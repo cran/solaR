@@ -1,4 +1,4 @@
-\name{RedEstaciones}
+\name{E_RedEstaciones}
 \alias{RedEstaciones}
 \docType{data}
 \title{
@@ -16,10 +16,11 @@ Meteorological stations available at \url{www.mapa.es/siar}
      \item{\code{NomEst}}{Name of the station}
 }}
 \details{
-    This dataset is to be used by \code{LeeMAPA} In this version the information about latitude and longitude of the stations is not available. It may be obtained through \url{http://www.geonames.org/} or with the package \code{{geonames}}. 
+    In this version the information about latitude and longitude of the stations is not available. It may be obtained through \url{http://www.geonames.org/} or with the package \code{{geonames}}. 
 }
 \source{
     \url{www.mapa.es/siar}
-}
+  }
+  \seealso{\code{\link{readMAPA}}}
 
 \keyword{datasets}

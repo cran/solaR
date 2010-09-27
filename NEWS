@@ -1,0 +1,8 @@
+*The package is now almost entirely designed with S4 classes and methods.
+*The time series object are constructed with the 'zoo' package.
+*Most of the functions and arguments have been renamed in order to 
+ease the understanding by international users.
+*Two new functions have been included for the statistical analysis of a PV plant composed of several systems.
+*The package dependencies have been optimized.
+*Several new small functions for date-time calculations are now available.
+*Several bugs have been corrected.

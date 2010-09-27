@@ -17,19 +17,21 @@
 #    junto a este programa. 
 #    En caso contrario, consulte <http://www.gnu.org/licenses/>.
 #-------------------------------------------------------------------------------
-fSombraHoriz<-function(AngGen, distancias,estruct){
-stopifnot(is.list(estruct),is.data.frame(distancias))
-	
-distancias=distancias/estruct$L;
-result= within(AngGen,{
-				leo=distancias$Leo;#Debe estar previamente normalizada
-				#FS=1-leo*cos(Beta);
-				Beta0=atan(abs(sin(AzS)/tan(AlS)));
-				FS=1-leo*cos(Beta0)/cos(Beta-Beta0);
-				SombraCond=(FS>0)
-				FS=FS*SombraCond;
-				FS[FS>1]<-1;
-				rm(leo, Beta0);
-				})
+fSombraHoriz<-function(angGen, distances,struct){
+  stopifnot(is.list(struct),is.data.frame(distances))
+###Preparo datos de partida	
+  distances=distances/struct$L;
+  AzS=angGen$AzS
+  AlS=angGen$AlS
+  Beta=angGen$Beta
+  lew=distances$Lew;              #Debe estar previamente normalizada
+###Cálculos
+  Beta0=atan(abs(sin(AzS)/tan(AlS)));
+  FS=1-lew*cos(Beta0)/cos(Beta-Beta0);
+  SombraCond=(FS>0)
+###Resultado
+  FS=FS*SombraCond;
+  FS[FS>1]<-1;
+  return(zoo(FS, index(angGen)))
 }
 

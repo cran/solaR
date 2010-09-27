@@ -1,5 +1,3 @@
-%% LyX 1.6.5 created this file.  For more info, see http://www.lyx.org/.
-%% Do not edit unless you really know what you are doing.
 \documentclass[spanish]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
@@ -53,13 +51,13 @@
 
 \begin{document}
 
-\title{Introducción a \texttt{solaR}}
+\title{Introducción a \texttt{solaR}} 
 
 
 \author{Oscar Perpiñán Lamigueiro}
 
 
-\date{10 de Febrero de 2010}
+\date{27 de Septiembre de 2010}
 
 \maketitle
 
@@ -71,13 +69,23 @@ y a la simulación del funcionamiento de diferentes aplicaciones de
 esta tecnología energética. En la versión actual de este paquete se
 incluyen funciones que permiten realizar todas las etapas de cálculo
 desde la radiación global en el plano horizontal hasta la productividad
-final de sistemas fotovoltaicos de conexión a red y de bombeo. En
-futuras versiones se incorporarán funciones adicionales que permitan
-la simulación de sistemas autónomos de electrificación. 
+final de sistemas fotovoltaicos de conexión a red y de bombeo. 
+También se incluye una herramienta de análisis estadístico del funcionamiento de
+plantas fotovoltaicas compuestas por varias unidades.
+
+Esta versión incluye numerosos cambios respecto a la versión anterior. Aunque se ha 
+intentado preservar el uso externo de las funciones, es innegable que los cambios son visibles. 
+Debe destacarse:
+
+\begin{enumerate}
+\item La mayor parte del paquete está basado en clases y métodos S4.
+\item Todas las series temporales están construidas con la clase \texttt{zoo} \cite{Zeileis.Grothendieck2005}.
+\item La mayor parte de las funciones y sus argumentos han sido renombrados con palabras inglesas para facilitar su comprensión internacional.
+\end{enumerate}
 
 <<echo=false,results=hide>>= 
 library(solaR)
-oopt <- options() 
+opt <- options() 
 options("digits"=4) 
 options("width"=80)
 @
@@ -99,21 +107,20 @@ Es posible realizar los cálculos para un día concreto:
 
 <<echo=TRUE>>=
 #Calculo para un único día 
+BTd=fBTd(mode='serie')
 
-lat=37.2; 
-Nm=1 #Numero de muestras por hora
-SolD<-fSolD(lat,dn=100)
-print(SolD)
-SolI<-fSolI(SolD,Nm=Nm)
-print(SolI[7:18,8:12])
+lat=37.2
+SolD<-fSolD(lat,BTd[100])
+SolI<-fSolI(SolD, sample='hour', keep.night=FALSE)
+head(SolI)
+
 @
 
 o para un conjunto de días:
 
 <<echo=TRUE>>=
 #Calculo para un varios días
-
-SolD<-fSolD(lat,dn=c(10,50,100))
+SolD<-fSolD(lat,BTd[c(10, 50, 100)])
 print(SolD)
 @
 
@@ -122,9 +129,9 @@ con diferente estructura. Así, para realizar el cálculo en los denominados
 días promedio empleamos el siguiente código:
 
 <<echo=TRUE>>=
-SolD<-fSolD(lat,BTd=fBTd(Modo='DiasProm')) 
-SolI<-fSolI(SolD,Nm=6)
-print(SolD)
+lat=37.2;
+SolD<-fSolD(lat,BTd=fBTd(mode='prom'))
+SolI<-fSolI(SolD, sample='10 min', keep.night=FALSE)
 @
 
 y podemos obtener la figura \ref{fig:AzimutAltura}. 
@@ -133,9 +140,14 @@ y podemos obtener la figura \ref{fig:AzimutAltura}.
 \begin{figure}
 \begin{centering}
 <<echo=TRUE, height=6, fig=TRUE>>=
-NombreMes=format(ISOdate(2000, 1:12, 1), "%b") 
-p<-xyplot(AlS*180/pi~AzS*180/pi, groups=factor(NombreMes[Mes]),data=SolI,col='black', type='l', xlab=expression(psi[s]),ylab=expression(gamma[s])) 
-print(direct.label(p,method='top.points'))
+mon=month.abb
+p<-xyplot(AlS*180/pi~AzS*180/pi,
+    groups=month,
+    data=SolI, type='l', col='black',
+    xlab=expression(psi[s]),ylab=expression(gamma[s]))
+plab=p+glayer(panel.text(0, y[x==0], mon[group.value], pos=4, cex=0.8))
+print(plab)
+
 @
 \par\end{centering}
 
@@ -147,9 +159,9 @@ print(direct.label(p,method='top.points'))
 También podemos extender los cálculos a todos los días de un año:
 
 <<echo=TRUE>>=
-BTd=fBTd(Modo='Serie')
-SolD<-fSolD(lat,BTd=BTd)
-summary(SolD)
+BTd=fBTd(mode='serie')
+solD <- fSolD(lat, BTd)
+summary(solD)
 @
 
 para obtener la figura \ref{fig:Declinacion}.
@@ -158,7 +170,7 @@ para obtener la figura \ref{fig:Declinacion}.
 \begin{figure}
 \begin{centering}
 <<echo=TRUE, fig=TRUE, height=6>>=
-p<-xyplot(decl~DiaAno,data=SolD,type='l')
+p <- xyplot(solD$decl)
 print(p)
 @
 \par\end{centering}
@@ -167,6 +179,10 @@ print(p)
 
 \end{figure}
 
+Estas dos funciones han sido agrupadas en una nueva función llamada \texttt{calcSol}. 
+Esta función construye un objeto de clase \texttt{Sol} que contiene en sus slots 
+los objetos \texttt{zoo} creados por \texttt{fSolD} y \texttt{fSolI}. 
+Esta clase cuenta con métodos para acceder a esta información (por ejemplo, \texttt{as.zooD, as.zooI}) y para visualizarla.
 
 
 \section{Radiación solar}
@@ -188,38 +204,52 @@ resultados obtenidos con \texttt{fSolD}, la radiación global en el
 plano horizontal (en $\si{\watthour\per\meter\squared}$) y la correlacción
 entre la fracción de difusa y el índice de claridad. En la versión
 actual de \texttt{solaR}, esta función incorpora las correlacciones
-de Collares Pereira y Rabl, y la de Page. Además, permite al usuario
+de Collares Pereira y Rabl \cite{Collares-Pereira.Rabl1979}, y la de Page \cite{Page1961}. 
+Además, permite al usuario
 elaborar su propia correlacción y entregarla a través del argumento
 \texttt{f}. Repitamos de nuevo los cálculos para un día concreto:
 
 <<echo=TRUE>>=
-SolD<-fSolD(lat,dn=100) 
-G0d=5000 
-CompD<-fCompD(SolD,G0d, corr = "Page")
-dif=!(names(CompD) %in% names(SolD))
-print(CompD[dif])
-@
+BTd=fBTd(mode='serie')
+SolD<-fSolD(lat, BTd[100])
+SolI<-fSolI(SolD, sample='hour')
 
+G0d=zoo(5000, index(SolD))
+fCompD(SolD, G0d, corr = "Page") 
+fCompD(SolD, G0d, corr = "CPR") 
+@ 
 y para los días promedio:
 
 <<echo=TRUE>>=
+lat=37.2;
 G0dm=c(2.766,3.491,4.494,5.912,6.989,7.742,7.919,7.027,5.369,3.562,2.814,2.179)*1000; 
-SolD<-fSolD(lat,BTd=fBTd(Modo='DiasProm'))  
-CompD<-fCompD(SolD,G0d=G0dm, corr = 'Page')
-dif=!(names(CompD) %in% names(SolD)) 
-summary(CompD[dif])
-@
+Rad=readG0dm(G0dm, lat)
+solD<-fSolD(lat,fBTd(mode='prom'))
+fCompD(solD, Rad, corr = 'Page') 
+@ 
 
-La construcción del perfil diario de irradiancias se realiza con la
-función \texttt{fCompI}. Esta función necesita la información proporcionada
-por \texttt{fCompD} y por \texttt{fSolI. Por ejemplo, para los días
-promedio obtenemos:}
+Definamos ahora una función que entrega el resultado de la correlacción de Page. Evidentemente, obtenemos el mismo resultado que con \texttt{corr='Page'}.
 
 <<echo=TRUE>>=
-SolI<-fSolI(SolD,Nm=6) 
-CompI<-fCompI(CompD,SolI)
-dif=!(names(CompI) %in% names(SolI))
-summary(CompI[dif])
+fKTd=function(x){(0.99*(x<=0.17))+(x>0.17)*(1.188-2.272*x+9.473*x^2-21.856*x^3+14.648*x^4)}
+fCompD(SolD,G0d, corr="user",f=fKTd)
+@ 
+                      
+La construcción del perfil diario de irradiancias se realiza con la
+función \texttt{fCompI}. Esta función necesita la información proporcionada
+por \texttt{fCompD} y por \texttt{fSolI}. Por ejemplo, para los días
+promedio obtenemos:
+
+<<echo=TRUE>>=
+lat=37.2;
+sol<-calcSol(lat, fBTd(mode='prom'), sample='hour', keep.night=FALSE)
+
+G0dm=c(2.766,3.491,4.494,5.912,6.989,7.742,7.919,7.027,5.369,3.562,2.814,2.179)*1000;
+Ta=c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2, 15.2)
+BD<-readG0dm(G0dm=G0dm, Ta=Ta, lat=37.2)
+compD<-fCompD(sol, BD, corr = 'Page') 
+compI<-fCompI(compD,sol)
+summary(compI)
 @
 
 resultado que recogemos en la figura \ref{fig:ComponentesIrradiancia}.
@@ -228,22 +258,16 @@ resultado que recogemos en la figura \ref{fig:ComponentesIrradiancia}.
 \begin{figure}
 \begin{centering}
 <<echo=TRUE, fig=TRUE, height=8>>=
-p<-xyplot(G0+B0+D0~w|Mes,data=CompI,type='l',auto.key=list(space='right'))
+p <- xyplot(G0+B0+D0~w|month, data=compI, type='l',auto.key=list(space='right'))
 print(p)
 @
 \par\end{centering}
-
-
-
 \caption{Irradiancia global, difusa y directa en los días promedio\label{fig:ComponentesIrradiancia}}
-
 \end{figure}
-
-
 
 \subsubsection{Obtención de medidas meteorológicas}
 
-La versión actual de este paquete incorpora una función llamada \texttt{LeeMAPA}
+La versión actual de este paquete incorpora una función llamada \texttt{readMAPA}
 capaz de acceder a la información disponible en la página \url{www.mapa.es/siar}.
 En esta página se almacenan las medidas diarias de estaciones agroclimáticas
 repartidas en la mayor parte de la superficie de España. Esta función
@@ -258,70 +282,85 @@ Madrid<-subset(RedEstaciones,NomProv=='Madrid')
 print(Madrid)
 @
 
+En esta versión de \texttt{solaR}, la función \texttt{readMAPA} crea un objeto
+de clase \texttt{Meteo}. Para acceder a todos los datos obtenidos se utiliza la función \texttt{getData}. 
+Si sólo se necesita la serie de irradiación, se puede obtener con \texttt{getG0}. 
+
 Obtengamos la información del año 2009 disponible en la estación de
 Aranjuez. Es importante resaltar que las medidas de radiación disponibles
 tienen unidades de $\si{\mega\joule\per\meter\squared}$, pero la
-función \texttt{LeeMAPA} realiza la conversión a $\si{\watthour\per\meter\squared}$:
+función \texttt{readMAPA} realiza la conversión a $\si{\watthour\per\meter\squared}$:
 
 <<echo=TRUE>>=
-Aranjuez<-LeeMAPA(28,3,'01/01/2009','31/12/2009')
-summary(Aranjuez)
+Aranjuez<-readMAPA(28,3,'01/01/2009','31/12/2009')
+print(Aranjuez)
 @
+Se pueden representar los datos con un método específico de \texttt{xyplot}:
+
+\begin{figure}
+  \centering
+<<echo=TRUE, fig=TRUE, height=6>>=
+p=xyplot(G~TempMedia|month, data=Aranjuez, type=c('p', 'r'))
+print(p)
+@ 
+  \caption{Relación entre irradiación y temperatura media en la estación de Aranjuez.}
+  \label{fig:Aranjuez}
+\end{figure}
+
 
 Esta base de datos incorpora información sobre los valores máximos
 y mínimos de temperatura. Con esta información la función \texttt{fTemp}
-genera un perfil intradiario de la temperatura ambiente (figura \ref{fig:Ta}).
+genera un perfil intradiario de la temperatura ambiente \cite{Huld.Suri.ea2006}. 
+Representamos la evolución intradiaria de esta temperatura ``sintética'' en el mes de marzo en la figura \ref{fig:Ta}.
 
-<<echo=TRUE, height=6>>=
+<<echo=TRUE>>=
 lat=41; 
-BTd=fBTd(Modo='BaseDatos',FechaBaseDatos=Aranjuez$Fecha,FormatoFecha="%d/%m/%Y") 
-BD<-cbind(BTd,Aranjuez)
-SolD<-fSolD(lat,BTd=BTd) 
-SolI<-fSolI(SolD,Nm=1)
-Temp<-fTemp(SolI,BD)
+sol=calcSol(lat, BTd=indexD(Aranjuez), sample='hour')
+Temp<-fTemp(sol,Aranjuez)
+@ 
+
+%
+\begin{figure}
+\begin{centering}
+<<echo=TRUE, fig=TRUE, width=8>>=
+wTemp=window(Temp, start=as.POSIXct('2009-03-01'), end=as.POSIXct('2009-03-31'))
+p=xyplot(wTemp, col='black', ylab='T')+layer_(panel.xblocks(x, DoY, col=c('lightgray', 'white')))
+print(p)
+@
+\par\end{centering}
+\caption{Evolución de la temperatura ambiente en el mes de Marzo.\label{fig:Ta}}
+\end{figure}
+
+Existen otras dos funciones que también acceden a datos radiación y temperatura y los organizan en un objeto \texttt{Meteo}. 
+Para leer la información de un fichero local o un \texttt{data.frame} se emplean las funciones \texttt{readBD} y \texttt{df2Meteo}. Para construir un objeto \texttt{Meteo} con 12 medias mensuales de radiación (y, opcionalmente, de temperatura ambiente) se utiliza la función \texttt{readG0dm}.
+
+
+\subsubsection{La función \texttt{calcG0}}
+
+Todo el proceso de cálculo en el plano horizontal, incluyendo la obtención
+de medidas con \texttt{readMAPA} y la generación de series de temperatura,
+está integrado dentro de la función \texttt{calcG0}. Por ejemplo,
+con las siguientes líneas obtenemos, a partir de las medidas de la estación meteorológica de
+Aranjuez, las componentes de irradiación e irradiancia en el plano horizontal.
+
+<<>>=
+g0<-calcG0(lat=37.2,
+	modeRad='mapa',
+	mapa=list(prov=28,est=3,
+	start='01/01/2009', end='31/12/2009'))
+print(g0)
 @
 
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=8>>=
-p<-bwplot(Ta~w|Mes,data=Temp,horizontal=FALSE, outline=FALSE)
+<<echo=TRUE, fig=TRUE, width=6>>=
+p=xyplot(g0)
 print(p)
 @
-\par\end{centering}
-
-\caption{Evolución de la temperatura ambiente\label{fig:Ta}}
-
+\end{centering}
+\caption{Componentes de irradiación en el plano horizontal obtenidas con la función \texttt{calcG0}.}
 \end{figure}
-
-
-
-\subsubsection{La función \texttt{\textmd{calcG0}}}
-
-Todo el proceso de cálculo en el plano horizontal, incluyendo la obtención
-de medidas con \texttt{LeeMAPA} y la generación de series de temperatura,
-está integrado dentro de la función \texttt{calcG0}. Por ejemplo,
-con las siguientes líneas:
-
-<<echo=TRUE>>=
-MAPA=list(Provincia=28,Estacion=3,FechaInicio='01/01/2009',FechaFinal='31/12/2009')
-Rad0<-calcG0(lat=41,modoRad='mapa',MAPA=MAPA)
-#Parametros
-Rad0$param
-@
-
-obtenemos, a partir de las medidas de la estación meteorológica de
-Aranjuez, las componentes de irradiación en el plano horizontal:
-
-<<echo=TRUE>>=
-summary(Rad0$D)
-@
-
-e irradiancia en el plano horizontal:
-
-<<echo=TRUE>>=
-summary(Rad0$I[18:30])
-@
 
 
 \subsection{Irradiación y irradiancia en la superficie del generador}
@@ -330,33 +369,73 @@ Estas componentes de irradiancia en el plano horizontal son transformadas
 al plano del generador mediante la función \texttt{fInclin}. Pero
 antes se debe realizar el cálculo de la geometría de la superficie
 del generador, tarea realizada por la función \texttt{fTheta}. Esta
-función necesita el resultado de \texttt{fSolI}, y también la información
+función necesita el resultado de \texttt{calcSol}, y también la información
 sobre el comportamiento de la superficie (estática, seguimiento a
 doble eje o con un eje horizontal N-S). En la versión actual de este
 paquete, esta función permite el cálculo del movimiento mediante \emph{backtracking}
-sólo para seguidores de eje horizontal. En versiones posteriores se
-incorporará esta funcionalidad a los seguidores de doble eje. Así,
-en las siguientes líneas calculamos el movimiento de un seguidor de
-eje horizontal N-S con \emph{backtracking} cuyo máximo ángulo de inclinación
-es $\ang{60}$.
+sólo para seguidores de eje horizontal \cite{Panico.Garvison.ea1991}. En versiones posteriores se
+incorporará esta funcionalidad a los seguidores de doble eje. 
 
+A partir de los resultados de \texttt{fTheta}, la función \texttt{fInclin}
+proporciona las componentes de irradiancia global, difusa y directa
+en el plano del generador, distinguiendo entre irradiancia incidente
+e irradiancia efectiva (aquella que incorpora las pérdidas por suciedad
+e incidencia no perpendicular) \cite{Martin.Ruiz2001}. 
+
+En esta versión, estas dos funciones quedan integradas dentro de la función \texttt{calcGef}. 
+Esta función construye un objeto \texttt{Gef} que contiene objetos \texttt{Meteo}, \texttt{Sol} y \texttt{G0}. 
+Cuenta con métodos propios para transformar su contenido en objetos \texttt{zoo} y \texttt{data.frame}. También cuenta con métodos de visualización con \texttt{xyplot}, tanto con fórmulas como con el objeto completo como único argumento.
+
+Utilicemos los cálculos previos realizados con \texttt{calcG0} para calcular la irradiación e irradiancia en un superficie fija orientada al Sur:
 <<echo=TRUE>>=
+gef<-calcGef(lat=37.2, modeRad='prev', prev=g0, beta=30)
+print(gef)
+@ 
 
-SolD<-fSolD(lat=41,BTd=fBTd(Modo='DiasProm')) 
-SolI<-fSolI(SolD,Nm=6)
-AngGenHoriz<-fTheta(SolI,modoSeg='horiz',BT=TRUE,
-           distancias=data.frame(Leo=10),
-           estruct=list(L=4),BetaLim=60);
-@
-
-y representamos la evolución del ángulo de inclinación a lo largo
-del día en la figura \ref{fig:Backtracking}. 
-
+Como ejemplo, en la figura \ref{fig:GefG0vsTheta} mostramos la relación
+entre la radiación efectiva y la radiación incidente frente al coseno
+del ángulo de incidencia para este sistema estático.
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-p<-xyplot(Beta~w,data=AngGenHoriz,type='l')
+<<echo=TRUE, fig=TRUE,width=6>>=
+p<-xyplot(Gef/G~cosTheta|month, data=gef, type='smooth')
+print(p)
+@
+\par\end{centering}
+\caption{Relación entre la irradiancia efectiva y la incidente frente al coseno
+del ángulo de incidencia para un sistema estático.\label{fig:GefG0vsTheta}}
+\end{figure}
+
+En las siguientes líneas calculamos el movimiento de un seguidor de
+eje horizontal N-S con \emph{backtracking} cuyo máximo ángulo de inclinación
+es $\ang{60}$ y representamos la evolución del ángulo de inclinación a lo largo
+del día en la figura \ref{fig:Backtracking}. 
+
+<<echo=TRUE>>=
+G0dm=c(2766, 3491, 4494, 5912, 6989, 7742, 7919, 7027, 5369, 3562, 2814,
+2179)
+Ta=c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2, 15.2)
+prom=list(G0dm=G0dm, Ta=Ta)
+
+structHoriz=list(L=4.83);
+distHoriz=data.frame(Lew=structHoriz$L*4,H=0);
+
+gefBT=calcGef(lat=37.2, prom=prom, sample='10 min',
+  modeTrk='horiz',
+  modeShd='bt', betaLim=60,
+  distances=distHoriz,
+  struct=structHoriz)
+@ 
+
+\begin{figure}
+\begin{centering}
+<<echo=TRUE, fig=TRUE, width=6>>=
+p <- xyplot(r2d(Beta)~r2d(w),
+     data=gefBT,
+     type='l',
+     xlab=expression(omega (degrees)),
+     ylab=expression(beta (degrees)))
 print(p)
 @
 \par\end{centering}
@@ -367,42 +446,6 @@ y limitación de ángulo. \label{fig:Backtracking}}
 \end{figure}
 
 
-A partir de los resultados de \texttt{fTheta}, la función \texttt{fInclin}
-proporciona las componentes de irradiancia global, difusa y directa
-en el plano del generador, distinguiendo entre irradiancia incidente
-e irradiancia efectiva (aquella que incorpora las pérdidas por suciedad
-e incidencia no perpendicular). Por ejemplo, las siguientes líneas
-de código calculan la irradiancia incidente y efectiva en un generador
-estático inclinado $\ang{35}$ y orientado hacia el Sur.
-
-<<echo=TRUE>>=
-#por defecto, modoSeg='est' y alfa=0
-AngGen<-fTheta(SolI,beta=35)
-Inclin<-fInclin(CompI, AngGen)
-@
-
-Como ejemplo, en la figura \ref{fig:GefG0vsTheta} mostramos la relación
-entre la radiación efectiva y la radiación incidente frente al coseno
-del ángulo de incidencia para este sistema estático.
-
-%
-\begin{figure}
-\begin{centering}
-<<echo=TRUE, fig=TRUE,height=6>>=
-p<-xyplot(Gef/G~cosTheta,data=Inclin)
-print(p)
-@
-\par\end{centering}
-
-\caption{Relación entre la irradiancia efectiva y la incidente frente al coseno
-del ángulo de incidencia para un sistema estático.\label{fig:GefG0vsTheta}}
-
-
-
-\end{figure}
-
-
-
 \section{Productividad de un Sistema Fotovoltaico de Conexión a Red}
 
 A partir de los cálculos de radiación descritos la función \texttt{fProd}
@@ -410,76 +453,87 @@ simula el funcionamiento de un Sistema Fotovoltaico de Conexión a
 Red (SFCR) tomando en consideración ciertos parámetros de su configuración
 (características del módulo y del inversor, configuración eléctrica
 del módulo y pérdidas en el sistema). Por ejemplo, las siguientes
-instrucciones calculan los parámetros principales del sistema bajo
+instrucciones calculan los parámetros principales del sistema 
+(configurado con las opciones por defecto de \texttt{fProd}) bajo
 determinadas condiciones de radiación y temperatura ambiente.
 
 <<echo=TRUE>>=
-Inclin=data.frame(Gef=c(200,400,600,800,1000),Ta=25)
-modulo = list(Vocn = 57.6, Iscn = 4.7, Vmn = 46.08, Imn = 4.35, Ncs = 96, Ncp = 1, CoefVT = 0.0023, TONC = 47)
-generador = list(Nms = 12, Nmp = 11)
-inversor = list(Ki = c(0.01, 0.025, 0.05), Pinv = 25000, Vmin = 420, Vmax = 750, Gumb = 20)
-EffSys = list(ModQual = 3, ModDisp = 2, OhmDC = 1.5, OhmAC = 1.5, MPP = 1, TrafoMT = 1, Disp = 0.5)
-Prod<-fProd(Inclin,modulo,generador,inversor,EffSys)
-print(Prod)
+inclin=data.frame(Gef=c(200,400,600,800,1000),Ta=25)
+fProd(inclin)
 @
 
 En primer lugar \texttt{fProd} calcula el punto MPP del generador
 (\texttt{Vmpp} e \texttt{Impp}) en las condiciones de irradiancia
 y temperatura marcadas en \texttt{Inclin}. A continuación, comprueba
 que este punto se encuentre dentro de la ventana de búsqueda del MPP
-del inversor (determinada por los valores \texttt{inversor\$Vmin}
-e \texttt{inversor\$Vmax}). En caso de que el punto MPP calculado
+del inversor (determinada por los valores \texttt{inverter\$Vmin}
+e \texttt{inverter\$Vmax}). En caso de que el punto MPP calculado
 se encuentre fuera de estos márgenes, la función asigna el valor límite
 de la ventana y calcula el valor de corriente correspondiente. En
 esta situación, la función activa un aviso. En todo caso, la tensión
 y corriente de entrada al inversor son \texttt{Vdc} e \texttt{Idc}:
 
 <<echo=TRUE>>=
-Inclin=data.frame(Gef=800,Ta=30)
-generador = list(Nms = 10, Nmp = 11)
-Prod<-fProd(Inclin,generador=generador)
-print(Prod)
+inclin=data.frame(Gef=800,Ta=30)
+gen1 = list(Nms = 10, Nmp = 11)
+prod=fProd(inclin, generator=gen1)
+print(prod)
 @
 
 En este caso concreto, las pérdidas debidas a la limitación en tensión
 del inversor son:
 
 <<echo=TRUE>>=
-with(Prod,Vdc*Idc/(Vmpp*Impp))
+with(prod,Vdc*Idc/(Vmpp*Impp))
 @
 
-La función \texttt{prodSFCR }integra todos los cálculos de radiación
+La función \texttt{prodGCPV} (en la anterior versión su nombre era \texttt{prodSFCR})
+integra todos los cálculos de radiación
 (en el plano horizontal y en el plano inclinado) y la simulación del
 SFCR haciendo uso de todas las funciones anteriormente descritas.
+
+La función \texttt{prodGCPV} construye un objeto S4 de clase \texttt{ProdGCPV}. 
+Incluye las clases \texttt{Meteo}, \texttt{Sol}, \texttt{G0} y \texttt{Gef}. 
+Al igual que las anteriores, cuenta con métodos para ser transformado en un \texttt{data.frame} 
+o en un \texttt{zoo}, y para ser representado con \texttt{xyplot} 
+como objeto completo o mediante fórmulas.
+
 La siguiente secuencia de instrucciones calcula la productividad del
 mismo SFCR funcionando como estático, doble eje y con eje horizontal.
 Para el módulo, generador, inversor y pérdidas del sistema se utilizan
-los valores por defecto que incorpora la función \texttt{prodSFCR}.
+los valores por defecto que incorpora la función \texttt{prodGCPV}.
 
 <<echo=TRUE>>=
 lat=37.2;
-G0dm=c(2766, 3491, 4494, 5912, 6989, 7742, 7919, 7027, 5369, 3562, 2814, 2179)
-ProdEst<-prodSFCR(lat=lat,G0dm=G0dm) 
-Prod2x<-prodSFCR(lat=lat,G0dm=G0dm,modoSeg='doble') 
-ProdHoriz<-prodSFCR(lat=lat,G0dm=G0dm,modoSeg='horiz')
+G0dm=c(2766, 3491, 4494, 5912, 6989, 7742, 7919, 7027, 5369, 3562, 2814,
+2179)
+Ta=c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2, 15.2)
+prom=list(G0dm=G0dm, Ta=Ta)
+
+ProdFixed<-prodGCPV(lat=lat, prom=prom, keep.night=FALSE)
+Prod2x<-prodGCPV(lat=lat, prom=prom, modeTrk='two', keep.night=FALSE)
+ProdHoriz<-prodGCPV(lat=lat,prom=prom, modeTrk='horiz', keep.night=FALSE)
 @
 
 La comparativa de funcionamiento se muestra en la figura \ref{fig:ComparativaSeguimiento}.
 
-%
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=8>>=
-ComparePac<-data.frame(doble=Prod2x$I$Pac,horiz=ProdHoriz$I$Pac, est=ProdEst$I$Pac, w=ProdEst$I$w,Mes=ProdEst$I$Mes)
-p<-xyplot(doble+horiz+est~w|Mes,data=ComparePac,type='l',auto.key=list(space='right'),ylab='Pac')
+<<echo=TRUE, fig=TRUE, width=8>>=
+ComparePac<-CBIND(two=as.zooI(Prod2x)$Pac, 
+     horiz=as.zooI(ProdHoriz)$Pac, 
+     fixed=as.zooI(ProdFixed)$Pac)
+AngSol=as.zooI(as(ProdFixed, 'Sol'))
+ComparePac=CBIND(AngSol, ComparePac)
+mon=month(index(ComparePac))
+
+p=xyplot(two+horiz+fixed~AzS|mon, data=ComparePac,
+     type='l', auto.key=list(space='right', lines=TRUE, points=FALSE),ylab='Pac')
 print(p)
 @
 \par\end{centering}
 
 \caption{Comparativa de funcionamiento entre sistemas de seguimiento\label{fig:ComparativaSeguimiento}}
-
-
-
 \end{figure}
 
 
@@ -487,87 +541,114 @@ print(p)
 \subsection{Influencia de las sombras}
 
 Uno de los factores a tener en cuenta en el funcionamiento de los
-sistemas fotovoltaicos es el impacto de las sombras en los generadores.
+sistemas fotovoltaicos es el impacto de las sombras en los generadores \cite{Perpinan2008}.
 En este paquete se incluyen cinco funciones que calculan las sombras
 mutuas entre generadores pertenecientes a una misma planta. Estas
 funciones son \texttt{fSombra2X}, \texttt{fSombraHoriz}, \texttt{fSombraEst},
 \texttt{fSombra6} y \texttt{fSombra}. Las tres primeras calculan las
 sombras en plantas de seguimiento a doble eje, eje horizontal y sistemas
-estáticos, respectivamente. La función \texttt{fSombra6 calcula las
+estáticos, respectivamente. La función \texttt{fSombra6} calcula las
 sombras en grupos de 6 seguidores de doble eje, permitiendo el cálculo
-de la sombra promedio de la planta. Finalmente, la función fSombra}
+de la sombra promedio de la planta. Finalmente, la función \texttt{fSombra}
 permite el uso de cualquiera de ellas de forma sencilla a través de
-su parámetro \texttt{modoSeg}. Por ejemplo, la siguiente secuencia
+su parámetro \texttt{modoTrk}. Por ejemplo, la siguiente secuencia
 calcula el sombreado en un seguidor de doble eje rodeado de otros
 cinco. Las dimensiones de la estructura del seguidor y la configuración
-en filas y columnas de la planta vienen recogidas en la lista \texttt{estruct},
+en filas y columnas de la planta vienen recogidas en la lista \texttt{struct},
 mientras que las distancias entre seguidores están definidas en el
-\texttt{data.frame} \texttt{distancias}. 
+\texttt{data.frame} \texttt{distances}. 
 
 <<echo=FALSE>>=
-lat=37.2; 
-G0dm=c(2.766,3.491,4.494,5.912,6.989,7.742,7.919,7.027,5.369,3.562,2.814,2.179)*1000; 
-SolD<-fSolD(lat,BTd=fBTd(Modo='DiasProm')) 
-SolI<-fSolI(SolD,Nm=6) 
-CompD<-fCompD(SolD,G0d=G0dm, corr = 'Page') 
-CompD$Ta=25 
-CompI<-fCompI(CompD,SolI) 
-AngGen<-fTheta(SolI,beta=35);
+sol<-calcSol(lat=37.2, fBTd(mode='serie'), sample='10 min', keep.night=FALSE)
+angGen<-fTheta(sol, beta=35);
+Angles=CBIND(as.zooI(sol), angGen)
+
+distances=data.frame(Lew=40,Lns=30,H=0)
+struct=list(W=23.11, L=9.8, Nrow=2, Ncol=8)
+
+ShdFactor<-fSombra6(Angles, distances, struct, prom=FALSE)
+
+Angles$FS=ShdFactor
 @
 
+La figura \ref{fig:Sombreado2x} muestra la incidencia de sombreado a lo largo del día (eje X) 
+y del año (eje Y). Es evidente que el sombreado es de importancia en las primeras y últimas horas
+del día, y en algunas horas cercanas al mediodía en los meses de invierno.
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-distancias=data.frame(Leo=40,Lns=30,H=0) 
-estruct=list(W=23.11, L=9.8, Nfilas=2, Ncol=8)
-FactorSombra<-fSombra6(AngGen,distancias, estruct,prom=FALSE)
-p<-xyplot(FS~w,groups=Mes, data=FactorSombra, type='l',auto.key=list(space='right'))
+<<echo=TRUE, fig=TRUE, width=6>>=
+YlOrBr=brewer.pal(n=5, 'YlOrBr')
+p <- levelplot(FS~w*day, data=Angles, 
+               col.regions=colorRampPalette(YlOrBr, space='Lab'))
 print(p)
 @
 \par\end{centering}
 
 \caption{Sombreado en una planta de seguimiento a doble eje.\label{fig:Sombreado2x}}
 
-
-
 \end{figure}
 
 
-En este caso, dado que el \texttt{data.frame} \texttt{distancias }sólo
-contienen una fila, la función\texttt{ }fSombra6 construye una red
+En este caso, dado que el \texttt{data.frame} \texttt{distances} sólo
+contiene una fila, la función\texttt{fSombra6} construye una red
 simétrica de seguidores, situando en (0,0,0) el seguidor en estudio.
 Esta misma red se podría haber construido con:
 
 <<echo=TRUE>>=
-distancias=data.frame(Leo=c(-40,0,40,-40,40),Lns=c(30,30,30,0,0),H=0) 
-FactorSombra2<-fSombra6(AngGen,distancias, estruct,prom=FALSE)
-identical(FactorSombra,FactorSombra2)
+distances=data.frame(Lew=c(-40,0,40,-40,40),Lns=c(30,30,30,0,0),H=0)
+ShdFactor2<-fSombra6(Angles, distances, struct,prom=FALSE)
+
+identical(coredata(ShdFactor), coredata(ShdFactor2))
 @
 
-Además de este caso trivial, el \texttt{data.frame} \texttt{distancias}
+Además de este caso trivial, el \texttt{data.frame} \texttt{distances}
 puede definir una cuadrícula irregular alrededor del seguidor problema.
-Dado que este seguidor está en (0,0,0) \texttt{distancias} debe tener
+Dado que este seguidor está en (0,0,0) \texttt{distances} debe tener
 5 filas.
 
 Cuando \texttt{prom=TRUE}, a partir de la distribución de seguidores
-en la planta (\texttt{Nfilas} y \texttt{Ncol}), se obtiene una media
+en la planta (\texttt{Nrow} y \texttt{Ncol}), se obtiene una media
 ponderada del sombreado en el conjunto completo.
 
-El uso de estas funciones está integrado en la función \texttt{prodSFCR},
+El uso de estas funciones está integrado en la función \texttt{prodGCPV},
 tal y como muestran los siguientes ejemplos:
 
 <<echo=TRUE>>=
-###2x
-Prod2xSombra<-prodSFCR(lat=lat,G0dm=G0dm,modoSeg='doble', modoSombra='area', distancias=data.frame(Leo=40,Lns=40,H=0))
-###Eje horizontal NS sin backtracking 
-estruct=list(L=4.83)
-distancias=data.frame(Leo=estruct$L*4,H=0)
-ProdHorizSombra<-prodSFCR(lat=lat,G0dm=G0dm, Nm=6, modoSeg='horiz', modoSombra='area', BetaLim=60, distancias=distancias, estruct=estruct)
-###Eje horizontal NS con backtracking 
-ProdHorizBT<-prodSFCR(lat=lat,G0dm=G0dm, Nm=6, modoSeg='horiz', modoSombra='bt', BetaLim=60, distancias=distancias, estruct=estruct)
-@
+struct2x=list(W=23.11, L=9.8, Nrow=2, Ncol=8)
+dist2x=data.frame(Lew=40, Lns=30, H=0)
+@ 
 
+<<echo=TRUE>>=
+prod2xShd<-prodGCPV(lat=lat, prom=prom, modeTrk='two', 
+    modeShd='area', struct=struct2x, distances=dist2x)
+print(prod2xShd)
+@ 
+
+<<echo=TRUE>>=
+#Horizontal N-S tracker
+structHoriz=list(L=4.83);
+distHoriz=data.frame(Lew=structHoriz$L*4,H=0);
+
+#Without Backtracking
+prodHorizShd<-prodGCPV(lat=lat, prom=prom, sample='10 min', 
+    modeTrk='horiz',
+    modeShd='area', betaLim=60,
+    distances=distHoriz,
+    struct=structHoriz)
+print(prodHorizShd)
+
+@ 
+<<echo=TRUE>>=
+#With Backtracking
+prodHorizBT<-prodGCPV(lat=lat, prom=prom, sample='10 min', 
+    modeTrk='horiz',
+    modeShd='bt', betaLim=60,
+    distances=distHoriz,
+    struct=structHoriz)
+
+print(prodHorizBT)
+@
 
 \subsection{Ubicación de seguidores en una planta}
 
@@ -581,9 +662,10 @@ los costes relacionados con los elementos de unión entre estructuras
 entre elementos (seguidores o estructuras estáticas) es aquella que
 conduce al mínimo valor del coste de la energía producida por el sistema. 
 
-Este paquete incluye una función llamada \texttt{optimSombra} diseñada
+Este paquete incluye una función llamada \texttt{optimShd} 
+(en la versión anterior era \texttt{optimSombra}) diseñada
 para calcular el efecto del sombreado mutuo en un conjunto de posibles
-separaciones entre elementos. El consiguiente conjunto de resultados
+separaciones entre elementos \cite{Perpinan2008}. El consiguiente conjunto de resultados
 combina la productividad (\texttt{Yf}) y la ocupación de terreno (\texttt{ROT})
 para cada una de las posibles separaciones. El diseñador deberá tomar
 la decisión oportuna a partir de este conjunto de resultados efectuando
@@ -591,7 +673,10 @@ las traducciones económicas que considere necesarias.
 
 <<echo=FALSE>>=
 lat=37.2;
-G0dm=c(2766, 3491, 4494, 5912, 6989, 7742, 7919, 7027, 5369, 3562, 2814, 2179) 
+G0dm=c(2766, 3491, 4494, 5912, 6989, 7742, 7919, 7027, 5369, 3562, 2814,
+2179)
+Ta=c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2, 15.2)
+prom=list(G0dm=G0dm, Ta=Ta)
 @
 
 Supongamos un sistema de seguimiento de eje horizontal sin \emph{backtracking
@@ -601,21 +686,30 @@ analizaremos el funcionamiento limitando el ángulo de inclinación
 del seguidor:
 
 <<echo=TRUE>>=
-estruct=list(L=4.83); 
-distancias=list(Leo=estruct$L*c(2,5));
-Sombra12Horiz<-optimSombra(lat=lat,G0dm=G0dm, modoSeg='horiz', BetaLim=60, distancias=distancias, res=2, estruct=estruct, modoSombra='area',prog=FALSE)
-class(Sombra12Horiz)
+structHoriz=list(L=4.83);
+distHoriz=list(Lew=structHoriz$L*c(2,5));
+
+Shd12Horiz<-optimShd(lat=lat, prom=prom,
+                     modeTrk='horiz',
+                     betaLim=60,
+                     distances=distHoriz, res=2,
+                     struct=structHoriz,
+                     modeShd='area',
+                     prog=FALSE)
+
+print(Shd12Horiz)
 @
 
-Vemos que el resultado de \texttt{optimSombra} tiene clase {}``\texttt{sombra}''.
-Para esta clase \texttt{solaR} incorpora un método denominado \texttt{plot.sombra}
+La función \texttt{optimShd} crea un objeto de clase \texttt{Shade} 
+(en la anterior versión era \texttt{sombra}). 
+Para esta clase \texttt{solaR} incorpora un método S4 de \texttt{plot}
 que permite representar gráficamente los resultados (figura \ref{fig:optimHoriz}).
 
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-plot(Sombra12Horiz)
+<<echo=TRUE, fig=TRUE, width=6>>=
+plot(Shd12Horiz)
 @
 \par\end{centering}
 
@@ -628,18 +722,23 @@ backtracking\label{fig:optimHoriz}}
 Realicemos los cálculos para un sistema estático (figura \ref{fig:optimEst}):
 
 <<echo=TRUE>>=
-estruct=list(L=5); 
-distancias=list(D=estruct$L*c(1,3)); 
-Sombra12Est<-optimSombra(lat=lat,G0dm=G0dm, modoSeg='est', modoSombra='area', distancias=distancias, res=1, estruct=estruct,prog=FALSE)
+structFixed=list(L=5);
+distFixed=list(D=structFixed$L*c(1,3));
+Shd12Fixed<-optimShd(lat=lat, prom=prom,
+                     modeTrk='fixed',
+                     distances=distFixed, res=1,
+                     struct=structFixed,
+                     modeShd='area',
+                     prog=FALSE)
+print(Shd12Fixed)
 @
 
 %
 \begin{figure}
-\begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-plot(Sombra12Est)
+\centering
+<<echo=TRUE, fig=TRUE, width=6>>=
+plot(Shd12Fixed)
 @
-\par\end{centering}
 
 \caption{Sombreado mutuo en una planta con estructuras estáticas\label{fig:optimEst}}
 
@@ -651,7 +750,7 @@ de ancho y $\SI{9.8}{\meter}$ de alto en una planta. Nos interesa
 configurar esta planta en una red de 2 filas y 8 columnas. 
 
 <<echo=TRUE>>=
-estruct=list(W=23.11, L=9.8, Nfilas=2, Ncol=8)
+struct2x=list(W=23.11, L=9.8, Nrow=2, Ncol=8)
 @
 
 Probaremos las separaciones comprendidas entre $\SI{30}{\meter}$
@@ -659,24 +758,27 @@ y $\SI{50}{\meter}$ para la dirección E-O y entre $\SI{20}{\meter}$
 y $\SI{50}{\meter}$ para la dirección N-S.
 
 <<echo=TRUE>>=
-distancias=list(Leo=c(30,50),Lns=c(20,50))
+dist2x=list(Lew=c(30,50),Lns=c(20,50))
 @
 
 Obtenemos los resultados con una resolución de $\SI{5}{\meter}$ con
 la siguiente instrucción:
 
 <<echo=TRUE>>=
-SombraM2x<-optimSombra(lat=lat,G0dm=G0dm, modoSeg='doble', modoSombra=c('area','prom'), distancias=distancias, res=5, prog=FALSE)
-summary(SombraM2x$S)
+ShdM2x<-optimShd(lat=lat, prom=prom, modeTrk='two', 
+                 modeShd=c('area','prom'), distances=dist2x, struct=struct2x, 
+                 res=5, prog=FALSE)
+
+print(ShdM2x)
 @
 
 %
 \begin{figure}
-\begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-plot(SombraM2x)
+\centering
+<<echo=TRUE, fig=TRUE, width=6>>=
+plot(ShdM2x)
 @
-\par\end{centering}
+
 
 \caption{Sombreado mutuo en una planta de seguimiento a doble eje\label{fig:optim2x}}
 
@@ -692,18 +794,19 @@ plot(SombraM2x)
 El primer paso a dar para analizar el funcionamiento de un sistema
 fotovoltaico de bombeo es caracterizar la bomba centrífuga en unas
 condiciones de altura manométrica constante (suposición de funcionamiento
-en estos sistemas). Empleamos la función \texttt{fBomba} para analizar
-el funcionamiento de una bomba SP8A44 (\url{http://net.grundfos.com/Appl/WebCAPS/InitCtrl?mode=1})
-trabajando a una altura manométrica de $H=\SI{40}{m}$. La información
-sobre esta bomba la extraemos de \texttt{CoefBomba}:
+en estos sistemas) \cite{Abella.Lorenzo.ea2003}. 
+Empleamos la función \texttt{fPump} (antes \texttt{fBomba}) 
+para analizar el funcionamiento de una bomba SP8A44 (\url{http://net.grundfos.com/Appl/WebCAPS/InitCtrl?mode=1}) trabajando a una altura manométrica de $H=\SI{40}{m}$. La información
+sobre esta bomba la extraemos de \texttt{pumpCoef} (antes \texttt{CoefBomba}):
 
 <<echo=TRUE>>=
-data(CoefBomba) 
-CoefSP8A44<-subset(CoefBomba,Qn==8&Etapas==44)
-fSP8A44<-fBomba(Bomba=CoefSP8A44,H=40)
+data(pumpCoef) 
+CoefSP8A44<-subset(pumpCoef, Qn==8&stages==44)
+
+fSP8A44<-fPump(pump=CoefSP8A44,H=40)
 @
 
-El resultado de \texttt{fBomba} es un conjunto de funciones que relacionan,
+El resultado de \texttt{fPump} es un conjunto de funciones que relacionan,
 en un rango de funcionamiento determinado por la bomba, la potencia
 mecánica e hidráulica, el caudal y la frecuencia con la potencia eléctrica
 de entrada. Con estas funciones es posible calcular estos parámetros
@@ -713,25 +816,29 @@ y \ref{fig:PotenciaMotobomba}):
 
 <<echo=TRUE>>=
 SP8A44=with(fSP8A44,{
-    Pac=seq(lim[1],lim[2],by=100); 
-    Pb=fPb(Pac); 
-    etam=Pb/Pac; 
-    Ph=fPh(Pac); 
-    etab=Ph/Pb; 
-    f=fFrecuencia(Pac); 
-    Caudal=fCaudal(Pac); 
-    result=data.frame(Caudal,Pac,Pb,Ph,etam,etab,f)})
+		Pac=seq(lim[1],lim[2],by=100)
+		Pb=fPb(Pac)
+		etam=Pb/Pac
+		Ph=fPh(Pac)
+		etab=Ph/Pb
+		f=fFreq(Pac)
+		Q=fQ(Pac)
+		result=data.frame(Q,Pac,Pb,Ph,etam,etab,f)})
+
+
 SP8A44$etamb=with(SP8A44,etab*etam)
+
 @
 
 %
 \begin{figure}
-\begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-p<-xyplot(etam+etab+etamb~Pac,data=SP8A44,type='l') 
-print(direct.label(p, method = "top.points")) 
+\centering
+<<echo=TRUE, fig=TRUE, width=6>>=
+lab=c(expression(eta[motor]), expression(eta[pump]), expression(eta[mp]))
+p<-xyplot(etam+etab+etamb~Pac,data=SP8A44,type='l', ylab='Eficiencia')
+print(p+glayer(panel.text(x[1], y[1], lab[group.number], pos=3)))
 @
-\par\end{centering}
+
 
 \caption{Eficiencia de motor, bomba y motobomba para diferentes valores de
 potencia eléctrica de una bomba SP8A44 trabajando a una altura manométrica
@@ -742,12 +849,13 @@ de $H=\SI{40}{m}$\label{fig:EficienciaMotobomba}}
 
 %
 \begin{figure}
-\begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-p<-xyplot(Pb+Ph~Pac,data=SP8A44,type='l') 
-print(direct.label(p))
+\centering
+<<echo=TRUE, fig=TRUE, width=6>>=
+lab=c(expression(P[pump]), expression(P[hyd]))
+p<-xyplot(Pb+Ph~Pac,data=SP8A44,type='l', ylab='Potencia (W)', xlab='Potencia AC (W)')
+print(p+glayer(panel.text(x[length(x)], y[length(x)], lab[group.number], pos=3)))
 @
-\par\end{centering}
+
 
 \caption{\label{fig:PotenciaMotobomba}Potencia mecánica e hidráulica frente
 a la potencia eléctrica de una bomba SP8A44 trabajando a una altura
@@ -767,21 +875,23 @@ funcionamiento de un sistema fotovoltaico de bombeo para diferentes
 alturas manométricas y un conjunto de potencias de generador fotovoltaico.
 Al representar las combinaciones posibles en un gráfico de doble entrada
 se obtiene una herramienta que ayuda a la selección de la mejor combinación
-de bomba y generador en unas condiciones de radiación y altura. Este
-tipo de gráficos se obtienen con la función \texttt{NmgSFB}. Por ejemplo,
+de bomba y generador en unas condiciones de radiación y altura \cite{Abella.Lorenzo.ea2003}. 
+Este tipo de gráficos se obtienen con la función \texttt{NmgPVPS}. Por ejemplo,
 generemos un nomograma (figura \ref{fig:Nomograma}) para la bomba
 SP8A44 trabajando en un rango de alturas desde 50 a 80 metros, alimentada
-por diferentes potencias de generador fotovoltaico.
+por diferentes potencias de generador fotovoltaico. La extraña forma de  la curva 
+correspondiente a una altura de 50 metros indica que el funcionamiento
+de esta bomba a esta altura no es adecuada.
 
 \texttt{}%
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-Pg=seq(3000,5500,by=500) 
-H=seq(60,80,by=5) 
-Bomba=list(Qn=8,Etapas=44) 
-NmgSP8A44<-NmgSFB(Bomba=Bomba,Pg=Pg,H=H,Gd=6000)
-print(NmgSP8A44$dibujo)
+<<echo=TRUE, fig=TRUE, width=6>>=
+Pg=seq(3000,5500,by=500);
+H=seq(50,80,by=5);
+NmgSP8A44<-NmgPVPS(pump=CoefSP8A44, Pg=Pg, H=H, Gd=6000,
+     title='Elección de bombas', theme=custom.theme())
+print(NmgSP8A44$plot)
 @
 \par\end{centering}
 
@@ -802,46 +912,32 @@ de irradiancia, como los explicados anteriormente.
 Otro enfoque diferente consiste en simular el funcionamiento del sistema
 empleando el mismo itinerario de cálculo que hemos recorrido con los
 sistemas de conexión a red. Si allí empleamos la función \texttt{prodSFCR}
-ahora nos serviremos de la función \texttt{prodSFB}. Los parámetros
+ahora nos serviremos de la función \texttt{prodPVPS}. Los parámetros
 de entrada de esta función son muy parecidos a aquella, salvo las
 pertinentes diferencias en la definición del inversor. En esta función
-no están habilitadas las opciones de seguimiento ni cálculo de sombra.
+no están habilitadas las opciones de cálculo de sombra.
 Nuevamente con la bomba SP8A44, calculemos el caudal que proporcionará
 este sistema con un generador de $\SI{5500}{\wattpeak}$ contra una
-altura manométrica de 50 metros.
+altura manométrica de 50 metros descargando datos de \url{www.mapa.es/siar}.
 
 <<echo=TRUE>>=
-lat=37.2 
-G0dm=c(2766, 3491, 4494, 5912, 6989, 7742, 7919, 7027, 5369, 3562, 2814, 2179) 
-
-Bomba=list(Qn=8,Etapas=44) 
-
-prodSP8A44<-prodSFB(lat,G0dm,Bomba=Bomba,H=50,Pg=5500) 
-
-print(prodSP8A44$D) 
+prodSP8A44<-prodPVPS(lat=41,
+             modeRad='mapa',
+             mapa=list(prov=28,est=3,
+               start='01/01/2009', end='31/12/2009'),
+             pump=CoefSP8A44, Pg=5500, H=50)
+print(prodSP8A44)
 @
 
 La relación entre el caudal y la irradiancia efectiva queda recogido
-en la figura \ref{fig:CaudalIrradiancia}. Supongamos que deseamos
-extraer más caudal con esta bomba y ampliamos el generador fotovoltaico
-hasta una potencia de $\SI{7000}{\wattpeak}$. Podemos comprobar que,
-dado el rango de funcionamiento de la bomba, la decisión no es muy
-acertada. La productividad (\texttt{Yf}) y el caudal normalizado a
-la potencia (\texttt{Qn}) han descendido respecto de la otra configuración.
-Observando la gráfica correspondiente (figura \ref{fig:CaudalIrradianciaLimite})
-comprobamos que en los meses centrales del año, en los momentos de
-alta irradiancia la bomba alcanza su caudal y frecuencia máximas,
-y el variador de frecuencia ordena el paro del sistema.
+en la figura \ref{fig:CaudalIrradiancia}. 
 
-<<echo=TRUE>>=
-prodSP8A44Lim<-prodSFB(lat,G0dm,Bomba=Bomba,H=50,Pg=7000)  
-@
-
-%
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-p<-xyplot(Q~Gef|Mes,type='l',data=prodSP8A44$I)
+<<echo=TRUE, fig=TRUE, width=6>>=
+p=xyplot(Q~Gef|month, data=prodSP8A44, 
+  cex=0.5, type=c('p', 'smooth'), 
+  col.symbol='gray', col.line='black')
 print(p)
 @
 \par\end{centering}
@@ -852,30 +948,96 @@ de 50 metros\label{fig:CaudalIrradiancia}}
 
 \end{figure}
 
+Supongamos que deseamos extraer más caudal con esta bomba y ampliamos el generador fotovoltaico
+hasta una potencia de $\SI{7000}{\wattpeak}$. Podemos comprobar que,
+dado el rango de funcionamiento de la bomba, la decisión no es muy
+acertada. La productividad (\texttt{Yf}) y el caudal normalizado a
+la potencia (\texttt{Qn}) han descendido respecto de la otra configuración.
+Observando la gráfica correspondiente (figura \ref{fig:CaudalIrradianciaLimite})
+comprobamos que en los meses centrales del año, en los momentos de
+alta irradiancia la bomba alcanza su caudal y frecuencia máximas,
+y el variador de frecuencia ordena el paro del sistema.
 
+<<echo=TRUE>>=
+prodSP8A44Lim<-prodPVPS(lat, modeRad='prev', prev=prodSP8A44,
+                        pump=CoefSP8A44, H=50, Pg=7000)  
+@
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
-p<-xyplot(Q~Gef|Mes,type='l',data=prodSP8A44Lim$I)
+<<echo=FALSE, fig=TRUE, width=6>>=
+p=xyplot(Q~Gef|month, data=prodSP8A44Lim, 
+  cex=0.5, type=c('p', 'smooth'), 
+  col.symbol='gray', col.line='black')
 print(p)
 @
 \par\end{centering}
 
 \caption{Caudal frente a irradiancia de un sistema basado en la bomba SP8A44
-con un generador de $\SI{5500}{\wattpeak}$ contra una altura manométrica
+con un generador de $\SI{7000}{\wattpeak}$ contra una altura manométrica
 de 50 metros\label{fig:CaudalIrradianciaLimite}}
 
 \end{figure}
 
+\section{Análisis estadístico de Plantas Fotovoltaicas}
+\label{sec:AnalisisEstadistico}
+En una planta fotovoltaica, los sistemas individuales que la componen son, 
+teóricamente, idénticos, y su funcionamiento a lo largo del tiempo debiera ser
+aproximadamente el mismo. Sin embargo, debido a sus diferencias prácticas 
+--tolerancia en potencia, pérdidas por dispersión, suciedad--,
+el funcionamiento individual de cada sistema se desvía del comportamiento promedio
+del conjunto. Cuando un sistema se comporta correctamente estas desviaciones están
+comprendidas en un rango determinado y no son signo de mal funcionamiento.
 
+Tratando estas desviaciones como un proceso estocástico, se puede aplicar un análisis
+estadístico al funcionamiento del conjunto de sistemas para identificar
+un sistema defectuoso como aquel que se aparta significativamente del comportamiento
+promedio.
 
-\section{Líneas futuras}
+En \cite{Perpinan2009} se expone un método para llevar a cabo este análisis y 
+una herramienta gráfica que resume los resultados. Este gráfico, denominado ``Target Diagram'',
+muestra en un sólo gráfico la raiz del valor cuadrático medio, la media y la desviación estándar 
+de la diferencia entre las plantas y una referencia dada (por defecto, la mediana). 
 
-En versiones posteriores este paquete incorporará funciones que permitan
-el análisis estadístico de plantas fotovoltaicas, en la línea de lo
-expuesto en mi artículo: 
+Esta versión de \texttt{solaR} incluye dos funciones --\texttt{analyzeData} y \texttt{TargetDiagram}-- para realizar este análisis. Las siguientes líneas muestran un ejemplo de aplicación basado en unos
+datos de productividad de una planta compuesta por 22 sistemas nominalmente iguales (estos datos son accesibles mediante \texttt{data(prodEx)}).
 
-{}``Statistical analysis of the performance and simulation of a two-axis
-tracking PV system'', Solar Energy, 83 (11). pp. 2074-2085 (\url{http://oa.upm.es/1843/1/PERPINAN_ART2009_01.pdf}).
+<<echo=TRUE>>=
+data(prodEx)
+prodStat<-analyzeData(prodEx)
+@
+
+%
+\begin{figure}
+  \centering
+<<echo=TRUE, fig=TRUE, width=6>>=
+p=xyplot(prodStat$stat)
+print(p)
+@ 
+
+\caption{Análisis estadístico de un conjunto de 22 plantas.}
+\label{fig:TargetDiagram}
+\end{figure}
+
+%
+\begin{figure}
+  \centering
+ 
+<<echo=TRUE, fig=TRUE, width=6>>=
+day=as.Date('2008-8-29')
+ndays=c(5, 10, 15, 20)
+
+palette=brewer.pal(n=length(ndays), name='Set1')
+
+TDColor<-TargetDiagram(prodEx, end=day, ndays=ndays,
+color=palette)
+print(TDColor$plot)
+@ 
+  \caption{``Target Diagram'' del análisis estadístico de un conjunto de 22 plantas durante determinados períodos temporales para detectar sistemas con mal funcionamiento.}
+  \label{fig:TargetDiagram}
+\end{figure}
+
+\bibliography{solaR}
+\bibliographystyle{plain}
+
 \end{document}

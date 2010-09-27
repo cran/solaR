@@ -1,0 +1,91 @@
+import(zoo)
+import(lattice)
+import(latticeExtra)
+import(methods)
+importFrom(graphics, plot)
+
+export(
+       ##small utilities
+       hour,
+       minute,
+       second,
+       hms,
+       doy,
+       dom,
+       month,
+       year,
+       DoY,
+       DoM,
+       Month,
+       Year,
+       dst,
+       d2r,
+       r2d,
+       h2r,
+       r2h,
+       r2sec,
+       local2Solar,
+       CBIND,
+       ##main functions
+       fBTd,
+       fSolD,
+       fSolI,
+       fTemp,
+       fCompD,
+       fCompI,
+       fTheta,
+       fInclin,
+       fProd,
+       fSombra,
+       fSombra2X,
+       fSombra6,
+       fSombraHoriz,
+       fSombraEst,
+       fPump,
+       HQCurve,
+       NmgPVPS,
+       analyzeData,
+       TargetDiagram,
+       ##constructors
+       calcSol,
+       calcG0,
+       calcGef,
+       calcShd,
+       prodGCPV,
+       prodPVPS,
+       optimShd,
+       readMAPA,
+       readG0dm,
+       readBD,
+       df2Meteo
+       )
+
+exportMethods(
+              getData,
+              getG0,
+              getLat,
+              indexD,
+              indexI,
+              as.zooD,
+              as.zooI,
+              as.zooM,
+              as.zooY,
+              as.data.frameD,
+              as.data.frameI,
+              as.data.frameM,
+              as.data.frameY,
+              show,
+              xyplot,
+              levelplot,
+              plot)
+
+exportClasses(
+              Meteo,
+              Sol,
+              G0,
+              Gef,
+              ProdGCPV,
+              ProdPVPS,
+              Shade
+              )
+  

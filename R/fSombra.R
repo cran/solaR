@@ -17,14 +17,13 @@
 #    junto a este programa. 
 #    En caso contrario, consulte <http://www.gnu.org/licenses/>.
 
-fSombra<-function(AngGen, distancias, estruct, modoSeg='est',prom=TRUE){
+fSombra<-function(angGen, distances, struct, modeTrk='fixed',prom=TRUE){
 
-#-------------------------------------------------------------------------------
-stopifnot(modoSeg %in% c('doble','horiz','est'))
-result=switch(modoSeg, #Para evitar errores si sólo entrego la primera fila a fSombraHoriz y fSombraEst
-				doble={fSombra6(AngGen,distancias,estruct,prom)},
-				horiz={fSombraHoriz(AngGen,distancias[1,],estruct)},
-				est= {fSombraEst(AngGen,distancias[1,],estruct)}
-				);
-			}
+  stopifnot(modeTrk %in% c('two','horiz','fixed'))
+  result=switch(modeTrk, #Para evitar errores si sólo entrego la primera fila a fSombraHoriz y fSombraEst
+    two={fSombra6(angGen,distances,struct,prom)},
+    horiz={fSombraHoriz(angGen,distances[1,],struct)},
+    fixed= {fSombraEst(angGen,distances[1,],struct)}
+    );
+}
 

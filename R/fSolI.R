@@ -16,47 +16,90 @@
 #    junto a este programa. 
 #    En caso contrario, consulte <http://www.gnu.org/licenses/>.
 
-fSolI<-function(SolD,Nm=1){
-	if (Nm>60) {Nm=60;#El valor máximo es Nm=60 (1 muestra por minuto).
-				warning('Nm coerced to the maximum value 60.')};
+fSolI<-function(solD, sample='hour', EoT=FALSE, keep.night=TRUE){
+
+  ##Copiado de seq.POSIXt
+  ##Necesario aquí porque seq.POSIXt acepta también "days", "months", etc.
+  by2 <- strsplit(sample, " ", fixed = TRUE)[[1L]]
+  if (length(by2) > 2L || length(by2) < 1L) 
+    stop("invalid 'by' string")
+  valid <- pmatch(by2[length(by2)], c("secs", "mins", "hours"))
+  if (is.na(valid)) 
+    stop("invalid string for 'sample'")
+
+  lat=d2r(attr(solD, 'lat'))
+  start.sol<-start(solD)                #index(solD)[1]
+  end.sol<-end(solD) #tail(index(solD), 1) o tambien index(solD)[length[index(solD)]
+  seqby=seq(start.sol, end.sol+86400-1, by=sample)
+    
+  ##Para escoger sólo aquellos días que están en solD, 
+  ##por ejempo para días promedio
+  ##o para días que no están en la base de datos
+  seqby.day<-truncDay(seqby) #format(seqby, '%Y-%m-%d')
+  solD.day<-index(solD)               #format(index(solD), '%Y-%m-%d')
+  mtch<-match(seqby.day, solD.day, nomatch = 0) ##Obtengo los índices de solD.day para los que hay correspondencia con seqby.day
+  mtch.in=which(mtch>0)                #which(seqby.day %in% solD.day)
+  mtch=mtch[mtch>0]
+  ##un objeto zoo no permite que haya repeticiones en el índice, así que debo transformarlo a data.frame
+  sol.rep<-data.frame(solD)[mtch,]    
+                                        #nrep<-length(seqMatch)/dim(solD)[1]
+                                        #sol.rep<-as.data.frame(lapply(as.data.frame(coredata(solD)),
+                                        #   FUN=function(x)rep(x,each=nrep)))
+  ##Obtengo los instantes de seqby que se corresponden con días en solD    
+  ##Es útil cuando hay huecos en la base de datos o cuando trabajo en modo "prom"
+  seqby.match<-seqby[mtch.in]
+
+  ##Obtengo las variables de solD
+  decl<-sol.rep$decl
+  ##lat<-sol.rep$lat
+  ws<-sol.rep$ws
+  Bo0d<-sol.rep$Bo0d
+  eo<-sol.rep$eo
+  if (EoT) {EoT=sol.rep$EoT} else {EoT=0}
+    
+  Bo=1367; ##Constante Solar
+     
+  TO=hms(seqby.match)
+  w<-h2r(TO-12)+EoT
 	
-  HoraMin=expand.grid(Min=seq(0,59,60/Nm),Hora=0:23);
-  SolDrep<-as.data.frame(lapply(SolD,FUN=function(x)rep(x,each=Nm*24)))
-  SolDF<-cbind(SolDrep,HoraMin);
-  SolDF$IDi=with(SolDF,IDd+3600*Hora+60*Min);
-  #Actualizo IDd a IDi agregandole 3600 por hora y 60 por minuto. De esta forma, el valor de ID me identifica 
-  # un instante determinado, y me será útil para efectuar resúmenes instantáneos
-  # cuando ocurren cosas de forma simultánea (por ejemplo, con el cálculo de sombras).
+  aman<-abs(w)<=abs(ws);
+
+  ##Angulos solares
+  cosThzS<-sin(decl)*sin(lat)+cos(decl)*cos(w)*cos(lat);
+  cosThzS[!aman]<-NA;
+  cosThzS[cosThzS>1]<-1
+
+  AlS=asin(cosThzS); ##Altura del sol
+
+  cosAzS=sign(lat)*(cos(decl)*cos(w)*sin(lat)-cos(lat)*sin(decl))/cos(AlS)
+  cosAzS[!aman]<-NA;
+  cosAzS[cosAzS>1]<-1;
+
+  AzS=sign(w)*acos(cosAzS); ##Angulo azimutal del sol. Positivo hacia el oeste.
+
+  ##Irradiancia extra-atmosférica
+  Bo0<-Bo*eo*cosThzS;
+    
+  ##Generador empirico de Collares-Pereira y Rabl 
+  a=0.409-0.5016*sin(ws+pi/3);
+  b=0.6609+0.4767*sin(ws+pi/3);
+
+  rd<-Bo0/Bo0d;
+  rg<-rd*(a+b*cos(w));
+    
+###Resultados
+  resultDF<-data.frame(w, aman, cosThzS, AlS, AzS, Bo0, rd, rg)
+
+  if (!keep.night){ ##No conservamos todo aquello en lo que aman==FALSE
+    resultDF <- resultDF[aman==TRUE,]
+    seqby.match <- seqby.match[aman==TRUE]
+    mtch <- mtch[aman==TRUE]
+  } else {}
   
-  result<-within(SolDF,{
-		  w<-(Hora+Min/60-12)*15*(pi/180);
-		  aman<-abs(w)<=abs(ws);
-
-		  Bo=1367; # Constante Solar
-
-		  cosThzS<-sin(decl)*sin(lat)+cos(decl)*cos(w)*cos(lat);
-		  cosThzS[!aman]<-NA;
-
-		  AlS=asin(cosThzS); #Altura del sol
-
-		  cosAzS=sign(lat)*(cos(decl)*cos(w)*sin(lat)-cos(lat)*sin(decl))/cos(AlS)
-		  cosAzS[!aman]<-NA;
-		  cosAzS[cosAzS>1]<-1;
-		  
-		  AzS=sign(w)*acos(cosAzS); # Angulo azimutal del sol. Positivo hacia el oeste.
-		 
-		  Bo0<-Bo*eo*cosThzS;
-		  rm(cosAzS,Bo)
-		  #-----------------------------------
-		  #Generador empirico de Collares-Pereira y Rabl para extraer valores "instantaneos" de valores diarios
-		  a=0.409-0.5016*sin(ws+pi/3);
-		  b=0.6609+0.4767*sin(ws+pi/3);
-
-		  rd<-Bo0/Bo0d;
-		  rg<-rd*(a+b*cos(w));
-		  rm(a,b)
-		  #________________________________-
-		  
-		})
-
-				}
+  result <- zoo(resultDF, order.by=seqby.match)  
+  attr(result, 'match')=mtch
+  attr(result, 'lat')=r2d(lat)
+  attr(result, 'sample')=sample
+  
+  result
+}

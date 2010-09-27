@@ -1,5 +1,5 @@
-\name{fSolI}
-\Rdversion{1.1}
+\name{C_fSolI}
+\Rdversion{1.2}
 \encoding{UTF-8}
 \alias{fSolI}
 \title{
@@ -9,21 +9,34 @@ Instantaneous apparent movement of the Sun from the Earth
 Compute the angles which describe the intradaily apparent movement of the Sun from the Earth. 
 }
 \usage{
-fSolI(SolD, Nm = 1)
+fSolI(solD, sample='hour', EoT=FALSE, keep.night=TRUE)
 }
 \arguments{
-  \item{SolD}{\code{data.frame} with the same components as the result of \code{fSolD}}
-  \item{Nm}{Number of samples per hour. The maximum number allowed is \code{Nm=60}}
+ \item{solD}{A \code{zoo} object with the result of \code{fSolD}}
+
+ \item{sample}{Increment of the intradaily sequence. It is a character
+          string, containing one of ‘"sec"’, ‘"min"’, 
+          ‘"hour"’.  This can optionally be preceded by a (positive or
+          negative) integer and a space, or followed by ‘"s"’. It is
+          used by \code{\link{seq.POSIXt}}.}
+\item{EoT}{logical, if \code{TRUE} the Equation of Time is used.}
+\item{keep.night}{logical, if \code{TRUE} (default) the night is
+          included in the time series.}
 }
 
-\value{A \code{data.frame} is returned with these components:
+\value{
+  A \code{zoo} object is returned with these components:
     \item{w}{numeric, solar hour angle (radians)}
     \item{aman}{logical, \code{TRUE} when Sun is above the horizon }
     \item{cosThzS}{numeric, cosine of the solar zenith angle}
     \item{AzS}{numeric, solar acimuth angle (radians)}
     \item{AlS}{numeric, solar elevation angle (radians)}
     \item{Bo0}{numeric, extra-atmospheric irradiance (W/m2)}
-    \item{rd, rg}{numeric, relation between irradiance and irradiation of diffuse and global values, respectively, following the correlations proposed by Collares-Pereira and Rabl}
+    \item{rd, rg}{numeric, relation between irradiance and irradiation
+    of diffuse and global values, respectively, following the
+    correlations proposed by Collares-Pereira and Rabl}
+  
+  The latitude is stored as the attribute \code{lat} of this object.
 }
 \references{ \itemize{
 \item{Collares-Pereira, M. y Rabl, A.,  The average distribution of solar radiation: correlations between
@@ -31,43 +44,44 @@ diffuse and hemispherical and between daily and hourly insolation values. Solar 
 \item{Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
 }}
 \author{
-Oscar Perpiñán Lamigueiro
+Oscar Perpiñán Lamigueiro.
 }
 \seealso{
 \code{\link{fSolD}}
 }
 \examples{
 ###Angles for one day 
+BTd=fBTd(mode='serie')
 
 #North hemisphere
-Nm=1
 lat=37.2
-SolD<-fSolD(lat,dn=100)
-(SolI<-fSolI(SolD,Nm=Nm))
+solD<-fSolD(lat,BTd[100])
+solI<-fSolI(solD, sample='hour')
+print(solI)
 
 #South hemisphere
 lat=-37.2;
-SolDs<-fSolD(lat,dn=283)
-(SolIs<-fSolI(SolDs,Nm=1))
+solDs<-fSolD(lat,BTd[283])
+solIs<-fSolI(solDs, sample='hour')
+print(solIs)
 
-###Angles for the 12 average days
+ ###Angles for the 12 average days
 lat=37.2;
-SolD<-fSolD(lat,BTd=fBTd(Modo='DiasProm'))
-SolI<-fSolI(SolD,Nm=6)
-
+solD<-fSolD(lat,BTd=fBTd(mode='prom'))
+solI<-fSolI(solD, sample='10 min', keep.night=FALSE)
 
 library(lattice)
-library(latticedl)
+library(latticeExtra)
 
 ###Solar elevation angle vs. azimuth.
 #This kind of graphics is useful for shadows calculations 
-NombreMes=format(ISOdate(2000, 1:12, 1), "\%b")
+mon=month.abb
 p<-xyplot(AlS*180/pi~AzS*180/pi,
-        groups=factor(NombreMes[Mes]),data=SolI,
-        col='black', type='l',
-        xlab=expression(psi[s]),ylab=expression(gamma[s]))
-direct.label(p,method='top.points')
-
+    groups=month,
+    data=solI, type='l', col='black',
+    xlab=expression(psi[s]),ylab=expression(gamma[s]))
+plab=p+glayer(panel.text(0, y[x==0], mon[group.value], pos=4, cex=0.8))
+print(plab)
 }
 
 \keyword{utilities}
