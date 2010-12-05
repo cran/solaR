@@ -1,22 +1,19 @@
-#    analyzeDatos: Análisis del funcionamiento de plantas en un sistema FV
-
-#    Copyright (c) 2009, Oscar Perpiñán Lamigueiro
-
-#    Este programa es software libre: usted puede redistribuirlo y/o modificarlo 
-#    bajo los términos de la Licencia Pública General GNU publicada 
-#    por la Fundación para el Software Libre, ya sea la versión 3 
-#    de la Licencia, o (a su elección) cualquier versión posterior.
-
-#    Este programa se distribuye con la esperanza de que sea útil, pero 
-#    SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita 
-#    MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO. 
-#    Consulte los detalles de la Licencia Pública General GNU para obtener 
-#    una información más detallada. 
-
-#    Debería haber recibido una copia de la Licencia Pública General GNU 
-#    junto a este programa. 
-#    En caso contrario, consulte <http://www.gnu.org/licenses/>.
-#-------------------------------------------------------------------------------
+ # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
+ #
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ #/
 analyzeData<-function(x, ref=NULL){
 
 ###Estadísticos por filas
@@ -32,22 +29,22 @@ analyzeData<-function(x, ref=NULL){
   if (is.null(ref)) {ref<-Median}
   MediaRef<-mean(ref,na.rm=1)
   SDRef<-sd(ref,na.rm=1);
-  
+
 ###Diferencia de cada variable (columna) respecto a la referencia
   Dif<-x-ref
-       
+
 ###Estadísticos de cada variable (por columnas) en el periodo completo
-  SDUnit<-sd(x, na.rm=1) ##SD de CADA variable 
+  SDUnit<-sd(x, na.rm=1) ##SD de CADA variable
   ME<-apply(Dif,2,mean,na.rm=1)
   RMSDc<-apply(Dif,2,sd,na.rm=1)
   DifSD<-SDUnit-SDRef;
-  
-  ##Valores relativos (respecto a la desv estandar de la referencia)	
+
+  ##Valores relativos (respecto a la desv estandar de la referencia)
   rRMSDc<-RMSDc/SDRef;
   rME<-ME/SDRef;
   RMSD<-sqrt(RMSDc^2+ME^2);
   rRMSD<-RMSD/SDRef;
-	
+
   result<-list(stat=zoo(x.stat, index(x)),
                err=data.frame(Unit=names(x),
                  ME, rME,

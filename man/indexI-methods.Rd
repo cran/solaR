@@ -5,13 +5,14 @@
 \alias{indexI,Sol-method}
 \title{Methods for Function indexI}
 \description{
-Intra-daily time index of \code{solaR} objects.
+  Intra-daily time index of \code{solaR} objects.
 }
 \section{Methods}{
-\describe{
+  \describe{
 
-\item{\code{signature(object = "Sol")}}{returns the index of the slot
-  \code{solI} (a \code{zoo} object).
-}
+    \item{\code{signature(object = "Sol")}}{returns the index of the slot
+      \code{solI} (a \code{zoo} object).
+    }
 }}
 \keyword{methods}
+\author{Oscar Perpiñán Lamigueiro}

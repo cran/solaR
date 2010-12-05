@@ -1,3 +1,19 @@
+ # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
+ #
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ #/
 ###Indices temporales
 
 ###Quizás sería útil que todas estas funciones admitiesen un zoo directamente
@@ -59,34 +75,44 @@ r2h<-function(x){x*12/pi}
 
 r2sec<-function(x){x*12/pi*3600}
 
+
+##Trunca un POSIXct a días
+truncDay <- function(x){as.POSIXct(trunc(x, units='days'))}
+
 ###Husos horarios
-lonHH<-function(x)
+lonHH<-function(tz)
     {            #Calcula la longitud (en radianes) de un huso horario
-      stopifnot(class(x)=='character')
-      tHH<-as.POSIXct('2000-1-1 12:00:00', tz=x)
-      tUTC<-as.POSIXct(format(tHH, tz='UTC'), tz=x)
+      stopifnot(class(tz)=='character')
+      tHH<-as.POSIXct('2000-1-1 12:00:00', tz=tz)
+      tUTC<-as.POSIXct(format(tHH, tz='UTC'), tz=tz)
       h2r(as.numeric(tHH-tUTC))
     }
 
   
 local2Solar<-function(x, lon=NULL){	
-    tz=attr(x, 'tzone')
-    if (tz=='' || is.null(tz)) {tz='UTC'}
-    ##Adelanto oficial por verano
-    AO=3600*dst(x);
-    if (AO<0) stop('Daylight Savings Time unknown!')
-    ##Diferencia entre la longitud del lugar y la longitud del huso horario LH
-    LH=lonHH(tz)
-    if (is.null(lon)) 
-      {deltaL=0
-     } else
-    {deltaL=d2r(lon)-LH
-   }
-    ##Hora local corregida en UTC
-    tt<-format(x-AO+r2sec(deltaL), tz=tz)
-    result<-as.POSIXct(tt, tz='UTC')
-    result
+  tz=attr(x, 'tzone')
+  if (tz=='' || is.null(tz)) {tz='UTC'}
+  ##Adelanto oficial por verano
+  AO=3600*dst(x);
+  AOneg=(AO<0)
+  if (any(AOneg)) {
+    AO[AOneg]=0
+    warning('Some Daylight Savings Time unknown. Set to zero.')
   }
+  ##Diferencia entre la longitud del lugar y la longitud del huso horario LH
+  LH=lonHH(tz)
+  if (is.null(lon)) 
+    {deltaL=0
+   } else
+  {deltaL=d2r(lon)-LH
+ }
+  ##Hora local corregida en UTC
+  ##    tt<-format(x-AO+r2sec(deltaL), tz=tz)
+  tt<-format(x, tz=tz)
+  result<-as.POSIXct(tt, tz='UTC')-AO+r2sec(deltaL)
+  ##      result<-as.POSIXct(tt, tz='UTC')
+  result
+}
 
 
 ##cbind garantizando conservación del index (para tz='UTC', principalmente)
@@ -101,37 +127,92 @@ CBIND <- function(..., index=NULL){
   }
 }
 
-
-###De uso interno
-
-
-
-##Convierte el character "sample" en un número de horas
-sample2Hours <-function(by){
-##Copiado de seq.POSIXt
-
-  by2 <- strsplit(by, " ", fixed = TRUE)[[1L]]
-  if (length(by2) > 2L || length(by2) < 1L) 
-    stop("invalid 'by' string")
-  valid <- pmatch(by2[length(by2)], c("secs", "mins", "hours"))
-  if (is.na(valid)) 
-    stop("invalid string for 'by'")
-  if (valid <= 5L) {
-    by <- c(1, 60, 3600, 86400, 7 * 86400)[valid]
-    if (length(by2) == 2L) 
-      by <- by * as.integer(by2[1L])
+##Convierte un difftime en un número de horas
+diff2Hours <-function(by){
+  if (!inherits(by, 'difftime')) {
+    stop('This function is only useful for difftime objects.')
+  } else {
+    return(as.numeric(by, units='hours'))
   }
-  else by <- if (length(by2) == 2L) as.integer(by2[1L])
-  return(by/3600)
 }
 
-P2E <- function(x, sample){
-  Nm=1/sample2Hours(sample)
+char2diff <- function(by){
+  if (!is.character(by)) {
+    stop('This function is only useful for character strings.')
+  } else {
+    ##Adaptado de seq.POSIXt
+    by2 <- strsplit(by, " ", fixed = TRUE)[[1L]]
+    if (length(by2) > 2L || length(by2) < 1L) 
+      stop("invalid 'by' string")
+    units <- c("secs", "mins", "hours")
+    valid <- pmatch(by2[length(by2)], units)
+    if (is.na(valid)) {
+      stop("invalid string for 'by'")
+    } else {
+      unitValid <- units[valid]
+      if (length(by2)==1) {
+        by2=1
+      } else {
+        by2=as.numeric(by2[1])
+      }
+      result <- as.difftime(by2,units=unitValid)
+      return(result)
+    }
+  }
+}
+
+sample2Hours <- function(by){
+  if (is.character(by)) {
+    y <- char2diff(by)
+    return(diff2Hours(y))
+  } else if (inherits(by, 'difftime')) {
+    return(diff2Hours(by))
+  } else {stop('by must be a character or difftime.')}
+}
+  
+P2E <- function(x, by){
+  Nm=1/sample2Hours(by)
   sum(x, na.rm=1)/Nm                    #Potencia a Energía
 } 
+###OJO
+dailySum <- function(x, by){##x is a time series
+  if (missing(by)) {by=DeltaT(x)}
+  res <- aggregate(x, by=truncDay, FUN=P2E, by)
+  return(res)
+  }
 
-##Trunca un POSIXct a días
-truncDay <- function(x){as.POSIXct(trunc(x, units='days'))}
+monthlySum <- function(x, by){##x is a INTRADAILY time series
+  if (missing(by)) {by=DeltaT(x)}
+  res <- aggregate(x, by=as.yearmon, FUN=P2E, by)
+  return(res)
+  }
+
+yearlySum <- function(x, by){##x is a INTRADAILY time series
+  if (missing(by)) {by=DeltaT(x)}
+  res <- aggregate(x, by=year, FUN=P2E, by)
+  return(res)
+  }
+
+dailyMean <- function(x){##x is a time series
+  res <- aggregate(x, by=doy, FUN=mean, na.rm=1)
+  return(res)
+  }
+
+monthlyMean <- function(x){##x is a time series
+  res <- aggregate(x, by=as.yearmon, FUN=mean, na.rm=1)
+  return(res)
+  }
+
+yearlyMean <- function(x){##x is a time series
+  res <- aggregate(x, by=year, FUN=mean, na.rm=1)
+  return(res)
+  }
+
+
+##No exportada
+DeltaT <- function(x){
+  return(median(diff(index(x))))###spend a long time with large series, ¿mean(x, 0.2)?
+  }
 
 
 factorI<-function(x, index.rep, breaks=3, ...){

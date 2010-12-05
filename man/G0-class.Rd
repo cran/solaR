@@ -12,31 +12,32 @@
   irradiation and irradiance on the horizontal plane, and ambient
   temperature. }
 \section{Objects from the Class}{
-Objects can be created by the function \code{\link{calcG0}}.
+  Objects can be created by the function \code{\link{calcG0}}.
 }
 \section{Slots}{
   \describe{
     \item{\code{G0D}:}{Object of class \code{"zoo"} created by
       \code{\link{fCompD}}. It includes daily
       values of:
-      \itemize{
-      \item{Fd: }{numeric, the diffuse fraction}
-      \item{Ktd: }{numeric, the clearness index}
-      \item{G0d: }{numeric, the global irradiation on a horizontal surface
-	(Wh/m²)}
-      \item{D0d: }{numeric, the diffuse irradiation on a horizontal
-	surface (Wh/m²)}
-      \item{B0d: }{numeric, the direct irradiation on a horizontal surface
-	(Wh/m²)}}
+      \describe{
+        \item{Fd: }{numeric, the diffuse fraction}
+        \item{Ktd: }{numeric, the clearness index}
+        \item{G0d: }{numeric, the global irradiation on a horizontal surface
+          (Wh/m²)}
+        \item{D0d: }{numeric, the diffuse irradiation on a horizontal
+          surface (Wh/m²)}
+        \item{B0d: }{numeric, the direct irradiation on a horizontal surface
+          (Wh/m²)}}
     }
     \item{\code{G0I}:}{Object of class \code{"zoo"} created by
       \code{\link{fCompI}}. It includes values of:
-      \itemize{
-	\item{kt: }{numeric, clearness index}
-	\item{G0: }{numeric, global irradiance on a horizontal surface, (W/m²)}
-	\item{D0: }{numeric, diffuse irradiance on a horizontal surface, (W/m²)}
-	\item{B0: }numeric, direct irradiance on a horizontal surface, (W/m²)}
-    }
+      \describe{
+        \item{kt: }{numeric, clearness index}
+        \item{G0: }{numeric, global irradiance on a horizontal surface, (W/m²)}
+        \item{D0: }{numeric, diffuse irradiance on a horizontal surface, (W/m²)}
+        \item{B0: }{numeric, direct irradiance on a horizontal surface, (W/m²)}
+      }
+      }
     \item{\code{G0dm}:}{Object of class \code{"zoo"} with monthly mean
       values of daily irradiation.}
     \item{\code{G0y}:}{Object of class \code{"zoo"} with yearly sums of irradiation.}
@@ -47,8 +48,8 @@ Objects can be created by the function \code{\link{calcG0}}.
   \code{\linkS4class{Meteo}} classes.
 }
 \section{Extends}{
-Class \code{"\linkS4class{Meteo}"}, directly.
-Class \code{"\linkS4class{Sol}"}, directly.
+  Class \code{"\linkS4class{Meteo}"}, directly.
+  Class \code{"\linkS4class{Sol}"}, directly.
 }
 \section{Methods}{
   \describe{
@@ -70,11 +71,11 @@ Class \code{"\linkS4class{Sol}"}, directly.
       \code{\linkS4class{Sol}} object. }
     \item{xyplot}{\code{signature(x = "G0", data = "missing")}: display
       the time series of daily values of irradiation.}
-        \item{xyplot}{\code{signature(x = "formula", data = "G0")}:
+    \item{xyplot}{\code{signature(x = "formula", data = "G0")}:
       displays the contents of a \code{G0} object with the
       \code{xyplot} method for formulas.}
 
-	 }
+  }
 }
 \references{
   Perpiñán, O, Energía Solar Fotovoltaica, 2010.
@@ -82,7 +83,7 @@ Class \code{"\linkS4class{Sol}"}, directly.
 }
 
 \author{
-Oscar Perpiñán Lamigueiro.
+  Oscar Perpiñán Lamigueiro.
 }
 
 

@@ -9,6 +9,7 @@
     \item{\code{signature(object = "Sol")}}{returns the daily index of
       the \code{solD} slot but repeated to match the length of the index of the
       \code{solI} slot.
-}
+    }
 }}
 \keyword{methods}
+\author{Oscar Perpiñán Lamigueiro}

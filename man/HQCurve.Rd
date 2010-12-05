@@ -15,27 +15,27 @@ HQCurve(pump)
 
 \value{
   \item{result}{A \code{data.frame} with the result of the
-  simulation. It contains several columns with values of manometric
-  height (\code{H}), frequency (\code{fe} and \code{fb}), mechanical power
-  (\code{Pb}), AC electrical power (\code{Pm}), DC electrical power
-  (\code{Pdc}) and efficiency of the pump (\code{etab}) and motor (\code{etam}).}
+    simulation. It contains several columns with values of manometric
+    height (\code{H}), frequency (\code{fe} and \code{fb}), mechanical power
+    (\code{Pb}), AC electrical power (\code{Pm}), DC electrical power
+    (\code{Pdc}) and efficiency of the pump (\code{etab}) and motor (\code{etam}).}
 
   \item{plot}{The plot with several curves labelled with the
     correspondent frequencies, and the isoefficiency curve (named "ISO").}
 }
 \references{\itemize{
-    \item{Abella, M. A., Lorenzo, E. y Chenlo, F.: PV water pumping systems based on standard frequency converters. Progress in Photovoltaics: Research and Applications, 11(3):179–191, 2003, ISSN 1099-159X.}
-    \item{Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
+    \item Abella, M. A., Lorenzo, E. y Chenlo, F.: PV water pumping systems based on standard frequency converters. Progress in Photovoltaics: Research and Applications, 11(3):179–191, 2003, ISSN 1099-159X.
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }}
 \author{
-Oscar Perpiñán Lamigueiro.
+  Oscar Perpiñán Lamigueiro.
 }
 
 \seealso{
   \code{\link{NmgPVPS}},
   \code{\link{prodPVPS}},
   \code{\link{pumpCoef}}.
-  }
+}
 
 \examples{
 library(lattice)

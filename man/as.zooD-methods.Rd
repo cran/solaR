@@ -56,5 +56,6 @@ as.zooD(object, complete=FALSE)
   \code{G0D}, \code{GefD} and \code{prodD}.
 }
 }}
+\author{Oscar Perpiñán Lamigueiro}
 \keyword{methods}
 

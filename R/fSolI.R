@@ -1,36 +1,40 @@
-#    fSolI: calculo de ángulos solares en su evolución diaria
-#    Copyright (c) 2009-2010, Oscar Perpiñán. Lamigueiro
-
-#    Este programa es software libre: usted puede redistribuirlo y/o modificarlo 
-#    bajo los términos de la Licencia Pública General GNU publicada 
-#    por la Fundación para el Software Libre, ya sea la versión 3 
-#    de la Licencia, o (a su elección) cualquier versión posterior.
-
-#    Este programa se distribuye con la esperanza de que sea útil, pero 
-#    SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita 
-#    MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO. 
-#    Consulte los detalles de la Licencia Pública General GNU para obtener 
-#    una información más detallada. 
-
-#    Debería haber recibido una copia de la Licencia Pública General GNU 
-#    junto a este programa. 
-#    En caso contrario, consulte <http://www.gnu.org/licenses/>.
-
-fSolI<-function(solD, sample='hour', EoT=FALSE, keep.night=TRUE){
-
-  ##Copiado de seq.POSIXt
-  ##Necesario aquí porque seq.POSIXt acepta también "days", "months", etc.
-  by2 <- strsplit(sample, " ", fixed = TRUE)[[1L]]
-  if (length(by2) > 2L || length(by2) < 1L) 
-    stop("invalid 'by' string")
-  valid <- pmatch(by2[length(by2)], c("secs", "mins", "hours"))
-  if (is.na(valid)) 
-    stop("invalid string for 'sample'")
+ # Copyright (C) 2009, 2010 Oscar Perpiñán Lamigueiro
+ #
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ #/
+fSolI<-function(solD, sample='hour', BTi, EoT=FALSE, keep.night=TRUE){
 
   lat=d2r(attr(solD, 'lat'))
-  start.sol<-start(solD)                #index(solD)[1]
-  end.sol<-end(solD) #tail(index(solD), 1) o tambien index(solD)[length[index(solD)]
-  seqby=seq(start.sol, end.sol+86400-1, by=sample)
+
+  if (missing(BTi)){
+    ## ##Copiado de seq.POSIXt
+    ## ##Necesario aquí porque seq.POSIXt acepta también "days", "months", etc.
+    ## by2 <- strsplit(sample, " ", fixed = TRUE)[[1L]]
+    ## if (length(by2) > 2L || length(by2) < 1L) 
+    ##   stop("invalid 'by' string")
+    ## valid <- pmatch(by2[length(by2)], c("secs", "mins", "hours"))
+    ## if (is.na(valid)) 
+    ##   stop("invalid string for 'sample'")
+    sampleDiff <- char2diff(sample)
+    start.sol<-start(solD)              #index(solD)[1]
+    end.sol<-end(solD) #tail(index(solD), 1) o tambien index(solD)[length[index(solD)]
+    seqby=seq(start.sol, end.sol+86400-1, by=sampleDiff)
+  } else {
+    seqby=BTi
+    sampleDiff=median(diff(BTi))
+  }
     
   ##Para escoger sólo aquellos días que están en solD, 
   ##por ejempo para días promedio
@@ -61,18 +65,18 @@ fSolI<-function(solD, sample='hour', EoT=FALSE, keep.night=TRUE){
      
   TO=hms(seqby.match)
   w<-h2r(TO-12)+EoT
-	
+  	
   aman<-abs(w)<=abs(ws);
 
   ##Angulos solares
   cosThzS<-sin(decl)*sin(lat)+cos(decl)*cos(w)*cos(lat);
-  cosThzS[!aman]<-NA;
+  is.na(cosThzS) <- (!aman);
   cosThzS[cosThzS>1]<-1
 
   AlS=asin(cosThzS); ##Altura del sol
 
   cosAzS=sign(lat)*(cos(decl)*cos(w)*sin(lat)-cos(lat)*sin(decl))/cos(AlS)
-  cosAzS[!aman]<-NA;
+  is.na(cosAzS) <- (!aman)
   cosAzS[cosAzS>1]<-1;
 
   AzS=sign(w)*acos(cosAzS); ##Angulo azimutal del sol. Positivo hacia el oeste.
@@ -99,7 +103,7 @@ fSolI<-function(solD, sample='hour', EoT=FALSE, keep.night=TRUE){
   result <- zoo(resultDF, order.by=seqby.match)  
   attr(result, 'match')=mtch
   attr(result, 'lat')=r2d(lat)
-  attr(result, 'sample')=sample
+  attr(result, 'sample')=sampleDiff
   
   result
 }

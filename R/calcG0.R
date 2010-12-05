@@ -1,45 +1,48 @@
-#    calcG0.r: Cálculo de Componentes de Radiación Solar en el plano horizontal
-
-#    Copyright (c) 2010, Oscar Perpiñán Lamigueiro
-
-#    Este programa es software libre: usted puede redistribuirlo y/o modificarlo 
-#    bajo los términos de la Licencia Pública General GNU publicada 
-#    por la Fundación para el Software Libre, ya sea la versión 3 
-#    de la Licencia, o (a su elección) cualquier versión posterior.
-
-#    Este programa se distribuye con la esperanza de que sea útil, pero 
-#    SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita 
-#    MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO. 
-#    Consulte los detalles de la Licencia Pública General GNU para obtener 
-#    una información más detallada. 
-
-#    Debería haber recibido una copia de la Licencia Pública General GNU 
-#    junto a este programa. 
-#    En caso contrario, consulte <http://www.gnu.org/licenses/>.
-#-------------------------------------------------------------------------------
+ # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
+ #
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ #/
 calcG0<-function(lat, 
-                 modeRad='prom',        #'prom', 'aguiar','mapa','bd'
+                 modeRad='prom',  #'prom', 'aguiar','mapa','bd', 'bdI'
                  prom=list(),
                  mapa=list(),
                  bd=list(),
+                 bdI=list(),
                  sample='hour',
-                 keep.night=TRUE
-                 ){
-  stopifnot(modeRad %in% c('prom', 'aguiar','mapa','bd'))
+                 keep.night=TRUE,
+                 corr, f){
+
+  stopifnot(modeRad %in% c('prom', 'aguiar','mapa','bd', 'bdI'))
   stopifnot(mode(prom)=='list')
   stopifnot(mode(mapa)=='list')
-  stopifnot(mode(bd)=='list')
+  stopifnot(mode(bd)=='list' || class(bd)=='Meteo')
+  stopifnot(mode(bdI)=='list' || class(bdI)=='Meteo')
 		
   if (modeRad=='aguiar')	{
     warning('aguiar mode is temporarily disabled. Switching to prom mode.')
     modeRad='prom'}  #Deshabilito por ahora el procedimiento de Aguiar
 
 ###Datos de Radiacion
-  rad.corr=switch(modeRad,
-    mapa='CPR',    #Correlacion entre Fd y Kt para valores diarios
-    bd='CPR',      #Correlacion entre Fd y Kt para valores diarios
-    prom='Page'    #Correlacion entre Fd y Kt para promedios mensuales
-    );
+  if (missing(corr)){
+    corr=switch(modeRad,
+      mapa='CPR',  #Correlacion entre Fd y Kt para valores diarios
+      bd='CPR',    #Correlacion entre Fd y Kt para valores diarios
+      prom='Page', #Correlacion entre Fd y Kt para promedios mensuales
+      bdI='BRL'   #Correlación entre fd y kt para valores intradiarios
+      );
+  }
  
   BD=switch(modeRad,
     mapa={
@@ -49,52 +52,95 @@ calcG0<-function(lat,
       mapa=modifyList(mapa.default, mapa)
       res <- do.call('readMAPA', mapa)
       res
-    },
-    bd={
-      if (mode(bd$file)=='character'){
-        bd.default=list(file='', lat=lat, format="%d/%m/%Y",
-          header=TRUE, fill=TRUE,
-          dec='.', dates.col='dates', source='')
-        bd=modifyList(bd.default, bd)
-        res <- do.call('readBD', bd)
-        res
-      } else {
-        if (class(bd$file)=='data.frame'){
-          bd.default=list(file='', lat=lat, format="%d/%m/%Y",
-            dates.col='dates', source='')
-          bd=modifyList(bd.default, bd)
-          res <- do.call('df2Meteo', bd)
-          res
-        } else {
-          stop('The component "file" of the list "bd" is neither a character nor a data.frame.')
-        }
-      }
-    },
+    },                                  #Fin de mapa
+    bd={if (class(bd)=='Meteo') {
+      res <- bd
+    } else {
+      switch(class(bd$file),
+             character={
+               bd.default=list(file='', lat=lat, format="%d/%m/%Y",
+                 header=TRUE, fill=TRUE, sep=';',
+                 dec='.', dates.col='dates', source='')
+               bd=modifyList(bd.default, bd)
+               res <- do.call('readBD', bd)
+               res
+             },
+             data.frame={
+               bd.default=list(file='', lat=lat, format="%d/%m/%Y",
+                 dates.col='dates', source='')
+               bd=modifyList(bd.default, bd)
+               res <- do.call('df2Meteo', bd)
+               res
+             },
+             zoo={
+               bd.default=list(file='', lat=lat, source='')
+               bd=modifyList(bd.default, bd)
+               res <- do.call('zoo2Meteo', bd)
+               res
+             }
+             )
+    }},                                 #Fin de bd
     prom={
       prom.default=list(G0dm=numeric(), Ta=25, lat=lat, 
         year=as.POSIXlt(Sys.Date())$year+1900, 
         promDays=c(17,14,15,15,15,10,18,18,18,19,18,13), 
         source='')
       prom=modifyList(prom.default, prom)
-      res <- do.call('readG0dm', prom)}
-    );
+      res <- do.call('readG0dm', prom)
+    },                                  #Fin de prom
+    bdI={
+      if (class(bdI)=='Meteo') {
+        result=bdI
+      } else {
+        switch(class(bdI$file),
+               character={
+                 bdI.default=list(file='', lat=lat, format="%d/%m/%Y %H:%M:%S",
+                   header=TRUE, fill=TRUE, sep=';',
+                   dec='.', time.col='time', source='')
+                 bdI=modifyList(bdI.default, bdI)
+                 res <- do.call('readBDi', bdI)
+                 res
+               },
+               data.frame={
+                 bdI.default=list(file='', lat=lat, format="%d/%m/%Y %H:%M:%S",
+                   time.col='time', source='')
+                 bdI=modifyList(bdI.default, bdI)
+                 res <- do.call('dfI2Meteo', bdI)
+                 res
+               },
+               zoo={
+                 bdI.default=list(file='', lat=lat, source='')
+                 bdI=modifyList(bdI.default, bdI)
+                 res <- do.call('zoo2Meteo', bdI)
+                 res
+               },
+               stop('bdI$file should be a character, a data.frame or a zoo.')
+               )}
+    }                                   #Fin de bdI
+    );                                  #Fin del switch general
 
-###Angulos solares
-  sol <- calcSol(lat=lat, BTd=indexD(BD), sample=sample, keep.night=keep.night)
-
-###Radiación diaria
-  ##  datos <- BD@data
-  ##  G0d<-getG0(datos)#No es necesario porque fCompD admite un objeto Meteo
-
-###Componentes de irradiación e irradiancia
-  compD<-fCompD(sol, BD, corr=rad.corr); #Utiliza la correlación definida en DatosEntrada_CalcProd
-  compI<-fCompI(compD, sol);
+### Angulos solares y componentes de irradiancia
+  if (modeRad=='bdI') {
+    sol <- calcSol(lat=lat, BTi=index(getData(BD)), keep.night=keep.night)
+    compI <- fCompI(sol=sol, G0I=BD, corr=corr, f=f)
+    compD=aggregate(compI[,c('G0', 'D0', 'B0')],
+      by=truncDay, FUN=P2E, sol@sample) #Wh
+    names(compD) <- c('G0d', 'D0d', 'B0d')
+    compD$Fd=compD$D0d/compD$G0d
+    compD$Ktd=compD$G0d/as.zooD(sol)$Bo0d
+  } else { ##modeRad!='bdI'
+    sol <- calcSol(lat=lat, BTd=indexD(BD), sample=sample, keep.night=keep.night)
+    compD<-fCompD(sol=sol, G0d=BD, corr=corr, f);
+    compI<-fCompI(sol=sol, compD=compD);
+  }
 
 ###Temperatura
+
   ##Compruebo si tengo información de temperatura a partir de la cual
   ##generar una secuencia de datos. Para eso, debo estar leyendo de www.mapa.es 
   ##o de una base de datos que contenga dos variables con información sobre
   ##valores diarios máximos y mínimos de temperatura.
+
   ind.rep <- indexRep(sol) ##para repetir valores diarios de Ta, si es necesario
   indSol <- indexI(sol)
   
@@ -109,13 +155,18 @@ calcG0<-function(lat,
         if ("Ta" %in% names(BD@data)) {
           zoo(coredata(BD@data$Ta)[ind.rep], indSol)
         } else {
-          ##lo entregado como argumento en calcG0
-          ##reconvertido a zoo y repetido en el intradía
-          ##zoo(Ta[ind.rep], indSol)
+          warning('No temperature information available!')
         } 
       }
     },
-    prom= zoo(coredata(BD@data$Ta)[ind.rep], indSol)##zoo(rep(Ta, length(indSol)), indSol) ##idem
+    bdI={
+      if ("Ta" %in% names(BD@data)) {
+        Ta=BD@data$Ta
+      } else {
+          warning('No temperature information available!')
+      }
+    },
+    prom= zoo(coredata(BD@data$Ta)[ind.rep], indSol) ##zoo(rep(Ta, length(indSol)), indSol) ##idem
     )
 
 ###Medias mensuales y anuales
@@ -139,9 +190,7 @@ calcG0<-function(lat,
                 G0dm=G0dm,              #aggregate, medias mensuales
                 G0y=G0y,                #aggregate, valores anuales
                 G0I=compI,              #resultado de fCompI
-                Ta=Ta,                  #temperatura ambiente
-                sample=sample           #según lo pasado a fSolI
+                Ta=Ta                   #temperatura ambiente
                 )
-  ##print(result)
   return(result)
 }

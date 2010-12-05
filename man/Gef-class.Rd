@@ -11,43 +11,43 @@
   temperature. }
 
 \section{Objects from the Class}{
-Objects can be created by the function \code{\link{calcGef}}.
+  Objects can be created by the function \code{\link{calcGef}}.
 }
 \section{Slots}{
   \describe{
     \item{\code{GefI}:}{Object of class \code{"zoo"} created by
       \code{\link{fInclin}}. It contains these components:
-      \itemize{
-	  \item{Bo: }{Extra-atmospheric irradiance on the inclined surface (W/m²)}
-	\item{G, B, D, Di, Dc, R: }{Global, direct, diffuse (total, isotropic
-       and anisotropic) and albedo irradiance incident on an inclined
-       surface (W/m²)}
-     \item{Gef, Bef, Def, Dief, Dcef, Ref: }{Effective global, direct,
-    diffuse (total, isotropic and anisotropic) and albedo irradiance
-    incident on an inclined surface (W/m²)}
-      \item{FTb, FTd, FTr: }{Factor of angular losses for the direct,
-	diffuse and albedo components}}}
-  
+      \describe{
+        \item{Bo: }{Extra-atmospheric irradiance on the inclined surface (W/m²)}
+        \item{G, B, D, Di, Dc, R: }{Global, direct, diffuse (total, isotropic
+          and anisotropic) and albedo irradiance incident on an inclined
+          surface (W/m²)}
+        \item{Gef, Bef, Def, Dief, Dcef, Ref: }{Effective global, direct,
+          diffuse (total, isotropic and anisotropic) and albedo irradiance
+          incident on an inclined surface (W/m²)}
+        \item{FTb, FTd, FTr: }{Factor of angular losses for the direct,
+          diffuse and albedo components}}}
+
     \item{\code{GefD}:}{Object of class \code{"zoo"} with daily values
-    of global, diffuse and direct irradiation.}
+      of global, diffuse and direct irradiation.}
 
     \item{\code{Gefdm}:}{Object of class \code{"zoo"} with monthly means
-    of daily global, diffuse and direct irradiation.}
+      of daily global, diffuse and direct irradiation.}
 
     \item{\code{Gefy}:}{Object of class \code{"zoo"} with yearly sums of
       global, diffuse and direct irradiation.}
-    
+
     \item{\code{Theta}:}{Object of class \code{"zoo"} created by
       \code{\link{fTheta}}. It contains these components:
-      \itemize{
-	\item{\code{Beta}: }{numeric, inclination angle of the surface
-      (radians). When \code{modeTrk='fixed'} it is the value of the
-      argument \code{beta} converted from degreesto radians.}
-    \item{\code{Alfa}: }{numeric, azimuth angle of the surface
-      (radians). When \code{modeTrk='fixed'} it is the value of the
-      argument \code{alfa} converted from degreesto radians.}
-    \item{\code{cosTheta}: }{numeric, cosine of the incidence angle of the solar
-      irradiance on the surface}
+      \describe{
+        \item{\code{Beta}: }{numeric, inclination angle of the surface
+          (radians). When \code{modeTrk='fixed'} it is the value of the
+          argument \code{beta} converted from degreesto radians.}
+        \item{\code{Alfa}: }{numeric, azimuth angle of the surface
+          (radians). When \code{modeTrk='fixed'} it is the value of the
+          argument \code{alfa} converted from degreesto radians.}
+        \item{\code{cosTheta}: }{numeric, cosine of the incidence angle of the solar
+          irradiance on the surface}
     }}
     \item{\code{iS}:}{numeric, degree of dirtiness.}
     \item{\code{alb}:}{numeric, albedo reflection coefficient.}
@@ -60,13 +60,13 @@ Objects can be created by the function \code{\link{calcGef}}.
   }
 }
 \section{Extends}{
-Class \code{"\linkS4class{G0}"}, directly.
-Class \code{"\linkS4class{Meteo}"}, by class "G0", distance 2.
-Class \code{"\linkS4class{Sol}"}, by class "G0", distance 2.
+  Class \code{"\linkS4class{G0}"}, directly.
+  Class \code{"\linkS4class{Meteo}"}, by class "G0", distance 2.
+  Class \code{"\linkS4class{Sol}"}, by class "G0", distance 2.
 }
 \section{Methods}{
   \describe{
-        \item{as.zooD}{\code{signature(object = "Gef")}: conversion to a
+    \item{as.zooD}{\code{signature(object = "Gef")}: conversion to a
       \code{zoo} object with daily values.}
     \item{as.zooI}{\code{signature(object = "Gef")}: conversion to a
       \code{zoo} object with intradaily values.}
@@ -84,10 +84,10 @@ Class \code{"\linkS4class{Sol}"}, by class "G0", distance 2.
       \code{\linkS4class{Sol}} object. }
     \item{xyplot}{\code{signature(x = "Gef", data = "missing")}: display
       the time series of daily values of irradiation.}
-        \item{xyplot}{\code{signature(x = "formula", data = "Gef")}:
+    \item{xyplot}{\code{signature(x = "formula", data = "Gef")}:
       displays the contents of a \code{Gef} object with the
       \code{xyplot} method for formulas.}
-	 }
+  }
 }
 
 \references{
@@ -95,7 +95,7 @@ Class \code{"\linkS4class{Sol}"}, by class "G0", distance 2.
   (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }
 \author{
-Oscar Perpiñán Lamigueiro.
+  Oscar Perpiñán Lamigueiro.
 }
 
 \seealso{

@@ -1,16 +1,16 @@
 \name{B1_Meteo-class}
-\Rdversion{1.1}
+\Rdversion{1.2}
 \docType{class}
 \alias{Meteo-class}
 \alias{show,Meteo-method}
 
 \title{Class "Meteo"}
 \description{
-A class for meteorological data.
+  A class for meteorological data.
 }
 \section{Objects from the Class}{
-Objects can be created by \code{\link{readBD}}, \code{\link{readG0dm}}
-and \code{\link{readMAPA}}.
+  Objects can be created by \code{\link{readBD}}, \code{\link{readG0dm}}
+  and \code{\link{readMAPA}}.
 }
 \section{Slots}{
   \describe{
@@ -21,7 +21,7 @@ and \code{\link{readMAPA}}.
       temperature (\code{TempMax} and \code{TempMin}).}
     \item{\code{source}:}{A character with a short description of the
       source of the data.}
-        \item{\code{type}:}{A character, \code{prom}, \code{bd} or
+    \item{\code{type}:}{A character, \code{prom}, \code{bd}, \code{bdI} or
       \code{mapa}, depending on the constructor.}
 
   }
@@ -40,8 +40,8 @@ and \code{\link{readMAPA}}.
       the content of the object according to the \code{formula} argument.}
     \item{xyplot}{\code{signature(x = "Meteo", data = "missing")}: plot
       the \code{data} slot using the \code{xyplot} method for \code{zoo}
-    objects.}
-	 }
+      objects.}
+  }
 }
 
 \author{Oscar Perpiñán Lamigueiro.}

@@ -15,9 +15,9 @@
     \item{stages}{number of stages}
     \item{Qmax}{maximum flux}
     \item{Pmn}{rated motor power}
-    \item{a, b, c}{Coefficients of the equation \eqn{H=a \cdot f^2+b \cdot f \cdot Q+c \cdot Q^2}} 
-    \item{g, h, i}{Coefficients of the efficiency curve of the motor (50 Hz): \eqn{\eta_{m}=g \cdot (\%P_{mn})^2+h \cdot (\%P{mn})+i}}  
-    \item{j, k, l}{Coefficients of the efficiency curve of the pump (50 Hz): \eqn{\eta_{b}=j \cdot Q^2+k \cdot Q+l}}
+    \item{a, b, c}{Coefficients of the equation \eqn{H=a \cdot f^2+b \cdot f \cdot Q+c \cdot Q^2}.}
+    \item{g, h, i}{Coefficients of the efficiency curve of the motor (50 Hz): \eqn{\eta_{m}=g \cdot (\%P_{mn})^2+h \cdot (\%P{mn})+i}.}
+    \item{j, k, l}{Coefficients of the efficiency curve of the pump (50 Hz): \eqn{\eta_{b}=j \cdot Q^2+k \cdot Q+l}.}
 
   }
 }

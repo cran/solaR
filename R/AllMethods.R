@@ -1,10 +1,26 @@
+ # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
+ #
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ #/
 setGeneric('getData', function(object){standardGeneric('getData')})
 setMethod('getData',##Solo definido para Meteo, de forma que siempre devuelve valores de partida
           signature=(object='Meteo'),
           definition=function(object){
             result=object@data
             return(result)
-            }
+          }
           )
 
 setGeneric('getG0', function(object){standardGeneric('getG0')})
@@ -12,8 +28,8 @@ setMethod('getG0',##Solo definido para Meteo, de forma que siempre devuelve valo
           signature=(object='Meteo'),
           definition=function(object){
             result=getData(object)
-            return(result$G)
-            }
+            return(result$G0)
+          }
           )
 
 ###Latitud
@@ -105,9 +121,9 @@ setMethod('as.zooM',
             if (complete) {
               res1 <- as.zooM(as(object, 'G0'))
               return(CBIND(res1, res0))
-              } else {
-                return(res0)
-                }
+            } else {
+              return(res0)
+            }
           }
           )
 
@@ -118,9 +134,9 @@ setMethod('as.zooM',
             if (complete) {
               res1 <- as.zooM(as(object, 'Gef'), complete=TRUE)
               return(CBIND(res1, res0))
-              } else {
-                return(res0)
-                }
+            } else {
+              return(res0)
+            }
           }
           )
 
@@ -131,9 +147,9 @@ setMethod('as.zooM',
             if (complete) {
               res1 <- as.zooM(as(object, 'Gef'), complete=TRUE)
               return(CBIND(res1, res0))
-              } else {
-                return(res0)
-                }
+            } else {
+              return(res0)
+            }
           }
           )
 
@@ -154,9 +170,9 @@ setMethod('as.zooY',
             if (complete) {
               res1 <- as.zooY(as(object, 'G0'))
               return(CBIND(res1, res0))
-              } else {
-                return(res0)
-                }
+            } else {
+              return(res0)
+            }
           }
           )
 
@@ -167,9 +183,9 @@ setMethod('as.zooY',
             if (complete) {
               res1 <- as.zooY(as(object, 'Gef'), complete=TRUE)
               return(CBIND(res1, res0))
-              } else {
-                return(res0)
-                }
+            } else {
+              return(res0)
+            }
           }
           )
 
@@ -180,9 +196,9 @@ setMethod('as.zooY',
             if (complete) {
               res1 <- as.zooY(as(object, 'Gef'), complete=TRUE)
               return(CBIND(res1, res0))
-              } else {
-                return(res0)
-                }
+            } else {
+              return(res0)
+            }
           }
           )
 
@@ -191,9 +207,10 @@ setGeneric('as.zooD', function(object, complete=FALSE){standardGeneric('as.zooD'
 
 setMethod('as.zooD',
           signature=(object='Sol'),
-          definition=function(object, complete=FALSE){#complete está por compatibilidad con los otros métodos
+          definition=function(object, complete=FALSE){#complete esta por compatibilidad con los otros metodos
             res <- object@solD
-            }
+            return(res)
+          }
           )
 
 setMethod('as.zooD',
@@ -324,7 +341,7 @@ setMethod('as.zooI',
             res0 <- object@prodI
             if (complete) {
               res1 <- coredata(as.zooI(as(object, 'Gef'),
-                              complete=complete, day=day))
+                                       complete=complete, day=day))
               res0=coredata(res0)
               if (day) { ##complete&day
                 ind <- indexRep(object)
@@ -346,7 +363,7 @@ setMethod('as.zooI',
             res0 <- object@prodI
             if (complete) {
               res1 <- coredata(as.zooI(as(object, 'Gef'),
-                              complete=complete, day=day))
+                                       complete=complete, day=day))
               res0=coredata(res0)
               if (day) { ##complete&day
                 ind <- indexRep(object)
@@ -419,7 +436,7 @@ setMethod('as.data.frameY',
             zoo0=as.zooY(object, complete=complete)
             data0=as.data.frame(zoo0)
             ind=index(zoo0)
-            data0$year=year(ind)
+            data0$year=ind
             return(data0)
           }
           )
@@ -475,10 +492,10 @@ setMethod('show', 'Gef',
             cat('Mode of tracking: ', object@modeTrk,'\n')
             if (object@modeTrk=='fixed'){
               cat('    Inclination: ', object@angGen$beta, '\n')
-                            cat('    Orientation: ', object@angGen$alfa, '\n')
-              } else {
-                cat('    Inclination limit:', object@angGen$betaLim, '\n')
-                }
+              cat('    Orientation: ', object@angGen$alfa, '\n')
+            } else {
+              cat('    Inclination limit:', object@angGen$betaLim, '\n')
+            }
             ## cat('Monthly averages (kWh/kWp):\n')
             ## print(object@prodDm)
             ## cat('\nYearly values (kWh/kWp):\n')
@@ -520,9 +537,14 @@ setMethod('show', 'ProdPVPS',
           )
 
 ###XYPLOT
+
+## myTheme <- custom.theme.2(pch=19, cex=0.8, alpha=0.6, region=rev(brewer.pal(9, 'YlOrRd')))
+## myTheme$strip.background$col='transparent'
+## lattice.options(default.theme=myTheme)
+
 setMethod('xyplot',
           signature=c(x='formula', data='zoo'),
-          definition=function(x, data, ...){
+          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
             data0=as.data.frame(data)
             ind=index(data)
             data0$day=doy(ind) ##Incorporo dia, mes y año para facilitar la formula.
@@ -531,22 +553,7 @@ setMethod('xyplot',
             if (!('w' %in% names(data0))){
               data0$w=h2r(hms(ind)-12) ##hora solar en radianes
             }
-            xyplot(x, data0, ...)
-          }
-          )
-
-setMethod('levelplot',
-          signature=c(x='formula', data='zoo'),
-          definition=function(x, data, ...){
-            data0=as.data.frame(data)
-            ind=index(data)
-            data0$day=doy(ind) ##Incorporo dia, mes y año para facilitar la formula.
-            data0$month=month(ind)
-            data0$year=year(ind)
-            if (!('w' %in% names(data0))){
-              data0$w=h2r(hms(ind)-12) ##hora solar en radianes
-            }
-            levelplot(x, data0, ...)
+            xyplot(x, data0, par.settings=par.settings, ...)
           }
           )
 
@@ -574,19 +581,21 @@ setMethod('xyplot',
           }
           )
 
+
 setMethod('xyplot',
           signature=c(x='Meteo', data='missing'),
-          definition=function(x, data, ...){
+          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
             x0=getData(x)
-            xyplot(x0, ...)
+            xyplot(x0, par.settings=par.settings, ...)
           }
           )
 
 setMethod('xyplot',
           signature=c(x='G0', data='missing'),
-          definition=function(x, data, ...){
+          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
             x0=as.zooD(x, complete=FALSE)
-            xyplot(x0, ...,
+            xyplot(x0, par.settings=par.settings,
+                   ...,
                    superpose=TRUE,
                    auto.key=list(space='right'),
                    ylab='Wh/m²')
@@ -595,17 +604,62 @@ setMethod('xyplot',
 
 setMethod('xyplot',
           signature=c(x='ProdGCPV', data='missing'),
-          definition=function(x, data, ...){
+          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
             x0=as.zooD(x, complete=FALSE)
-            xyplot(x0, ...)
+            xyplot(x0, par.settings=par.settings, ...)
           }
           )
 
 setMethod('xyplot',
           signature=c(x='ProdPVPS', data='missing'),
-          definition=function(x, data, ...){
+          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
             x0=as.zooD(x, complete=FALSE)
-            xyplot(x0, ...)
+            xyplot(x0, par.settings=par.settings, ...)
+          }
+          )
+
+###LEVELPLOT
+setMethod('levelplot',
+          signature=c(x='formula', data='zoo'),
+          definition=function(x, data,
+            par.settings=custom.theme(region=rev(brewer.pal(9, 'YlOrRd'))),
+            panel=panel.levelplot.raster, interpolate=TRUE,...){
+            data0=as.data.frame(data)
+            ind=index(data)
+            data0$day=doy(ind) ##Incorporo dia, mes y año para facilitar la formula.
+            data0$month=month(ind)
+            data0$year=year(ind)
+            if (!('w' %in% names(data0))){
+              data0$w=h2r(hms(ind)-12) ##hora solar en radianes
+            }
+            levelplot(x, data0, par.settings=par.settings,
+                      panel=panel, interpolate=interpolate,
+                      ...)
+          }
+          )
+
+
+setMethod('levelplot',
+          signature=c(x='formula', data='Meteo'),
+          definition=function(x, data, ...){
+            data0=getData(data)
+            levelplot(x, data0, ...)##data0 es un zoo, luego ahora aplica el método data='zoo'
+          }
+          )
+
+setMethod('levelplot',
+          signature=c(x='formula', data='Sol'),
+          definition=function(x, data, ...){
+            data0=as.zooI(data, complete=TRUE, day=TRUE)
+            levelplot(x, data0, ...)
+          }
+          )
+
+setMethod('levelplot',
+          signature=c(x='formula', data='G0'),
+          definition=function(x, data, ...){
+            data0=as.zooI(data, complete=TRUE, day=TRUE)
+            levelplot(x, data0, ...)
           }
           )
 
@@ -617,7 +671,7 @@ setMethod('as.data.frame', 'Shade',
                          data.frame(FS=x@FS, GCR=x@GCR, Yf=x@Yf)
                          )
             return(res)
-            }
+          }
           )
 
 setMethod('show', 'Shade',
@@ -662,7 +716,7 @@ setMethod('plot', 'Shade',
                             nrow=length(Lew),
                             ncol=length(Lns))
               niveles=signif(seq(min(FS.m),max(FS.m),l=n+1),3)
-              pruebaCB<-("RColorBrewer" %in% .packages()); 
+              pruebaCB<-("RColorBrewer" %in% .packages());
               if (pruebaCB) {
                 ## paleta=heat_hcl(n,
                 ##   h = c(10, 100),
@@ -679,7 +733,7 @@ setMethod('plot', 'Shade',
                              plot.title=title(xlab=expression(L[ew]),
                                ylab=expression(L[ns]), main=main),
                              plot.axes={
-                               axis(1);axis(2); 
+                               axis(1);axis(2);
                                contour(Lew, Lns, FS.m,
                                        nlevels=n, #levels=niveles,
                                        col="black", labcex=.8,  add=TRUE)
@@ -688,19 +742,147 @@ setMethod('plot', 'Shade',
                                grid(col="white",lty=3)},
                              key.title=title("1-FS",cex.main=.8))
             }
-            if (mode=='horiz') {   
+            if (mode=='horiz') {
               Lew=seq(min(red$Lew),max(red$Lew),length=100)
               FS=predict(FS.loess,Lew)
               GCR=Lew/struct$L;
               plot(GCR,1-FS,main=main,type='l',...)
-              grid()	}
+              grid()    }
             if (mode=='fixed'){
               D=seq(min(red$D),max(red$D),length=100)
               FS=predict(FS.loess,D)
               GCR=D/struct$L;
               plot(GCR,1-FS,main=main,type='l',...)
-              grid()	}
-  
-          }
-)            
+              grid()    }
 
+          }
+          )
+
+####LOSSES
+setGeneric('losses', function(object){standardGeneric('losses')})
+
+setMethod('losses',
+          signature=(object='Gef'),
+          definition=function(object){ 
+            dat <- as.data.frameY(object, complete=TRUE)
+            isShd=('Gef0d' %in% names(dat)) ##is there shadows?
+            if (isShd) {
+              shd <- with(dat, mean(1-Gefd/Gef0d))
+              eff <- with(dat, mean(1-Gef0d/Gd))
+            } else {
+              shd <- 0
+              eff <- with(dat, mean(1-Gefd/Gd))
+            }
+            result <- data.frame(id=c('Shadows', 'AoI'), values=c(shd, eff))
+            result
+          }
+          )
+
+setMethod('losses',
+          signature=(object='ProdGCPV'),
+          definition=function(object){
+            DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31); ###OJO
+            dat <- as.data.frameY(object, complete=TRUE)
+            module0=object@module
+            module0$CoefVT=0 ##No losses with temperature
+            ## p0 <- prodGCPV(lat=object@lat, modeTrk=object@modeTrk,
+            ##                modeRad='prev', prev=object,
+            ##                module=module0, generator=object@generator,
+            ##                inverter=object@inverter, effSys=object@effSys)
+            ## p0Y <- as.data.frameY(p0)
+            ## temp <- mean(1-dat$Edc/p0Y$Edc)
+            Pg=object@generator$Pg
+            Nm=1/sample2Hours(object@sample)
+            datI <- as.zooI(object, complete=TRUE)
+            if (object@type=='prom'){
+              YfDC0=sum(monthlySum(datI$Vmpp*datI$Impp)/Pg*DayOfMonth)
+              YfAC0=sum(monthlySum(datI$Pdc*datI$EffI)/Pg*DayOfMonth)
+            } else {
+              YfDC0 <- yearlySum(datI$Vmpp*datI$Impp)/Pg
+              YfAC0 <- yearlySum(datI$Pdc*datI$EffI)/Pg
+            }
+            gen <- mean(1-YfDC0/dat$Gefd)
+            YfDC <- dat$Edc/Pg*1000
+            DC=mean(1-YfDC/YfDC0)
+            inv=mean(1-YfAC0/YfDC)
+            AC=mean(1-dat$Yf/YfAC0)
+            result0 <- losses(as(object, 'Gef'))
+            result1 <- data.frame(id=c('Generator', 'DC', 'Inverter', 'AC'),
+                                  values=c(gen, DC, inv, AC))
+            result <- rbind(result0, result1)
+            result
+          }
+          )
+
+###compareLosses
+setGeneric('compareLosses', signature='...', function(...){standardGeneric('compareLosses')})
+
+setMethod('compareLosses', 'ProdGCPV',
+          definition=function(...){
+            dots <- list(...)
+            nms <- as.character(substitute(list(...)))[-1]
+            foo <- function(object, label){
+              yY <- losses(object)
+              yY <- cbind(yY, name=label)
+              yY
+            }
+            cdata <- mapply(FUN=foo, dots, nms, SIMPLIFY=FALSE)
+            z <- do.call(rbind, cdata)
+            z$id <- ordered(z$id, levels=c('Shadows', 'AoI', 'Generator', 'DC', 'Inverter', 'AC'))
+            p <- dotplot(id~values*100, groups=name, data=z,
+                         par.settings=custom.theme.2(pch=19), type='b',
+                         auto.key=list(corner=c(0.95,0.2), cex=0.7), xlab='Losses (%)')
+            print(p)
+            return(z)
+            }
+          )
+
+
+####COMPARE
+setGeneric('compare', signature='...', function(...){standardGeneric('compare')})
+
+compareFunction <- function(..., vars){
+  dots <- list(...)
+  nms <- as.character(substitute(list(...)))[-1]
+  foo <- function(object, label){
+    yY <- colMeans(as.data.frameY(object, complete=TRUE)[vars])
+    yY <- cbind(stack(yY), name=label)
+    yY
+  }
+  cdata <- mapply(FUN=foo, dots, nms, SIMPLIFY=FALSE)
+  z <- do.call(rbind, cdata)
+  z$ind <- ordered(z$ind, levels=vars)
+  p <- dotplot(ind~values, groups=name, data=z, type='b',
+               par.settings=custom.theme.2(pch=19))
+  print(p+glayer(panel.text(x[length(x)], y[length(x)],
+                            label=group.value, cex=0.7, pos=3, srt=45)))
+  return(z)
+}
+
+
+setMethod('compare',
+          signature='G0',
+          definition=function(...){
+            vars <- c('D0d', 'B0d', 'G0d')
+            res <- compareFunction(..., vars=vars)
+            return(res)
+          }
+          )
+
+setMethod('compare',
+          signature='Gef',
+          definition=function(...){
+            vars <- c('Defd', 'Befd', 'Gefd')
+            res <- compareFunction(..., vars=vars)
+            return(res)
+          }
+          )
+
+setMethod('compare',
+          signature='ProdGCPV',
+          definition=function(...){
+            vars <- c('G0d', 'Gefd', 'Yf')
+            res <- compareFunction(..., vars=vars)
+            return(res)
+          }
+          )

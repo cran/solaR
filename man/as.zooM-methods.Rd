@@ -42,4 +42,5 @@ as.zooM(object, complete=FALSE)
 
 }}
 \keyword{methods}
+\author{Oscar Perpiñán Lamigueiro}
 

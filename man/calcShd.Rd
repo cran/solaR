@@ -6,27 +6,27 @@
 \title{Shadows on PV systems.}
 
 \description{
-Compute the irradiance and irradiation including shadows for two-axis
-and horizontal N-S axis trackers and fixed surfaces.
-It makes use of the function \code{\link{fSombra}} for the shadows
-factor calculation. It is used by the function \code{\link{calcGef}}.
+  Compute the irradiance and irradiation including shadows for two-axis
+  and horizontal N-S axis trackers and fixed surfaces.
+  It makes use of the function \code{\link{fSombra}} for the shadows
+  factor calculation. It is used by the function \code{\link{calcGef}}.
 }
 \usage{
 calcShd(radEf, modeTrk='fixed', modeShd='',
        struct=list(), distances=data.frame())
 }
 \arguments{
-     \item{radEf}{A \code{\linkS4class{Gef}} object. It may be the result of
-       the \code{\link{calcGef}} function.}
+  \item{radEf}{A \code{\linkS4class{Gef}} object. It may be the result of
+    the \code{\link{calcGef}} function.}
 
-     \item{modeTrk}{character, to be chosen from \code{'fixed'},
-     \code{'two'} or \code{'horiz'}. When \code{modeTrk='fixed'} the
-     surface is fixed (inclination and azimuth angles are constant). The
-     performance of a two-axis tracker is calculated with
-     \code{modeTrk='two'}, and \code{modeTrk='horiz'} is the option for
-     an horizontal N-S tracker. Its default value is
-     \code{modeTrk='fixed'}}
-   
+  \item{modeTrk}{character, to be chosen from \code{'fixed'},
+    \code{'two'} or \code{'horiz'}. When \code{modeTrk='fixed'} the
+    surface is fixed (inclination and azimuth angles are constant). The
+    performance of a two-axis tracker is calculated with
+    \code{modeTrk='two'}, and \code{modeTrk='horiz'} is the option for
+    an horizontal N-S tracker. Its default value is
+    \code{modeTrk='fixed'}}
+
   \item{modeShd}{character, defines the type of shadow calculation. In
     this version of the package the effect of the shadow is calculated
     as a proportional reduction of the circumsolar diffuse and direct
@@ -39,32 +39,32 @@ calcShd(radEf, modeTrk='fixed', modeShd='',
     backtracking method will be carried out and therefore no shadows
     will appear. Finally, for two-axis trackers it is possible to select
     \code{modeShd='prom'} in order to calculate the effect of shadows on
-    an average tracker (see \code{\link{fSombra6}}).  
-The result will include three variables (Gef0, Def0 and Bef0) with the
-irradiance/irradiation without shadows as a reference.}
+    an average tracker (see \code{\link{fSombra6}}).
+    The result will include three variables (Gef0, Def0 and Bef0) with the
+    irradiance/irradiation without shadows as a reference.}
 
-  
- \item{struct}{\code{list}. When \code{modeTrk='fixed'} or
- \code{modeTrk='horiz'} only a component named \code{L}, which is the
- height (meters) of the tracker, is needed. For two-axis trackers
- (\code{modeTrk='two'}), an additional component named \code{W}, the
- width of the tracker, is required. Moreover, two components named
- \code{Nrow} and \code{Ncol} are included under this list. These
- components define, respectively, the number of rows and columns of the
- whole set of trackers in the PVplant.}
 
- \item{distances}{\code{data.frame}, with a component named \code{Lew},
-   being the distance between horizontal NS and two-axis trackers along
-   the East-West direction, a component named \code{Lns} for two-axis
-   trackers or a component named \code{D} for the distance between fixed
-   surfaces. An additional component named \code{H} can be included with
-   the relative height (meters) between surfaces.}
+  \item{struct}{\code{list}. When \code{modeTrk='fixed'} or
+    \code{modeTrk='horiz'} only a component named \code{L}, which is the
+    height (meters) of the tracker, is needed. For two-axis trackers
+    (\code{modeTrk='two'}), an additional component named \code{W}, the
+    width of the tracker, is required. Moreover, two components named
+    \code{Nrow} and \code{Ncol} are included under this list. These
+    components define, respectively, the number of rows and columns of the
+    whole set of trackers in the PVplant.}
+
+  \item{distances}{\code{data.frame}, with a component named \code{Lew},
+    being the distance between horizontal NS and two-axis trackers along
+    the East-West direction, a component named \code{Lns} for two-axis
+    trackers or a component named \code{D} for the distance between fixed
+    surfaces. An additional component named \code{H} can be included with
+    the relative height (meters) between surfaces.}
 }
 
 \value{A \code{Gef} object including three additional variables
   (\code{Gef0}, \code{Def0} and \code{Bef0}) in the slots \code{GefI},
   \code{GefD}, \code{Gefdm} and \code{Gefy} with the
-irradiance/irradiation without shadows as a reference.}
+  irradiance/irradiation without shadows as a reference.}
 
 \references{Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
 

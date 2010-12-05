@@ -1,24 +1,30 @@
 \name{C_local2Solar}
 \alias{local2Solar}
 \alias{CBIND}
+\alias{lonHH}
+\Rdversion{1.1}
+\encoding{UTF-8}
 
 \title{
-Local time, mean solar time and UTC time zone.
+  Local time, mean solar time and UTC time zone.
 }
 \description{
-The function \code{local2Solar} converts the time zone of a \code{POSIXct} object to
-the mean solar time and set the time zone to UTC. It includes two corrections:
-the difference of longitudes between the location and the time zone, and
-the daylight saving time.
+  The function \code{local2Solar} converts the time zone of a \code{POSIXct} object to
+  the mean solar time and set the time zone to UTC. It includes two corrections:
+  the difference of longitudes between the location and the time zone, and
+  the daylight saving time.
 
-The function \code{CBIND} combines several objects (\code{zoo},
-\code{data.frame} or \code{matrix}) preserving
-the \code{index} of the first of them or asigning a new one with the
-\code{index} argument.
+  The function \code{CBIND} combines several objects (\code{zoo},
+  \code{data.frame} or \code{matrix}) preserving
+  the \code{index} of the first of them or asigning a new one with the
+  \code{index} argument.
+
+  The function \code{lonHH} calculates the longitude (radians) of a time zone.
 }
 \usage{
 local2Solar(x, lon = NULL)
 CBIND(..., index=NULL)
+lonHH(tz)
 }
 \arguments{
   \item{x}{a \code{POSIXct} object}
@@ -29,33 +35,37 @@ CBIND(..., index=NULL)
   \item{...}{A set of \code{zoo} objects.}
   \item{index}{A \code{POSIXct} object, the index of \code{zoo} object
     constructed with \code{CBIND}.}
+
+  \item{tz}{A character, a time zone.}
 }
 \details{
-  
+
   Since the result of \code{local2Solar} is the mean solar time, the
   Equation of Time correction is not calculated with this function. The
   \code{\link{fSolI}} function includes this correction if desired.
 
   If the \code{index} argument of \code{CBIND} is \code{NULL} (default)
-  the first object of \code{...} must be a \code{zoo} object. 
+  the first object of \code{...} must be a \code{zoo} object.
 }
 
 \value{The function \code{local2Solar} produces a \code{POSIXct} object
   with its time zone set to UTC.
 
-The function \code{CBIND} produces a \code{zoo} object.}
+  The function \code{CBIND} produces a \code{zoo} object.
+
+  The function \code{lonHH} gives a numeric value.}
 
 \author{Oscar Perpiñán Lamigueiro.}
 
 \references{
-Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+  Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }
 
 \note{
-It is important to note that the \code{solaR} package sets the system
-time zone to \code{UTC} with \code{Sys.setenv(TZ='UTC')}.
-Every \code{zoo} object created by the package will have an index with this
-time zone and will be supposed to be mean solar time.
+  It is important to note that the \code{solaR} package sets the system
+  time zone to \code{UTC} with \code{Sys.setenv(TZ='UTC')}.
+  Every \code{zoo} object created by the package will have an index with this
+  time zone and will be supposed to be mean solar time.
 
 
 }
@@ -73,6 +83,29 @@ t.local.dst<-as.POSIXct("2006-07-08 10:07:52", tz='Europe/Madrid')
 
 local2Solar(t.local.dst)
 local2Solar(t.local.dst, lon=-3)
+
+##Extracted from an example of calcG0
+##NREL-MIDC
+##La Ola, Lanai
+##Latitude: 20.76685o North
+##Longitude: 156.92291o West
+##Time Zone: -10.0
+
+file='http://www.nrel.gov/midc/apps/plot.pl?site=LANAI&start=20090722&edy=19&emo=11&eyr=2010&zenloc=19&year=2010&month=11&day=1&endyear=2010&endmonth=11&endday=19&time=1&inst=3&inst=4&inst=5&inst=10&type=data&first=3&math=0&second=-1&value=0.0&global=-1&direct=-1&diffuse=-1&user=0&axis=1'
+
+dat <- read.table(file, header=TRUE, sep=',')
+names(dat) <- c('date', 'hour', 'G0', 'B', 'D0', 'Ta')
+
+##B is direct normal. We need direct horizontal.
+dat$B0 <- dat$G0-dat$D0
+
+##http://www.nrel.gov/midc/la_ola_lanai/instruments.html:
+##The datalogger program runs using Greenwich Mean Time (GMT),
+##data is converted to Hawaiin Standard Time (HST) after data collection
+idxLocal <- with(dat, as.POSIXct(paste(date, hour), format='\%m/\%d/\%Y \%H:\%M', tz='HST'))
+head(idxLocal)
+idx <- local2Solar(idxLocal, lon=-156.9339)
+head(idx)
 }
 
 \keyword{utilities}

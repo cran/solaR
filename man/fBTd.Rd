@@ -16,13 +16,13 @@ fBTd(mode = "prom",
 
 \arguments{
   \item{mode}{character, controls the type of time base to be
-  created. With  \code{mode='serie'} the result is a daily time series from \code{start} to \code{end}. With \code{mode='prom'} only twelve days, one for each month, are included. During these 'average days' the declination angle is equal to the monthly mean of this angle.}
+    created. With  \code{mode='serie'} the result is a daily time series from \code{start} to \code{end}. With \code{mode='prom'} only twelve days, one for each month, are included. During these 'average days' the declination angle is equal to the monthly mean of this angle.}
   \item{year}{which year is to be used for the time base when \code{mode='prom'}. Its default value is the current year.}
   \item{start}{first day of the time base for \code{mode='serie'}. Its default value is the first of January of the current year. }
   \item{end}{last day of the time base for \code{mode='serie'}. Its
     default value is the last day of December of the current year.}
 
-  \item{format}{format of \code{start} and\code{end}.}
+  \item{format}{format of \code{start} and \code{end}.}
 }
 \details{This function is commonly used inside \code{fSolD}.}
 \value{This function returns a \code{POSIXct} object.}
@@ -36,7 +36,7 @@ fBTd(mode = "prom",
   \code{\link{fSolD}},
   \code{\link{as.POSIXct}},
   \code{\link{seq.POSIXt}}.
-  }
+}
 
 \examples{
 #Average days

@@ -10,20 +10,20 @@
 \description{A class containing values of the performance of a grid
   connected PV system.}
 \section{Objects from the Class}{
-Objects can be created by \code{\link{prodGCPV}}.
+  Objects can be created by \code{\link{prodGCPV}}.
 }
 \section{Slots}{
   \describe{
-\item{\code{prodI}:}{Object of class \code{"zoo"} created by
-  \code{\link{fProd}}. It includes these components:
-  \itemize{
-    \item{Tc: }{cell temperature, \eqn{^{\circ}{\rm C}}}
-    \item{Voc, Isc, Vmpp, Impp: }{open circuit voltage, short circuit current, MPP voltage and current, respectively.}
-    \item{Vdc, Idc: }{voltage and current at the input of the inverter.}
-    \item{Pdc: }{power at the input of the inverter, W}
-    \item{Pac: }{power at the output of the inverter, W}
-    \item{EffI: }{efficiency of the inverter}
-}}
+    \item{\code{prodI}:}{Object of class \code{"zoo"} created by
+      \code{\link{fProd}}. It includes these components:
+      \describe{
+        \item{Tc: }{cell temperature, \eqn{^{\circ}{\rm C}}.}
+        \item{Voc, Isc, Vmpp, Impp: }{open circuit voltage, short circuit current, MPP voltage and current, respectively.}
+        \item{Vdc, Idc: }{voltage and current at the input of the inverter.}
+        \item{Pdc: }{power at the input of the inverter, W}
+        \item{Pac: }{power at the output of the inverter, W}
+        \item{EffI: }{efficiency of the inverter}
+    }}
     \item{\code{prodD}:}{A \code{zoo} object with daily values of AC and
       DC energy (Wh), and
       productivity of the system.}
@@ -33,7 +33,7 @@ Objects can be created by \code{\link{prodGCPV}}.
     \item{\code{prody}:}{A \code{zoo} object with yearly sums of AC and
       DC energy (kWh), and
       productivity of the system.}
-    
+
     \item{\code{module}:}{A list with the characteristics of the module.}
     \item{\code{generator}:}{A list with the characteristics of the PV generator.}
     \item{\code{inverter}:}{A list with the characteristics of the inverter.}
@@ -44,15 +44,15 @@ Objects can be created by \code{\link{prodGCPV}}.
   \code{"\linkS4class{G0}"} and \code{"\linkS4class{Gef}"} classes.
 }
 \section{Extends}{
-Class \code{"\linkS4class{Gef}"}, directly.
-Class \code{"\linkS4class{G0}"}, by class "Gef", distance 2.
-Class \code{"\linkS4class{Meteo}"}, by class "Gef", distance 3.
-Class \code{"\linkS4class{Sol}"}, by class "Gef", distance 3.
+  Class \code{"\linkS4class{Gef}"}, directly.
+  Class \code{"\linkS4class{G0}"}, by class "Gef", distance 2.
+  Class \code{"\linkS4class{Meteo}"}, by class "Gef", distance 3.
+  Class \code{"\linkS4class{Sol}"}, by class "Gef", distance 3.
 }
 \section{Methods}{
   \describe{
 
-        \item{as.zooD}{\code{signature(object = "ProdGCPV")}: conversion to a
+    \item{as.zooD}{\code{signature(object = "ProdGCPV")}: conversion to a
       \code{zoo} object with daily values.}
     \item{as.zooI}{\code{signature(object = "ProdGCPV")}: conversion to a
       \code{zoo} object with intradaily values.}
@@ -70,7 +70,7 @@ Class \code{"\linkS4class{Sol}"}, by class "Gef", distance 3.
       \code{\linkS4class{Sol}} object. }
     \item{xyplot}{\code{signature(x = "ProdGCPV", data = "missing")}: display
       the time series of daily values.}
-        \item{xyplot}{\code{signature(x = "formula", data = "ProdGCPV")}:
+    \item{xyplot}{\code{signature(x = "formula", data = "ProdGCPV")}:
       displays the contents of a \code{ProdGCPV} object with the
       \code{xyplot} method for formulas.}
     \item{as.zooD}{\code{signature(object = "ProdGCPV")}: conversion to a
@@ -78,8 +78,8 @@ Class \code{"\linkS4class{Sol}"}, by class "Gef", distance 3.
     \item{as.zooI}{\code{signature(object = "ProdGCPV")}: conversion to a
       \code{zoo} object with intradaily values.}
   }
-  }
-       
+}
+
 \references{
   Perpiñán, O, Energía Solar Fotovoltaica, 2010.
   (\url{http://procomun.wordpress.com/documentos/libroesf/})
@@ -92,6 +92,6 @@ Class \code{"\linkS4class{Sol}"}, by class "Gef", distance 3.
   \code{\linkS4class{G0}},
   \code{\linkS4class{Gef}},
   \code{\linkS4class{Shade}}.
-  
+
 }
 \keyword{classes}

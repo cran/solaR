@@ -1,5 +1,5 @@
 \name{C_utils-time}
-\Rdversion{1.0}
+\Rdversion{1.1}
 \encoding{UTF-8}
 \alias{hour}
 \alias{minute}
@@ -14,12 +14,13 @@
 \alias{Month}
 \alias{Year}
 \alias{dst}
+\alias{truncDay}
 
 \title{Utilities for time indexes.}
 
 \description{Several small functions to extract information from \code{POSIXct}
   indexes.
-  }
+}
 
 \usage{
 hour(x)
@@ -35,10 +36,11 @@ DoM(x)
 Month(x)
 Year(x)
 dst(x)
+truncDay(x)
 }
 \arguments{
   \item{x}{A \code{POSIXct} vector.}
-  }
+}
 \value{The functions \code{year}, \code{month},
   \code{day}, \code{hour}, \code{minute}, \code{second} give the numeric
   value corresponding to their names.
@@ -54,12 +56,15 @@ dst(x)
   \code{hour(x)+minute(x)/60+second(x)/3600}
 
   \code{dst} is +1 if the Daylight Savings Time flag is in force,
-  zero if not, -1 if unknown (\code{\link{DateTimeClasses}}). 
+  zero if not, -1 if unknown (\code{\link{DateTimeClasses}}).
+
+  \code{truncDay} truncates the \code{POSIXct} object towards the day.
+
 }
 
 
 \author{
-Oscar Perpiñán Lamigueiro.
+  Oscar Perpiñán Lamigueiro.
 }
 \seealso{\code{as.POSIXct}
 }

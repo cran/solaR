@@ -25,4 +25,5 @@ See \code{\link{as.zooI-methods}} for a description of the arguments
 \code{complete} and \code{day}.}
 
 \keyword{methods}
+\author{Oscar Perpiñán Lamigueiro}
 

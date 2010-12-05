@@ -1,21 +1,19 @@
-#    prodPVPS.r: Cálculo de Productividad de SFB
-
-#    Copyright (c) 2010, Oscar Perpiñán. Lamigueiro
-
-#    Este programa es software libre: usted puede redistribuirlo y/o modificarlo 
-#    bajo los términos de la Licencia Pública General GNU publicada 
-#    por la Fundación para el Software Libre, ya sea la versión 3 
-#    de la Licencia, o (a su elección) cualquier versión posterior.
-
-#    Este programa se distribuye con la esperanza de que sea útil, pero 
-#    SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita 
-#    MERCANTIL o de APTITUD PARA UN PROPÓSITO DETERMINADO. 
-#    Consulte los detalles de la Licencia Pública General GNU para obtener 
-#    una información más detallada. 
-
-#    Debería haber recibido una copia de la Licencia Pública General GNU 
-#    junto a este programa. 
-#    En caso contrario, consulte <http://www.gnu.org/licenses/>.
+ # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
+ #
+ # This program is free software; you can redistribute it and/or
+ # modify it under the terms of the GNU General Public License
+ # as published by the Free Software Foundation; either version 2
+ # of the License, or (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program; if not, write to the Free Software
+ # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ #/
 prodPVPS<-function(lat, 
                    modeTrk='fixed', 
                    modeRad='prom', 
@@ -23,25 +21,27 @@ prodPVPS<-function(lat,
                    prom=list(),
                    mapa=list(), 
                    bd=list(),
+                   bdI=list(),
                    sample='hour',
                    keep.night=TRUE,
+                   corr, f,
                    betaLim=90, beta=abs(lat)-10, alfa=0,
-                   iS=2, alb=0.2,
+                   iS=2, alb=0.2, horizBright=FALSE,
                    pump , H, 
                    Pg, converter= list(), #Pnom=Pg, Ki=c(0.01,0.025,0.05)),
                    effSys=list()
                    ){
-  stopifnot(modeRad %in% c('prev','prom', 'aguiar','mapa','bd'))
   stopifnot(is.list(converter),
             is.list(effSys))
 
   if (modeRad!='prev'){                 #No utilizamos un cálculo prev
-    stopifnot(modeTrk %in% c('two','horiz','fixed'))
+
     radEf<-calcGef(lat=lat, modeTrk=modeTrk, modeRad=modeRad,
-                   prom=prom, mapa=mapa, bd=bd,
+                   prom=prom, mapa=mapa, bd=bd, bdI=bdI,
                    sample=sample, keep.night=keep.night,
+                   corr=corr, f=f,
                    betaLim=betaLim, beta=beta, alfa=alfa,
-                   iS=iS, alb=alb,
+                   iS=iS, alb=alb, horizBright=FALSE,
                    modeShd='')
 		
   } else { #Utilizamos un cálculo previo de calcG0, calcGef o prodSFCR
@@ -51,7 +51,7 @@ prodPVPS<-function(lat,
                       modeTrk=modeTrk, modeRad='prev',
                       prev=prev,
                       betaLim=betaLim, beta=beta, alfa=alfa,
-                      iS=iS, alb=alb,
+                      iS=iS, alb=alb, horizBright=FALSE,
                       modeShd=''),
                     Gef=prev,
                     ProdPVPS=as(prev, 'Gef')
@@ -138,7 +138,7 @@ prodPVPS<-function(lat,
     prodD$Yf=prodD$Eac/Pg
     
     prodDm=aggregate(prodD, by=as.yearmon, mean, na.rm=1)
-    prody=aggregate(prodD, by=Year, sum, na.rm=1)
+    prody=aggregate(prodD, by=year, sum, na.rm=1)
 
     prodDm$Eac=prodDm$Eac/1000
     prody$Eac=prody$Eac/1000

@@ -41,5 +41,6 @@ as.zooY(object, complete=FALSE)
 }
 
 }}
+\author{Oscar Perpiñán Lamigueiro}
 \keyword{methods}
 

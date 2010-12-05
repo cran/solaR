@@ -26,11 +26,11 @@
   with the performance of a PV systems without shadows.
 }
 \section{Extends}{
-Class \code{"\linkS4class{ProdGCPV}"}, directly.
-Class \code{"\linkS4class{Gef}"}, by class "ProdGCPV", distance 2.
-Class \code{"\linkS4class{G0}"}, by class "ProdGCPV", distance 3.
-Class \code{"\linkS4class{Meteo}"}, by class "ProdGCPV", distance 4.
-Class \code{"\linkS4class{Sol}"}, by class "ProdGCPV", distance 4.
+  Class \code{"\linkS4class{ProdGCPV}"}, directly.
+  Class \code{"\linkS4class{Gef}"}, by class "ProdGCPV", distance 2.
+  Class \code{"\linkS4class{G0}"}, by class "ProdGCPV", distance 3.
+  Class \code{"\linkS4class{Meteo}"}, by class "ProdGCPV", distance 4.
+  Class \code{"\linkS4class{Sol}"}, by class "ProdGCPV", distance 4.
 }
 \section{Methods}{
   \describe{
@@ -39,27 +39,27 @@ Class \code{"\linkS4class{Sol}"}, by class "ProdGCPV", distance 4.
       \code{Lns}, and \code{D}) and results (\code{FS}, \code{GCR} and \code{Yf}).}
     \item{plot}{\code{signature(x = "Shade")}: display the results of
       the iteration with a level plot for the two-axis tracking, or with
-    conventional plot for horizontal tracking and fixed systems.}
+      conventional plot for horizontal tracking and fixed systems.}
     \item{xyplot}{\code{signature(x = "formula", data = "Shade")}:
       display the content of the \code{Shade} object with the
       \code{xyplot} method for formulas.}
-	 }
-       }
-
-      
-\references{\itemize{
-    \item{Perpiñán, O.: Grandes Centrales Fotovoltaicas: producción, seguimiento y ciclo de vida. PhD Thesis, UNED, 2008. \url{http://e-spacio.uned.es/fez/view.php?pid=bibliuned:20080}.}
-    \item{Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
+  }
 }
+
+
+\references{\itemize{
+    \item Perpiñán, O.: Grandes Centrales Fotovoltaicas: producción, seguimiento y ciclo de vida. PhD Thesis, UNED, 2008. \url{http://e-spacio.uned.es/fez/view.php?pid=bibliuned:20080}.
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+  }
 }
 
 
 \author{
-Oscar Perpiñán Lamigueiro.
+  Oscar Perpiñán Lamigueiro.
 }
 
 \seealso{
-  \code{\linkS4class{Gef}}, 
+  \code{\linkS4class{Gef}},
   \code{\linkS4class{ProdGCPV}}.
 }
 \keyword{classes}

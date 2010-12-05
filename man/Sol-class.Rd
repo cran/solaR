@@ -1,5 +1,5 @@
 \name{B2_Sol-class}
-\Rdversion{1.1}
+\Rdversion{1.2}
 \encoding{UTF-8}
 \docType{class}
 \alias{Sol-class}
@@ -9,7 +9,7 @@
 \description{A class which describe the apparent movement of the Sun from the Earth.
 }
 \section{Objects from the Class}{
-Objects can be created by \code{\link{calcSol}}.
+  Objects can be created by \code{\link{calcSol}}.
 }
 \section{Slots}{
   \describe{
@@ -21,7 +21,7 @@ Objects can be created by \code{\link{calcSol}}.
       \code{\link{fSolI}}. It contains these components:}
     \item{\code{match}:}{numeric, index of \code{solD} related
       with the index of \code{solI}.}
-    \item{\code{sample}:}{character, increment of the intradaily sequence.}
+    \item{\code{sample}:}{\code{difftime}, increment of the intradaily sequence.}
   }
 }
 \section{Methods}{
@@ -45,7 +45,7 @@ Objects can be created by \code{\link{calcSol}}.
     \item{xyplot}{\code{signature(x = "formula", data = "Sol")}:
       displays the contents of a \code{Sol} object with the
       \code{xyplot} method for formulas.}
-	 }
+  }
 }
 \references{
   Perpiñán, O, Energía Solar Fotovoltaica, 2010.
@@ -53,12 +53,12 @@ Objects can be created by \code{\link{calcSol}}.
 }
 
 \author{
-Oscar Perpiñán Lamigueiro.
+  Oscar Perpiñán Lamigueiro.
 }
 
 
 \seealso{
-  \code{\linkS4class{G0}}, 
+  \code{\linkS4class{G0}},
   \code{\linkS4class{Gef}}.
 }
 

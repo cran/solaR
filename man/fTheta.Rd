@@ -4,23 +4,23 @@
 \alias{fTheta}
 
 \title{
-Angle of incidence of solar irradiation on a inclined surface
+  Angle of incidence of solar irradiation on a inclined surface
 }
 \description{
-The orientation, azimuth and incidence angle are calculated from the
-results of \code{fSolI} or \code{calcSol}and from the information supplied by the
-arguments \code{beta} and \code{alfa} when the surface is fixed
-(\code{modeTrk='fixed')} or the movement equations when a tracking
-surface is chosen (\code{modeTrk='horiz'} or \code{modeTrk='two')}. 
-Besides, the modified movement of a horizontal NS tracker due to the
-backtracking strategy is calculated if \code{BT=TRUE} with information
-about the tracker and the distance between the trackers included in the
-system.
+  The orientation, azimuth and incidence angle are calculated from the
+  results of \code{fSolI} or \code{calcSol}and from the information supplied by the
+  arguments \code{beta} and \code{alfa} when the surface is fixed
+  (\code{modeTrk='fixed')} or the movement equations when a tracking
+  surface is chosen (\code{modeTrk='horiz'} or \code{modeTrk='two')}.
+  Besides, the modified movement of a horizontal NS tracker due to the
+  backtracking strategy is calculated if \code{BT=TRUE} with information
+  about the tracker and the distance between the trackers included in the
+  system.
 
-This function is used by the \code{\link{calcGef}} function.
+  This function is used by the \code{\link{calcGef}} function.
 }
 \usage{
-fTheta(sol, beta, alfa = 0, modeTrk = "fixed", betaLim = 90, 
+fTheta(sol, beta, alfa = 0, modeTrk = "fixed", betaLim = 90,
     BT = FALSE, struct, dist)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -36,18 +36,18 @@ fTheta(sol, beta, alfa = 0, modeTrk = "fixed", betaLim = 90,
 }
 
 \value{A \code{zoo} object with these components:
-    \item{Beta}{numeric, inclination angle of the surface (radians). When \code{modeTrk='fixed'} it is the value of the argument \code{beta} converted from degrees to radians.}
-    \item{Alfa}{numeric, azimuth angle of the surface (radians). When \code{modeTrk='fixed'} it is the value of the argument \code{alfa} converted from degrees to radians.}
-    \item{cosTheta}{numeric, cosine of the incidence angle of the solar irradiance on the surface}
+  \item{Beta}{numeric, inclination angle of the surface (radians). When \code{modeTrk='fixed'} it is the value of the argument \code{beta} converted from degrees to radians.}
+  \item{Alfa}{numeric, azimuth angle of the surface (radians). When \code{modeTrk='fixed'} it is the value of the argument \code{alfa} converted from degrees to radians.}
+  \item{cosTheta}{numeric, cosine of the incidence angle of the solar irradiance on the surface}
 
 }
 \references{
-\itemize{
-\item{Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
-\item{Panico, D., Garvison, P., Wenger, H. J., Shugar, D., Backtracking: a novel strategy for tracking PV systems, Photovoltaic Specialists Conference, 668-673, 1991}
+  \itemize{
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Panico, D., Garvison, P., Wenger, H. J., Shugar, D., Backtracking: a novel strategy for tracking PV systems, Photovoltaic Specialists Conference, 668-673, 1991
 }}
 \author{
-Oscar Perpiñán Lamigueiro.
+  Oscar Perpiñán Lamigueiro.
 }
 
 

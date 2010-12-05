@@ -25,4 +25,5 @@ See \code{\link{as.zooY-methods}} for a description of the argument
 \code{complete}.}
 
 \keyword{methods}
+\author{Oscar Perpiñán Lamigueiro}
 
