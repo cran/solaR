@@ -7,7 +7,19 @@
   Shadows calculation for a set of distances between elements of a PV grid connected plant.
 }
 \description{
-  The optimum distance between trackers or static structures of a PV grid connected plant depends on two main factors: the ground cover ratio (defined as the ratio of the PV array area to the total ground area), and the productivity of the system including shadow losses. Therefore, the optimum separation may be the one which achieves the highest productivity with the highest ground cover ratio. However, this definition is not complete since the terrain characteristics and the costs of wiring or civil works could alter the decision. This function is a help for choosing this distance: it computes the productivity for a set of combinations of distances between the elements of the plant.
+  The optimum distance between trackers or static structures of a PV
+  grid connected plant depends on two main factors: the ground
+  requirement ratio (defined as the ratio of the total ground area to
+  the generator PV array area), and the productivity of the system
+  including shadow losses. Therefore, the optimum separation may be the
+  one which achieves the highest productivity with the lowest ground
+  requirement ratio. 
+
+  However, this definition is not complete since the terrain
+  characteristics and the costs of wiring or civil works could alter the
+  decision. This function is a help for choosing this distance: it
+  computes the productivity for a set of combinations of distances
+  between the elements of the plant.
 }
 \usage{
 optimShd(lat,
@@ -82,27 +94,41 @@ optimShd(lat,
     \code{iS=4} is the selection for a dirty surface. Its default value is
     2}
 
-  \item{alb}{numeric, albedo reflection coefficient. Its default value is 0.2}
+  \item{alb}{numeric, albedo reflection coefficient. Its default value
+    is 0.2}
+  
   \item{module}{list of numeric values with information about the PV module, \describe{
-      \item{\code{Vocn}}{open-circuit voltage of the module at Standard Test Conditions}
-      \item{\code{Iscn}}{short circuit current of the module at Standard Test Conditions}
-      \item{\code{Vmn}}{maximum power point voltage of the module at Standard Test Conditions}
-      \item{\code{Imn}}{Maximum power current of the module at Standard Test Conditions}
-      \item{\code{Vocn}}{open-circuit voltage of the module at Standard Test Conditions}
-      \item{\code{Ncs}}{number of cells in series inside the module}
-      \item{\code{Ncp}}{number of cells in parallel inside the module}
-      \item{\code{CoefVT}}{coefficient of decrement of voltage of each cell with the temperature}
-      \item{\code{TONC}}{nominal operational  cell temperature, \eqn{^{\circ}{\rm C}}.}
+      \item{\code{Vocn}}{open-circuit voltage of the module at Standard
+      Test Conditions (default value 57.6 volts.)}
+      \item{\code{Iscn}}{short circuit current of the module at Standard
+      Test Conditions (default value 4.7 amperes.)}
+      \item{\code{Vmn}}{maximum power point voltage of the module at
+      Standard Test Conditions (default value 46.08 amperes.)}
+      \item{\code{Imn}}{Maximum power current of the module at Standard
+      Test Conditions (default value 4.35 amperes.)}
+      \item{\code{Ncs}}{number of cells in series inside the module
+      (default value 96)}
+      \item{\code{Ncp}}{number of cells in parallel inside the module (default value 1)}
+      \item{\code{CoefVT}}{coefficient of decrement of voltage of each
+      cell with the temperature (default value 0.0023 volts per celsius degree)}
+      \item{\code{TONC}}{nominal operational  cell temperature, celsius
+      degree (default value 47).}
   }}
   \item{generator}{list of numeric values with information about the generator, \describe{
-      \item{\code{Nms}}{number of modules in series}
-      \item{\code{Nmp}}{number of modules in parallel}
+      \item{\code{Nms}}{number of modules in series (default value 12)}
+      \item{\code{Nmp}}{number of modules in parallel (default value 11)}
   }}
   \item{inverter}{list of numeric values with information about the DC/AC inverter, \describe{
-      \item{\code{Ki}}{vector of three values, coefficients of the efficiency curve of the inverter}
-      \item{\code{Pinv}}{nominal inverter power (W)}
-      \item{\code{Vmin, Vmax}}{ minimum and maximum voltages of the MPP range of the inverter}
-      \item{\code{Gumb}}{ minimum irradiance for the inverter to start (W/m²)}
+      \item{\code{Ki}}{vector of three values, coefficients of the
+      efficiency curve of the inverter (default c(0.01, 0.025, 0.05)),
+      or a matrix of nine values (3x3) if there is dependence with the
+      voltage (see references).}
+      \item{\code{Pinv}}{nominal inverter power (W) (default value 25000
+      watts.)}
+      \item{\code{Vmin, Vmax}}{ minimum and maximum voltages of the MPP
+      range of the inverter (default values 420 and 750 volts)}
+      \item{\code{Gumb}}{ minimum irradiance for the inverter to start
+      (W/m²) (default value 20 W/m²)}
   }}
   \item{effSys}{list of numeric values with information about the system losses, \describe{
       \item{\code{ModQual}}{average tolerance of the set of modules (\%), default value is 3}
@@ -130,29 +156,43 @@ optimShd(lat,
     The result will include three variables (Gef0, Def0 and Bef0) with the
     irradiance/irradiation without shadows as a reference.}
 
-  \item{struct}{\code{list}. When \code{modeTrk='fixed'} or \code{modeTrk='horiz'} only a component named \code{L}, which is the height (meters) of the tracker, is needed. For two-axis trackers (\code{modeTrk='two'}), an additional component named \code{W}, the width of the tracker, is required. Moreover, two components named \code{Nrow} and \code{Ncol} are included under this list. These components define, respectively, the number of rows and columns of the whole set of trackers in the PV plant.}
+  \item{struct}{\code{list}. When \code{modeTrk='fixed'} or
+    \code{modeTrk='horiz'} only a component named \code{L}, which is the
+    height (meters) of the tracker, is needed. For two-axis trackers
+    (\code{modeTrk='two'}), an additional component named \code{W}, the
+    width of the tracker, is required. Moreover, two components named
+    \code{Nrow} and \code{Ncol} are included under this list. These
+    components define, respectively, the number of rows and columns of
+    the whole setof trackers in the PV plant.}
 
-  \item{distances}{\code{list}, whose three components are vectors of length 2: \describe{
-      \item{\code{Lew}}{ minimum and maximum distance (meters) between horizontal NS and two-axis trackers along the East-West direction}
-      \item{\code{Lns}}{ minimum and maximum distance (meters) between two-axis trackers along the North-South direction}
-      \item{\code{D}}{minimum and maximum distance (meters) between static surfaces.}
-  }}
-  \item{res}{numeric, difference (meters) between the different steps of the calculation}
-  \item{prog}{logical, show a progress bar; default value is TRUE}
-}
-\details{
-  The result of this function is a \code{\link{Shade-class}} object.  A new
-  method of \code{plot} for this class is defined
-  (\code{\link{plot-methods}}), and it will show the graphical
-  relation between the productivity and the distance between
-  trackers or static surfaces.
-}
+  \item{distances}{\code{list}, whose three components are vectors of
+    length 2: \describe{ \item{\code{Lew}}{ (only when
+    \code{modeTrk='horiz'} or \code{modeTrk='two'}), minimum and maximum
+    distance (meters) between horizontal NS and two-axis trackers along
+    the East-West direction.}  \item{\code{Lns}}{ (only when
+    \code{modeTrk='two'}), minimum and maximum distance (meters) between
+    two-axis trackers along the North-South direction.}
+    \item{\code{D}}{(only when \code{modeTrk='fixed'}), minimum and
+    maximum distance (meters) between fixed surfaces.}  } These
+    distances, in meters, are defined between the axis of the trackers.}
+    \item{res}{numeric; \code{optimShd} constructs a sequence from the
+    minimum to the maximum value of \code{distances}, with \code{res} as
+    the increment, in meters, of the sequence.}  \item{prog}{logical,
+    show a progress bar; default value is TRUE} }
+
+\details{ \code{optimShd} calculates the energy produced for every
+combination of distances as defined by \code{distances} and
+\code{res}. The result of this function is a \code{\link{Shade-class}}
+object.  A method of \code{shadeplot} for this class is defined
+(\code{\link{shadeplot-methods}}), and it shows the graphical relation
+between the productivity and the distance between trackers or fixed
+surfaces.  }
 
 \value{A \code{\linkS4class{Shade}} object.}
 
 \references{\itemize{
     \item Perpiñán, O.: Grandes Centrales Fotovoltaicas: producción, seguimiento y ciclo de vida. PhD Thesis, UNED, 2008. \url{http://e-spacio.uned.es/fez/view.php?pid=bibliuned:20080}.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
   }
 }
 
@@ -180,13 +220,13 @@ dist2x=list(Lew=c(30,50),Lns=c(20,50))
 ShdM2x<-optimShd(lat=lat, prom=prom, modeTrk='two',
         modeShd=c('area','prom'), distances=dist2x, struct=struct2x, res=5)
 
-plot(ShdM2x)
+shadeplot(ShdM2x)
 
-pLew=xyplot(Yf~GCR,data=ShdM2x,groups=factor(Lew),type=c('l','g'),
+pLew=xyplot(Yf~GRR,data=ShdM2x,groups=factor(Lew),type=c('l','g'),
     main='Productivity for each Lew value')
 pLew+glayer(panel.text(x[1], y[1], group.value))
 
-pLns=xyplot(Yf~GCR,data=ShdM2x,groups=factor(Lns),type=c('l','g'),
+pLns=xyplot(Yf~GRR,data=ShdM2x,groups=factor(Lns),type=c('l','g'),
     main='Productivity for each Lns value')
 pLns+glayer(panel.text(x[1], y[1], group.value))
 
@@ -202,9 +242,9 @@ Shd12Horiz<-optimShd(lat=lat, prom=prom,
         struct=structHoriz,
         modeShd='area')
 
-plot(Shd12Horiz)
+shadeplot(Shd12Horiz)
 
-xyplot(diff(Yf)~GCR[-1],data=Shd12Horiz,type=c('l','g'))
+xyplot(diff(Yf)~GRR[-1],data=Shd12Horiz,type=c('l','g'))
 
 #with Backtracking
 Shd12HorizBT<-optimShd(lat=lat, prom=prom,
@@ -214,8 +254,8 @@ Shd12HorizBT<-optimShd(lat=lat, prom=prom,
         struct=structHoriz,
         modeShd='bt')
 
-plot(Shd12HorizBT)
-xyplot(diff(Yf)~GCR[-1],data=Shd12HorizBT,type=c('l','g'))
+shadeplot(Shd12HorizBT)
+xyplot(diff(Yf)~GRR[-1],data=Shd12HorizBT,type=c('l','g'))
 
 
 ###Fixed system
@@ -226,7 +266,7 @@ Shd12Fixed<-optimShd(lat=lat, prom=prom,
         distances=distFixed, res=1,
         struct=structFixed,
         modeShd='area')
-plot(Shd12Fixed)
+shadeplot(Shd12Fixed)
 }
 
 \keyword{utilities}

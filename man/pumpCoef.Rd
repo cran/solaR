@@ -25,6 +25,6 @@
 
 \source{\url{http://net.grundfos.com/Appl/WebCAPS/custom?}}
 
-\references{Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
+\references{Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
 
 \keyword{datasets}

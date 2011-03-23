@@ -13,7 +13,7 @@
   \describe{
     \item{\code{FS}:}{numeric, shadows factor values for each
       combination of distances.}
-    \item{\code{GCR}:}{numeric, Ground Cover Ratio for each combination.}
+    \item{\code{GRR}:}{numeric, Ground Requirement Ratio for each combination.}
     \item{\code{Yf}:}{numeric, final productivity for each combination.}
     \item{\code{FS.loess}:}{A local fitting of \code{FS} with \code{loess}.}
     \item{\code{Yf.loess}:}{A local fitting of \code{Yf} with \code{loess}.}
@@ -36,8 +36,8 @@
   \describe{
     \item{as.data.frame}{\code{signature(x = "Shade")}: conversion to a
       data.frame including columns for distances (\code{Lew},
-      \code{Lns}, and \code{D}) and results (\code{FS}, \code{GCR} and \code{Yf}).}
-    \item{plot}{\code{signature(x = "Shade")}: display the results of
+      \code{Lns}, and \code{D}) and results (\code{FS}, \code{GRR} and \code{Yf}).}
+    \item{shadeplot}{\code{signature(x = "Shade")}: display the results of
       the iteration with a level plot for the two-axis tracking, or with
       conventional plot for horizontal tracking and fixed systems.}
     \item{xyplot}{\code{signature(x = "formula", data = "Shade")}:
@@ -49,7 +49,7 @@
 
 \references{\itemize{
     \item Perpiñán, O.: Grandes Centrales Fotovoltaicas: producción, seguimiento y ciclo de vida. PhD Thesis, UNED, 2008. \url{http://e-spacio.uned.es/fez/view.php?pid=bibliuned:20080}.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
   }
 }
 

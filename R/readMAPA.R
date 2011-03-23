@@ -38,11 +38,11 @@ readMAPA<-function(prov, est, start, end, lat=0, format='%d/%m/%Y'){
     end=format(as.Date(end, format=format), formatMAPA)}
   URL=paste('http://www.mapa.es/siar/exportador.asp?T=DD&P=',
     prov,'&E=',est,'&I=',
-    start,'&F=',end,sep='');
+    start,'&F=',end,sep='')
   cat('Downloading data from www.mapa.es/siar...\n')
     
   BD<-read.table(URL,header=TRUE,skip=1,fill=TRUE,dec=',', as.is=TRUE)
-  fecha<-as.POSIXct(BD$Fecha2, tz='UTC', format=formatMAPA);
+  fecha<-as.POSIXct(BD$Fecha2, tz='UTC', format=formatMAPA)
   BD$G0<-BD$Radiacion/3.6*1000 #Cambio de unidades. G debe ir en Wh/m2, NO en kWh/m2
   BD$Radiacion<-NULL          #eliminamos esta variable
     
@@ -60,6 +60,8 @@ readG0dm<-function(G0dm, Ta=25, lat=0,
                    promDays=c(17,14,15,15,15,10,18,18,18,19,18,13), 
                    source=''){	
   index=as.POSIXct(paste(year, 1:12, promDays, sep='-'), tz='UTC')
+  G0dm=as.numeric(G0dm)
+  Ta=as.numeric(Ta)
   G0dm.zoo<-zoo(data.frame(G0=G0dm, Ta=Ta), index)
   result<-new(Class='Meteo',
               latData=lat,

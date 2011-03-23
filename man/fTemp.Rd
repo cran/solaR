@@ -32,7 +32,7 @@
       average daytime and daily temperature profiles within Europe,
       Environmental Modelling & Software 21 (2006) 1650-1661.
 
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
   }
 }
 
@@ -45,6 +45,7 @@
 }
 
 \examples{
+\dontrun{
 #Aranjuez, Madrid
 BD<-readMAPA(28,3,'01/01/2008','31/12/2008')
 lat=41;
@@ -55,7 +56,7 @@ Temp<-fTemp(sol,BD)
 library(latticeExtra)
 wTemp=window(Temp, start=as.POSIXct('2008-03-01'), end=as.POSIXct('2008-03-31'))
 xyplot(wTemp)+layer_(panel.xblocks(x, DoY, col=c('lightgray', 'white')))
-
+}
 }
 
 \keyword{utilities}

@@ -51,7 +51,9 @@ prodPVPS(lat,
   %    \item{bd}{\code{list} as defined by \code{\link{readBD}}. This list
   %    is only required when \code{modeRad='bd'}.}
 
-  \item{sample, keep.night, corr, f}{See \code{\link{calcSol}} for details.}
+  \item{sample, keep.night}{See \code{\link{calcSol}} for
+    details.}
+    \item{corr, f}{See \code{\link{calcG0}} for details.}
   % \item{sample}{\code{character}, containing one of ‘"sec"’, ‘"min"’,
   %       ‘"hour"’.  This can optionally be preceded by a (positive or
   %       negative) integer and a space, or followed by ‘"s"’ (used by
@@ -109,7 +111,7 @@ prodPVPS(lat,
 
 \references{\itemize{
     \item Abella, M. A., Lorenzo, E. y Chenlo, F.: PV water pumping systems based on standard frequency converters. Progress in Photovoltaics: Research and Applications, 11(3):179–191, 2003, ISSN 1099-159X.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }}
 \author{Oscar Perpiñán Lamigueiro.}
 
@@ -122,6 +124,7 @@ data(pumpCoef)
 
 CoefSP8A44<-subset(pumpCoef, Qn==8&stages==44)
 
+\dontrun{
 prodSP8A44<-prodPVPS(lat=41,
              modeRad='mapa',
              mapa=list(prov=28,est=3,
@@ -132,6 +135,7 @@ print(prodSP8A44)
 xyplot(prodSP8A44)
 
 xyplot(Q~Gef|month, data=prodSP8A44, cex=0.5)
+}
 }
 
 \keyword{utilities}

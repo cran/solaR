@@ -32,7 +32,7 @@ fSolD(lat, BTd)
 
 }
 \references{
-  Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+  Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }
 \author{
   Oscar Perpiñán Lamigueiro.
@@ -66,7 +66,7 @@ WsZ=zoo(mat, fBTd(mode='serie'))
 
 for (i in seq_along(Lats)){
     SolDaux<-fSolD(lat=Lats[i],BTd=fBTd(mode='serie'));
-    WsZ[,i]<-12/pi*2*abs(SolDaux$ws);}
+    WsZ[,i]<-r2h(2*abs(SolDaux$ws))}
 
 p=xyplot(WsZ, superpose=TRUE,
         ylab=expression(omega[s] (h)), auto.key=FALSE)

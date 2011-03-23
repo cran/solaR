@@ -1,4 +1,4 @@
- # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@ calcGef<-function(lat,
                   corr, f,
                   betaLim=90, beta=abs(lat)-10, alfa=0,
                   iS=2, alb=0.2, horizBright=FALSE,
-                  modeShd='',    #modeShd=c('area','bt','prom');
+                  modeShd='',    #modeShd=c('area','bt','prom')
                   struct=list(), #list(W=23.11, L=9.8, Nrow=2, Ncol=8), 
                   distances=data.frame() #data.frame(Lew=40, Lns=30, H=0)){
                   ){
@@ -48,15 +48,15 @@ calcGef<-function(lat,
   } 
 
 ###Paso a inclinada y radiación efectiva
-  BT=("bt" %in% modeShd); 
-  angGen<-fTheta(radHoriz, beta, alfa, modeTrk, betaLim, BT, struct, distances);
-  inclin<-fInclin(radHoriz, angGen, iS, alb, horizBright);
+  BT=("bt" %in% modeShd) 
+  angGen<-fTheta(radHoriz, beta, alfa, modeTrk, betaLim, BT, struct, distances)
+  inclin<-fInclin(radHoriz, angGen, iS, alb, horizBright)
 
 ###Valores diarios, mensuales y anuales
-  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31); ###OJO
+  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31) ###OJO
   
   if (radHoriz@type=='prom') {
-    Gefdm=aggregate(inclin[,c('Bo','G', 'D', 'B', 'Gef', 'Def', 'Bef')]/1000,
+    Gefdm=aggregate(inclin[,c('Bo', 'Bn', 'G', 'D', 'B', 'Gef', 'Def', 'Bef')]/1000,
       by=as.yearmon, FUN=P2E, radHoriz@sample)       #kWh
     names(Gefdm)=paste(names(Gefdm), 'd', sep='')
 
@@ -66,7 +66,7 @@ calcGef<-function(lat,
     Gefy=zoo(t(colSums(Gefdm*DayOfMonth)),
       unique(year(index(Gefdm))))
   } else {
-    GefD=aggregate(inclin[,c('Bo','G', 'D', 'B', 'Gef', 'Def', 'Bef')],
+    GefD=aggregate(inclin[,c('Bo','Bn', 'G', 'D', 'B', 'Gef', 'Def', 'Bef')],
       by=truncDay, FUN=P2E, radHoriz@sample)         #Wh
     names(GefD)=paste(names(GefD), 'd', sep='')
 

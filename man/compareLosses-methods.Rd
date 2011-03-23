@@ -49,7 +49,7 @@ losses(as(ProdFixed, 'Gef'))
 compareLosses(ProdFixed, Prod2x, ProdHoriz)
 }
 
-\references{Perpiñán, O, Energía Solar Fotovoltaica, 2010.
+\references{Perpiñán, O, Energía Solar Fotovoltaica, 2011.
   (\url{http://procomun.wordpress.com/documentos/libroesf/})}
 
 \author{Oscar Perpiñán Lamigueiro}

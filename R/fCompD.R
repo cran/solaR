@@ -1,4 +1,4 @@
- # Copyright (C) 2009, 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010, 2009 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -43,7 +43,7 @@ if (corr!='none'){
 
   is.na(G0d) <- (G0d>Bo0d)
 
-  Ktd=G0d/Bo0d;
+  Ktd=G0d/Bo0d
 	
   Fd=switch(corr,
     CPR=FdKtCPR(Ktd),     ##Correlacion global-difusa diaria de Collares Pereira y Rabl
@@ -55,8 +55,8 @@ if (corr!='none'){
     stop('Wrong descriptor of correlation Fd-Ktd.')
     )
 
-  D0d=Fd*G0d;
-  B0d=G0d-D0d;
+  D0d=Fd*G0d
+  B0d=G0d-D0d
 
 } else {##corr=='none', y por tanto G0d es multivariante con G0d, D0d y B0d
 
@@ -72,8 +72,8 @@ if (corr!='none'){
   B0d=coredata(IrrData$B0d)
   G0d=coredata(IrrData$G0d)
   
-  Ktd=G0d/Bo0d;
-  Fd=D0d/G0d;
+  Ktd=G0d/Bo0d
+  Fd=D0d/G0d
   }
   
   result<- zoo(data.frame(Fd, Ktd, G0d, D0d, B0d), 

@@ -1,4 +1,4 @@
- # Copyright (C) 2009, 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2010, 2009 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -23,26 +23,26 @@ NmgPVPS<-function(pump, Pg, H, Gd, Ta=30,
   t=seq(-t0,t0,l=2*t0*Nm);
   d=Gd/(Gmax*2*t0)
   s=(d*pi/2-1)/(1-pi/4)
-  G=Gmax*cos(t/t0*pi/2)*(1+s*(1-cos(t/t0*pi/2)));
-  G[G<0]<-0;
-  G=G/(sum(G,na.rm=1)/Nm)*Gd;
-  Red<-expand.grid(G=G,Pnom=Pg,H=H,Ta=Ta);
-  Red<-within(Red,{Tcm<-Ta+G*(TONC-20)/800;
+  G=Gmax*cos(t/t0*pi/2)*(1+s*(1-cos(t/t0*pi/2)))
+  G[G<0]<-0
+  G=G/(sum(G,na.rm=1)/Nm)*Gd
+  Red<-expand.grid(G=G,Pnom=Pg,H=H,Ta=Ta)
+  Red<-within(Red,{Tcm<-Ta+G*(TONC-20)/800
                    Pdc=Pnom*G/1000*(1-lambda*(Tcm-25)) #Potencia DC disponible
-                   Pac=Pdc*eta});       #Rendimiento del inversor
+                   Pac=Pdc*eta})       #Rendimiento del inversor
 
-  res=cbind(Red,Q=0);
+  res=cbind(Red,Q=0)
 	
   for (i in seq_along(H)){
-    fun=fPump(pump, H[i]);
+    fun=fPump(pump, H[i])
     Cond=res$H==H[i]
     x=res$Pac[Cond]
     z=res$Pdc[Cond]
-    rango=with(fun,x>=lim[1] & x<=lim[2]); #Limito la potencia al rango de funcionamiento de la bomba
+    rango=with(fun,x>=lim[1] & x<=lim[2]) #Limito la potencia al rango de funcionamiento de la bomba
     x[!rango]<-0
     z[!rango]<-0
     y=res$Q[Cond]
-    y[rango]<-fun$fQ(x[rango]);
+    y[rango]<-fun$fQ(x[rango])
     res$Q[Cond]=y
     res$Pac[Cond]=x
     res$Pdc[Cond]=z
@@ -58,8 +58,8 @@ NmgPVPS<-function(pump, Pg, H, Gd, Ta=30,
 ###Abaco con los ejes X comunes
 
   ##Compruebo si tengo disponible el paquete lattice, que debiera haber sido cargado en .First.lib
-  lattice.disp<-("lattice" %in% .packages()); 
-  latticeExtra.disp<-("latticeExtra" %in% .packages()); 
+  lattice.disp<-("lattice" %in% .packages()) 
+  latticeExtra.disp<-("latticeExtra" %in% .packages()) 
   if (lattice.disp && latticeExtra.disp){
     tema<-theme
     tema1 <- modifyList(tema, list(layout.width = list(panel=1,  

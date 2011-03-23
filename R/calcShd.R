@@ -16,7 +16,7 @@
  #/
 calcShd<-function(radEf,##class='Gef'
                   modeTrk='fixed',     #c('two','horiz','fixed')
-                  modeShd='prom',      #modeShd=c('area','bt','prom');
+                  modeShd='prom',      #modeShd=c('area','bt','prom')
                   struct=list(), #list(W=23.11, L=9.8, Nrow=2, Ncol=8), 
                   distances=data.frame() #data.frame(Lew=40, Lns=30, H=0)){
                   ){
@@ -58,7 +58,7 @@ calcShd<-function(radEf,##class='Gef'
 
 
 ###Valores diarios, mensuales y anuales
-  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31); ###OJO
+  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31) ###OJO
   
   if (radEf@type=='prom') {
     Gefdm=aggregate(GefShd[,c('Gef0', 'Def0', 'Bef0', 'G', 'D', 'B', 'Gef', 'Def', 'Bef')]/1000,

@@ -10,7 +10,8 @@
 }
 \description{
   The function \code{local2Solar} converts the time zone of a \code{POSIXct} object to
-  the mean solar time and set the time zone to UTC. It includes two corrections:
+  the mean solar time and set its time zone to UTC as a synonym of mean
+  solar time. It includes two corrections:
   the difference of longitudes between the location and the time zone, and
   the daylight saving time.
 
@@ -58,7 +59,7 @@ lonHH(tz)
 \author{Oscar Perpiñán Lamigueiro.}
 
 \references{
-  Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+  Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }
 
 \note{
@@ -84,6 +85,7 @@ t.local.dst<-as.POSIXct("2006-07-08 10:07:52", tz='Europe/Madrid')
 local2Solar(t.local.dst)
 local2Solar(t.local.dst, lon=-3)
 
+\dontrun{
 ##Extracted from an example of calcG0
 ##NREL-MIDC
 ##La Ola, Lanai
@@ -106,6 +108,7 @@ idxLocal <- with(dat, as.POSIXct(paste(date, hour), format='\%m/\%d/\%Y \%H:\%M'
 head(idxLocal)
 idx <- local2Solar(idxLocal, lon=-156.9339)
 head(idx)
+}
 }
 
 \keyword{utilities}

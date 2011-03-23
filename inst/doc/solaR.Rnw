@@ -15,7 +15,7 @@
  
 \makeatletter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
-\usepackage{Sweave}
+\usepackage[noae]{Sweave}
 \newcommand{\Rcode}[1]{{\texttt{#1}}}
 \newcommand{\Robject}[1]{{\texttt{#1}}}
 \newcommand{\Rcommand}[1]{{\texttt{#1}}}
@@ -49,13 +49,15 @@
 
 \begin{document}
 
+\setkeys{Gin}{width=0.5\textwidth}
+
 \title{Introduction to \texttt{solaR}} 
 
 
 \author{Oscar Perpiñán Lamigueiro}
 
 
-\date{5 December 2010}
+\date{23 March 2011}
 
 \maketitle
 
@@ -63,18 +65,19 @@
 
 The  \texttt{solaR} package includes a set of functions which calculate
 the solar radiation incident on a photovoltaic generator and simulate the 
-performance of several applications of the photovoltaic energy.
-The current version of this package allows the whole calculation from both \emph{daily} and 
+performance of several applications of the photovoltaic energy \cite{Perpinan2011}.
+This package performs the whole calculation from both \emph{daily} and 
 \emph{intra-daily} global horizontal irradiation to the final productivity of 
 grid connected PV systems and water pumping PV systems. 
-Besides, the package includes a tool for the statistical analysis of
+Besides, the package includes several visualization methods based on
+the \texttt{lattice} and \texttt{latticeExtra} packages , and tools for the statistical analysis of
 the performance of a large PV plant composed of several systems.
 
 The package is constructed with \texttt{S4} classes and methods. 
 The time series are constructed with the \texttt{zoo} package \cite{Zeileis.Grothendieck2005}.
 
 
-<<echo=false,results=hide>>= 
+<<echo=false, results=hide>>= 
 library(solaR)
 oopt <- options() 
 options("digits"=4) 
@@ -117,11 +120,12 @@ SolI<-fSolI(SolD, sample='10 min', keep.night=FALSE)
 @
 
 %
+
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, height=6, fig=TRUE>>=
+<<echo=TRUE, fig=TRUE>>=
 mon=month.abb
-p<-xyplot(AlS*180/pi~AzS*180/pi,
+p<-xyplot(r2d(AlS)~r2d(AzS),
     groups=month,
     data=SolI, type='l', col='black',
     xlab=expression(psi[s]),ylab=expression(gamma[s]))
@@ -129,11 +133,11 @@ plab=p+glayer(panel.text(0, y[x==0], mon[group.value], pos=4, cex=0.8))
 print(plab)
 
 @
+
 \par\end{centering}
-
 \caption{\label{fig:AzimutAltura}Azimuth and height solar angles during the ``average days''.}
-
 \end{figure}
+
 
 These calculations can also be carried out for the whole year (figure \ref{fig:Declinacion}).
 
@@ -147,7 +151,7 @@ summary(solD)
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=6>>=
+<<echo=TRUE, fig=TRUE>>=
 p <- xyplot(solD$decl)
 print(p)
 @
@@ -157,7 +161,7 @@ print(p)
 
 \end{figure}
 
-These two functions have been included in a new function,  \texttt{calcSol}. 
+These two functions are included in a function,  \texttt{calcSol}. 
 This function constructs an object of class  \texttt{Sol} containing in its slots 
 the \texttt{zoo} objects created by \texttt{fSolD} and \texttt{fSolI}. 
 This class owns methods for getting and displaying information (for example, \texttt{as.zooD, as.zooI, xyplot}).
@@ -165,24 +169,28 @@ This class owns methods for getting and displaying information (for example, \te
 
 \section{Solar Radiation}
 
-Values of global horizontal irradiation are commonly available, 
-either as monthly averages of daily values or as a time series of daily 
-during one or several years.
-The analysis of the performance of a PV system starts from the transformation
-of the global horizontal irradiation to global, diffuse and direct horizontal irradiance
-and irradiation, and then irradiance and irradiation on the generator surface.
+Values of global horizontal irradiation are commonly available either
+as monthly averages of daily values or as a time series of daily
+during one or several years.  The analysis of the performance of a PV
+system starts from the transformation of the global horizontal
+irradiation to global, diffuse and direct horizontal irradiance and
+irradiation, and then irradiance and irradiation on the generator
+surface.
 
 
 \subsection{Irradiation and irradiance on the horizontal plane}
 
-The function \texttt{fCompD} extracts the diffuse and direct components from the daily global irradiation on a horizontal surface by means of regressions between the clearness index and the diffuse fraction parameters. 
-This function need the results from  \texttt{fSolD},
-a set of values of global horizontal irradiation ($\si{\watthour\per\meter\squared}$), 
-and the correlation between the clearness index and the diffuse fraction.
-The current version of  \texttt{solaR} includes several correlations 
-(type \texttt{help(corrFdKt)} for details). 
-Besides, the user may define a particular correlation through the argument \texttt{f}. 
-Once again for a certain day:
+The function \texttt{fCompD} extracts the diffuse and direct
+components from the daily global irradiation on a horizontal surface
+by means of regressions between the clearness index and the diffuse
+fraction parameters.  This function need the results from
+\texttt{fSolD}, a set of values of global horizontal irradiation
+($\si{\watthour\per\meter\squared}$), and the correlation between the
+clearness index and the diffuse fraction.  The current version of
+\texttt{solaR} includes several correlations (type
+\texttt{help(corrFdKt)} for details).  Besides, the user may define a
+particular correlation through the argument \texttt{f}.  Once again
+for a certain day:
 
 <<echo=TRUE>>=
 BTd=fBTd(mode='serie')
@@ -203,8 +211,9 @@ solD<-fSolD(lat,fBTd(mode='prom'))
 fCompD(solD, Rad, corr = 'Page') 
 @ 
 
-Let's use \texttt{corr='user'} to define a function with the correlation of Page. 
-Obviously, we shall obtain the same result as with \texttt{corr='Page'}.
+Let's use \texttt{corr='user'} to define a function with the
+correlation of Collares Pereira and Rabl \cite{Collares-Pereira.Rabl1979}. 
+Obviously, we shall obtain the same result as with \texttt{corr='CPR'}.
 
 <<echo=TRUE>>=
 fKTd=function(x){(0.99*(x<=0.17))+(x>0.17)*(1.188-2.272*x+9.473*x^2-21.856*x^3+14.648*x^4)}
@@ -223,13 +232,12 @@ Ta=c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2, 15.2)
 BD<-readG0dm(G0dm=G0dm, Ta=Ta, lat=37.2)
 compD<-fCompD(sol, BD, corr = 'Page') 
 compI<-fCompI(sol, compD)
-summary(compI)
 @
 
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, height=8>>=
+<<echo=TRUE, fig=TRUE>>=
 p <- xyplot(G0+B0+D0~w|month, data=compI, type='l',auto.key=list(space='right'))
 print(p)
 @
@@ -275,12 +283,11 @@ in  $\si{\mega\joule\per\meter\squared}$, but \texttt{readMAPA} converts the val
 
 <<echo=TRUE>>=
 Aranjuez<-readMAPA(28,3,'01/01/2009','31/12/2009')
-print(Aranjuez)
 @
 
 \begin{figure}
   \centering
-<<echo=TRUE, fig=TRUE, height=6>>=
+<<echo=TRUE, fig=TRUE>>=
 p=xyplot(G0~TempMedia|month, data=Aranjuez, type=c('p', 'r'))
 print(p)
 @ 
@@ -302,7 +309,7 @@ Temp<-fTemp(sol,Aranjuez)
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, width=8>>=
+<<echo=TRUE, fig=TRUE>>=
 wTemp=window(Temp, start=as.POSIXct('2009-03-01'), end=as.POSIXct('2009-03-31'))
 p=xyplot(wTemp, col='black', ylab='T')+layer_(panel.xblocks(x, DoY, col=c('lightgray', 'white')))
 print(p)
@@ -330,17 +337,15 @@ print(g0)
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, width=6>>=
+<<echo=TRUE, fig=TRUE>>=
 p=xyplot(g0)
 print(p)
 @
-\end{centering}
+\par\end{centering}
 \caption{Components of horizontal irradiation calculated with \texttt{calcG0}.\label{fig:calcG0}}
 \end{figure}
 
-With this version, \texttt{solaR} accepts intradaily irradiation data sources. 
-
-For example, the Measurement and Instrumentation Data Center of the NREL (NREL-MIDC) provides meteorological data from a variety of stations. We will try the \emph{La Ola - Lanai} station at Hawaii (\url{http://www.nrel.gov/midc/la_ola_lanai/}).
+\texttt{solaR} accepts intradaily irradiation data sources. For example, the Measurement and Instrumentation Data Center of the NREL (NREL-MIDC) provides meteorological data from a variety of stations. We will try the \emph{La Ola - Lanai} station at Hawaii (\url{http://www.nrel.gov/midc/la_ola_lanai/}).
 <<echo=TRUE>>=
 file='http://www.nrel.gov/midc/apps/plot.pl?site=LANAI&start=20090722&edy=19&emo=11&eyr=2010&zenloc=19&year=2010&month=11&day=1&endyear=2010&endmonth=11&endday=19&time=1&inst=3&inst=4&inst=5&inst=10&type=data&first=3&math=0&second=-1&value=0.0&global=-1&direct=-1&diffuse=-1&user=0&axis=1'
 
@@ -370,7 +375,7 @@ NRELMeteo <- zoo2Meteo(z, lat=lat)
 
 \begin{figure}
   \centering
-<<echo=TRUE, fig=TRUE, width=6>>=
+<<echo=TRUE, fig=TRUE>>=
 p <- xyplot(NRELMeteo)
 print(p)
 @ 
@@ -392,7 +397,7 @@ g0BRL <- calcG0(lat=lat, modeRad='bdI', bdI=NRELMeteo, corr='BRL')
 
 \begin{figure}
   \centering
-<<echo=TRUE, fig=TRUE, width=6>>=
+<<echo=TRUE, fig=TRUE>>=
 p <- xyplot(fd~kt, data=g0BRL, pch=19, alpha=0.3, cex=0.5)
 print(p)
 @ 
@@ -404,19 +409,42 @@ print(p)
 
 \subsection{Irradiation and irradiance on the generator plane}
 
-The solar irradiance incident on an inclined surface can be calculated from the direct and  diffuse irradiance on a horizontal surface, and from the evolution of the angles of the Sun and the surface. The transformation of the direct radiation is straightforward since only geometric considerations are needed. However, the treatment of the diffuse irradiance is more complex since it involves the modelling of the atmosphere. There are several models for the estimation of diffuse irradiance on an inclined surface. The one which combines simplicity and acceptable results is the proposal of Hay and McKay. This model divides the diffuse component in isotropic and anisotropic whose values depends on a anisotropy index.
-On the other hand, the effective irradiance, the fraction of the incident irradiance that reaches the cells inside a PV module, is calculated with the losses due to the angle of incidence and dirtiness. This behaviour can be simulated with a model proposed by Martin and Ruiz requiring information about the angles of the surface and the level of dirtiness \cite{Martin.Ruiz2001}.
+The solar irradiance incident on an inclined surface can be calculated
+from the direct and diffuse irradiance on a horizontal surface, and
+from the evolution of the angles of the Sun and the surface. The
+transformation of the direct radiation is straightforward since only
+geometric considerations are needed. However, the treatment of the
+diffuse irradiance is more complex since it involves the modelling of
+the atmosphere. There are several models for the estimation of diffuse
+irradiance on an inclined surface. The one which combines simplicity
+and acceptable results is the proposal of Hay and McKay. This model
+divides the diffuse component in isotropic and anisotropic whose
+values depends on a anisotropy index.  On the other hand, the
+effective irradiance, the fraction of the incident irradiance that
+reaches the cells inside a PV module, is calculated with the losses
+due to the angle of incidence and dirtiness. This behaviour can be
+simulated with a model proposed by Martin and Ruiz requiring
+information about the angles of the surface and the level of dirtiness
+\cite{Martin.Ruiz2001}.
 
 The orientation, azimuth and incidence angle are calculated from the
-results of \texttt{fSolI} or \texttt{calcSol} with the functions \texttt{fTheta} 
-\texttt{fInclin}. These functions can calculate the movement and irradiance for fixed systems, and two-axis and horizontal N-S trackers. Besides, the the movement of a horizontal NS tracker due to the
-backtracking strategy \cite{Panico.Garvison.ea1991} can be calculated with information
-about the tracker and the distance between the trackers included in the
-system.
+results of \texttt{fSolI} or \texttt{calcSol} with the functions
+\texttt{fTheta} and \texttt{fInclin}. These functions can calculate
+the movement and irradiance for fixed systems, and two-axis and
+horizontal N-S trackers. Besides, the movement of a horizontal NS
+tracker due to the backtracking strategy \cite{Panico.Garvison.ea1991}
+can be calculated with information about the tracker and the distance
+between the trackers included in the system.
 
-Both functions are integrated in  \texttt{calcGef}, which construct an object of class \texttt{Gef}. Once again, this class owns methods for obtaining and displaying information.
+Both functions are integrated in \texttt{calcGef}, which construct an
+object of class \texttt{Gef}. Once again, this class owns methods for
+obtaining and displaying information.
 
-For example, with the previous results, we can calculate the irradiance and irradiation on a fixed surface. The figure  \ref{fig:GefG0vsTheta} shows the relation between the effective and incident irradiance versus the cosine of the angle of incidence for this system.
+For example, with the previous results, we can calculate the
+irradiance and irradiation on a fixed surface. The figure
+\ref{fig:GefG0vsTheta} shows the relation between the effective and
+incident irradiance versus the cosine of the angle of incidence for
+this system.
 
 <<echo=TRUE>>=
 gef<-calcGef(lat=37.2, modeRad='prev', prev=g0, beta=30)
@@ -426,22 +454,28 @@ print(gef)
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE,width=6>>=
-p<-xyplot(Gef/G~cosTheta|month, data=gef, type=c('p', 'smooth'), par.settings=custom.theme(pch=19, alpha=0.5, cex=0.4))
+<<echo=TRUE, fig=TRUE>>=
+p<-xyplot(Gef/G~cosTheta|month, data=gef, type=c('p', 'smooth'), cex=0.4, alpha=0.5)
 print(p)
 @
 \par\end{centering}
-\caption{relation between the effective and incident irradiance versus the cosine of the angle of incidence for a fixed system.\label{fig:GefG0vsTheta}}
+\caption{Relation between the effective and incident irradiance versus the cosine of the angle of incidence for a fixed system.\label{fig:GefG0vsTheta}}
 \end{figure}
 
-The next lines of code calculate the movement of a N-S horizontal axis tracker with \emph{backtracking} and whose inclination angle is limited to $\ang{60}$. The evolution of the inclination angle is displayed in the figure \ref{fig:Backtracking}. 
+The next lines of code calculate the movement of a N-S horizontal axis
+tracker with \emph{backtracking} (\texttt{modeShd='bt'}) and whose inclination angle is
+limited to $\ang{60}$ (\texttt{betaLim=60}). The evolution of the inclination angle is
+displayed in the figure \ref{fig:Backtracking}. The meaning of the
+\texttt{distances} and \texttt{struct} arguments will be detailed in the
+\ref{sec:shadows} section.
 
-<<echo=TRUE>>=
+<<echo=FALSE>>=
 G0dm=c(2766, 3491, 4494, 5912, 6989, 7742, 7919, 7027, 5369, 3562, 2814,
 2179)
 Ta=c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2, 15.2)
 prom=list(G0dm=G0dm, Ta=Ta)
-
+@ 
+<<echo=TRUE>>=
 structHoriz=list(L=4.83);
 distHoriz=data.frame(Lew=structHoriz$L*4,H=0);
 
@@ -454,12 +488,12 @@ gefBT=calcGef(lat=37.2, prom=prom, sample='10 min',
 
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, width=6>>=
+<<echo=TRUE, fig=TRUE>>=
 p <- xyplot(r2d(Beta)~r2d(w),
      data=gefBT,
      type='l',
-     xlab=expression(omega (degrees)),
-     ylab=expression(beta (degrees)))
+     xlab=expression(omega),
+     ylab=expression(beta))
 print(p)
 @
 \par\end{centering}
@@ -485,16 +519,21 @@ fProd(inclin)
 
 First, \texttt{fProd} computes the Maximum Power Point (MPP) of the generator
 (\texttt{Vmpp} and \texttt{Impp}) at the irradiance and ambient temperature conditions 
-contained in \texttt{Inclin}. Next, it checks that this points is inside the MPP window
-of the inverter, as defined by  \texttt{inverter\$Vmin} and \texttt{inverter\$Vmax}). 
+contained in \texttt{Inclin}. Next, it checks that this point is inside the MPP window
+of the inverter, as defined by  \texttt{inverter\$Vmin} and \texttt{inverter\$Vmax}. 
 If the MPP value is outside this range, the function asigns the limit value to the voltage,
 and calculates the correspondent current value with a warning. 
-Anyway, the inverter input voltage and current are  \texttt{Vdc} e \texttt{Idc}:
+
+Anyway, the inverter input voltage and current are  \texttt{Vdc} e
+\texttt{Idc}. With the next piece of code, the \texttt{Vdc} value is
+set to \texttt{Vmin} (the minimum value of the MPP window of the
+inverter), $\SI{420}{\volt}$,  since \texttt{Vmpp} is below this value.
 
 <<echo=TRUE>>=
 inclin=data.frame(Gef=800,Ta=30)
 gen1 = list(Nms = 10, Nmp = 11)
-prod=fProd(inclin, generator=gen1)
+inv1=list(Ki = c(0.01,0.025,0.05), Pinv=25000, Vmin=420, Vmax=750, Gumb=20)
+prod=fProd(inclin, generator=gen1, inverter=inv1)
 print(prod)
 @
 
@@ -508,18 +547,23 @@ The function \texttt{prodGCPV} integrates the calculation procedure of
 irradiation, irradiance and simulation of the GCPV system. It constructs an object
 of class \texttt{ProdGCPV}. 
 
-The next code computes the productivity of the previous GCPV system working as 
-fixed, NS horizontal axis tracking and two-axis tracking systems. 
-The parameters of the generator, module, inverter and rest of the system are those by default in
-\texttt{prodGCPV}. The comparative of the performances is shown at the figure \ref{fig:ComparativaSeguimiento}.
+The next code computes the productivity of the previous GCPV system
+working as fixed, NS horizontal axis tracking and two-axis tracking
+systems.  The parameters of the generator, module, inverter and rest
+of the system are those by default in \texttt{prodGCPV}. The
+comparative of the intradaily power time series is shown at the figure
+\ref{fig:ComparativaSeguimiento}. Later on, the \texttt{compare} and
+\texttt{compareLosses} methods will be shown. They are useful for
+comparisons of \emph{yearly} values.
 
-<<echo=TRUE>>=
+<<echo=FALSE>>=
 lat=37.2;
 G0dm=c(2766, 3491, 4494, 5912, 6989, 7742, 7919, 7027, 5369, 3562, 2814,
 2179)
 Ta=c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2, 15.2)
 prom=list(G0dm=G0dm, Ta=Ta)
-
+@ 
+<<echo=TRUE>>=
 ProdFixed<-prodGCPV(lat=lat, prom=prom, keep.night=FALSE)
 Prod2x<-prodGCPV(lat=lat, prom=prom, modeTrk='two', keep.night=FALSE)
 ProdHoriz<-prodGCPV(lat=lat,prom=prom, modeTrk='horiz', keep.night=FALSE)
@@ -541,12 +585,76 @@ print(p)
 @
 \par\end{centering}
 
-\caption{Comparative of performance between tracker strategies.\label{fig:ComparativaSeguimiento}}
+\caption{Comparative of intradaily power between tracker strategies.\label{fig:ComparativaSeguimiento}}
+\end{figure}
+
+\subsection{Using \texttt{mergesolaR}}
+\label{sec:mergesolar}
+
+The \texttt{mergesolaR} method is designed to merge \emph{daily} time series
+of several \texttt{solaR} objects. 
+
+For example, we can obtain the daily irradiation of the whole set of
+meteorological stations of Madrid (Spain) and use this information to
+calculate the productivity of a grid connected PV system. It is
+possible to complete this process with the \texttt{lapply}
+function. Therefore we obtain a list of \texttt{ProdGCPV} objects:
+<<>>=
+EstMadrid <- subset(RedEstaciones, NomProv=='Madrid')
+nEstMadrid <- nrow(EstMadrid)
+namesMadrid <- EstMadrid$NomEst
+
+prodMadrid <- lapply(1:nEstMadrid,
+                     function(x){try(prodGCPV(lat=41, modeRad='mapa',
+                                                  mapa=list(prov=28, est=x,
+                                                    start='01/01/2009', end='31/12/2010'))
+                                     )})
+names(prodMadrid) <- namesMadrid
+okMadrid <- lapply(prodMadrid, class)!='try-error'
+prodMadrid <- prodMadrid[okMadrid]
+@ 
+
+In order to prevent from the erroneous behaviour of some stations, the
+code includes the use of \texttt{try}. Now it's time for
+\texttt{mergesolaR}. Since we have a list of objects, \texttt{do.call}
+can solve the problem:
+<<>>=
+YfMadrid <- do.call(mergesolaR, prodMadrid)
+summary(YfMadrid)
+@
+
+The \texttt{mergesolaR} for a set of \texttt{ProdGCPV} objects merges
+the daily time series of the \texttt{Yf} variable of each object. The
+result is a multivariate \texttt{zoo} object where each column is the
+daily productivity with the radiation data of each meteorological
+station. It can be displayed (for example) with the
+\texttt{horizonplot} function (figure \ref{fig:horizonMerge}). This
+result will be revisited with the \texttt{Target Diagram} tool (figure
+\ref{fig:TargetMerge}). 
+
+\begin{figure}
+  \centering
+<<fig=TRUE, echo=TRUE>>=
+print(
+      horizonplot(YfMadrid-rowMeans(YfMadrid),
+            origin=0,
+            scales=list(y=list(relation='same')),
+            colorkey=TRUE)
+      )
+@ 
+  \caption{\texttt{Horizonplot} of the result of a \texttt{mergesolaR}
+    call. Previously, the row mean is substracted from each column in
+    order to show the deviation of each meteorological station from
+    the daily mean of the set.}
+  \label{fig:horizonMerge}
 \end{figure}
 
 
 
+
+
 \subsection{Shadows}
+\label{sec:shadows}
 
 The shadows on PV generators alter the performance of the PV generators and
 reduce their productivity \cite{Perpinan2008}.
@@ -556,7 +664,13 @@ calculate the shadows in two-axis, horizontal axis and fixed systems, respective
 The function \texttt{fSombra6} is indicated for groups of 6 two-axis trackers. 
 Finally, \texttt{fSombra} is a wrapper to the previous functions.
 
-For example, the shadows factor of a tracker surrounded by five trackers is calculated in the next code box. The dimensions of the tracker structure and the configuration (rows and columns) of the plant are defined by \texttt{struct}, while the distances between the trackers are defined by \texttt{distances}. The figure \ref{fig:Sombreado2x} shows the evolution of the shadows factor during the day (X axis) and year (Y axis).
+For example, the shadows factor of a tracker surrounded by five
+trackers is calculated in the next code box. The dimensions of the
+tracker structure and the configuration (rows and columns) of the
+plant are defined by \texttt{struct}, while the distances between the
+trackers are defined by \texttt{distances}. The figure
+\ref{fig:Sombreado2x} shows the evolution of the shadows factor during
+the day (X axis) and year (Y axis).
 
 
 <<echo=FALSE>>=
@@ -575,7 +689,7 @@ Angles$FS=ShdFactor
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, width=6>>=
+<<echo=TRUE, fig=TRUE>>=
 p <- levelplot(FS~w*day, data=Angles, par.settings=custom.theme(region=brewer.pal('YlOrBr', n=9)))
 print(p)
 @
@@ -601,22 +715,21 @@ Besides, \texttt{distances} can define a irregular grid around the affected trac
 Since this tracker is situated at (0,0,0), \texttt{distances} must have five rows. 
 When \texttt{prom=TRUE}, \texttt{fSombra6} provides a weighted averaged of the shadows
 in the whole set of trackers, whose distribution in the PV plant is defined 
-by (\texttt{Nrow} y \texttt{Ncol}.
+by \texttt{Nrow} and \texttt{Ncol}.
 
 These functions are integrated in \texttt{calcShd}, \texttt{calcGef} and \texttt{prodGCPV}, 
-as these examples show:
+as these examples show.
 
+First, a two-axis tracking system.
 <<echo=TRUE>>=
 struct2x=list(W=23.11, L=9.8, Nrow=2, Ncol=8)
 dist2x=data.frame(Lew=40, Lns=30, H=0)
-@ 
 
-<<echo=TRUE>>=
 prod2xShd<-prodGCPV(lat=lat, prom=prom, modeTrk='two', 
     modeShd='area', struct=struct2x, distances=dist2x)
-print(prod2xShd)
 @ 
 
+Then, a N-S horizontal axis tracking system without backtracking, 
 <<echo=TRUE>>=
 #Horizontal N-S tracker
 structHoriz=list(L=4.83);
@@ -628,9 +741,9 @@ prodHorizShd<-prodGCPV(lat=lat, prom=prom, sample='10 min',
     modeShd='area', betaLim=60,
     distances=distHoriz,
     struct=structHoriz)
-print(prodHorizShd)
-
 @ 
+
+and a N-S horizontal axis tracking system with backtracking, 
 <<echo=TRUE>>=
 #With Backtracking
 prodHorizBT<-prodGCPV(lat=lat, prom=prom, sample='10 min', 
@@ -638,20 +751,19 @@ prodHorizBT<-prodGCPV(lat=lat, prom=prom, sample='10 min',
     modeShd='bt', betaLim=60,
     distances=distHoriz,
     struct=structHoriz)
-
-print(prodHorizBT)
 @
 
-Finally, we can compare these systems with the method
-\texttt{compare} (fig. \ref{fig:compare}), and calculate and compare their losses with the
-methods \texttt{losses} and \texttt{compareLosses} (fig. \ref{fig:compareLosses}), respectively.
+Finally, we can compare the \emph{yearly} performance of these systems
+with the method \texttt{compare} (fig. \ref{fig:compare}), and
+calculate and compare their \emph{yearly} losses with the methods
+\texttt{losses} and \texttt{compareLosses}
+(fig. \ref{fig:compareLosses}), respectively.
  
 \begin{figure}
   \centering
 <<echo=TRUE, fig=TRUE>>=
 comp <- compare(ProdFixed, Prod2x, ProdHoriz, prod2xShd, prodHorizShd, prodHorizBT)
 head(comp)
-
 @   
   \caption{Comparison of several \texttt{ProdGCPV} objects.}
   \label{fig:compare}
@@ -672,10 +784,11 @@ head(compL)
 
 The optimum distance between trackers or static structures of 
 a PV grid connected plant depends on two main factors: 
-the ground cover ratio (defined as the ratio of the PV array area to the total ground area), 
+the ground requirement ratio (defined as the ratio of the total ground
+area to the PV generator area), 
 and the productivity of the system including shadow losses. 
 Therefore, the optimum separation may be the one which achieves the highest productivity 
-with the highest ground cover ratio. 
+with the lowest ground requirement ratio (GRR). 
 However, this definition is not complete since the terrain characteristics 
 and the costs of wiring or civil works could alter the decision. 
 
@@ -708,8 +821,6 @@ Shd12Horiz<-optimShd(lat=lat, prom=prom,
                      struct=structHoriz,
                      modeShd='area',
                      prog=FALSE)
-
-print(Shd12Horiz)
 @
 
 The function \texttt{optimShd} constructs an object of class \texttt{Shade}
@@ -718,8 +829,8 @@ This class owns a S4 method of \texttt{plot} for displaying the results (figure 
 %
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, width=6>>=
-plot(Shd12Horiz)
+<<echo=TRUE, fig=TRUE>>=
+shadeplot(Shd12Horiz)
 @
 \par\end{centering}
 
@@ -739,14 +850,13 @@ Shd12Fixed<-optimShd(lat=lat, prom=prom,
                      struct=structFixed,
                      modeShd='area',
                      prog=FALSE)
-print(Shd12Fixed)
 @
 
 %
 \begin{figure}
 \centering
-<<echo=TRUE, fig=TRUE, width=6>>=
-plot(Shd12Fixed)
+<<echo=TRUE, fig=TRUE>>=
+shadeplot(Shd12Fixed)
 @
 
 \caption{Mutual shadows in a PV plant with fixed structures.\label{fig:optimEst}}
@@ -754,7 +864,9 @@ plot(Shd12Fixed)
 \end{figure}
 
 
-Last, we are interested in a two-axis tracker $\SI{23.11}{\meter}$ width and $\SI{9.8}{\meter}$ height. We will try to design a PV plant with a grid of 2 rows and 8 columns.
+Last, we are interested in a two-axis tracker whose dimensions are
+$\SI{23.11}{\meter}$ width and $\SI{9.8}{\meter}$ height. We will try
+to design a PV plant with a grid of trackers of 2 rows and 8 columns.
 
 <<echo=TRUE>>=
 struct2x=list(W=23.11, L=9.8, Nrow=2, Ncol=8)
@@ -767,21 +879,26 @@ and between $\SI{20}{\meter}$ and $\SI{50}{\meter}$ for the N-S direction.
 dist2x=list(Lew=c(30,50),Lns=c(20,50))
 @
 
-The results are obtained with a resolution of $\SI{5}{\meter}$ (figure \ref{fig:optim2x}):
-
+\texttt{optimShd} constructs a sequence from the minimum to the
+maximum value of \texttt{distances}, with \texttt{res} as the increment,
+in meters, of the sequence. In this example, \texttt{res=5}. 
 <<echo=TRUE>>=
 ShdM2x<-optimShd(lat=lat, prom=prom, modeTrk='two', 
                  modeShd=c('area','prom'), distances=dist2x, struct=struct2x, 
                  res=5, prog=FALSE)
-
-print(ShdM2x)
 @
+Besides, the \texttt{Shade} object includes the
+local fitting of the sequence of \texttt{Yf} and \texttt{FS} values
+(slots named \texttt{Yf.loess} and \texttt{FS.loess}). The
+\texttt{predict} method is used with these \texttt{loess} slots inside
+the \texttt{shadeplot} method of the \texttt{Shade} class (figure
+\ref{fig:optim2x}).
 
-%
+
 \begin{figure}
 \centering
-<<echo=TRUE, fig=TRUE, width=6>>=
-plot(ShdM2x)
+<<echo=TRUE, fig=TRUE>>=
+shadeplot(ShdM2x)
 @
 
 \caption{Mutual shadows in a two-axis tracking PV system for a combination of separations between trackers.\label{fig:optim2x}}
@@ -795,10 +912,14 @@ plot(ShdM2x)
 
 \subsection{Simulation of centrifugal pumps}
 
-The first step for the simulation of the performance of a PV pumping system (PVPS)
-is the characterization of the pump under the supposition of constant manometric height \cite{Abella.Lorenzo.ea2003}. With the function \texttt{fPump} compute the performance of the different parts of a centrifugal pump fed by a frequency converter following the affinity laws.
+The first step for the simulation of the performance of a PV pumping
+system (PVPS) is the characterization of the pump under the
+supposition of constant manometric height
+\cite{Abella.Lorenzo.ea2003}. The function \texttt{fPump} computes the
+performance of the different parts of a centrifugal pump fed by a
+frequency converter following the affinity laws.
 
-For example, with the function \texttt{fPump} we can characterize the performance of the SP8A44 pump (\url{http://net.grundfos.com/Appl/WebCAPS/InitCtrl?mode=1}) working with $H=\SI{40}{m}$. The information of this pump is stored in the dataset \texttt{pumpCoef}.
+For example, we can characterize the performance of the SP8A44 pump (\url{http://net.grundfos.com/Appl/WebCAPS/InitCtrl?mode=1}) working with $H=\SI{40}{m}$. The information of this pump is stored in the dataset \texttt{pumpCoef}.
 
 <<echo=TRUE>>=
 data(pumpCoef) 
@@ -831,7 +952,7 @@ SP8A44$etamb=with(SP8A44,etab*etam)
 %
 \begin{figure}
 \centering
-<<echo=TRUE, fig=TRUE, width=6>>=
+<<echo=TRUE, fig=TRUE>>=
 lab=c(expression(eta[motor]), expression(eta[pump]), expression(eta[mp]))
 p<-xyplot(etam+etab+etamb~Pac,data=SP8A44,type='l', ylab='Eficiencia')
 print(p+glayer(panel.text(x[1], y[1], lab[group.number], pos=3)))
@@ -846,7 +967,7 @@ print(p+glayer(panel.text(x[1], y[1], lab[group.number], pos=3)))
 %
 \begin{figure}
 \centering
-<<echo=TRUE, fig=TRUE, width=6>>=
+<<echo=TRUE, fig=TRUE>>=
 lab=c(expression(P[pump]), expression(P[hyd]))
 p<-xyplot(Pb+Ph~Pac,data=SP8A44,type='l', ylab='Power (W)', xlab='AC power (W)')
 print(p+glayer(panel.text(x[length(x)], y[length(x)], lab[group.number], pos=3)))
@@ -867,16 +988,19 @@ such as the length of the day, the daily irradiation and the maximum value of th
 With this profile, the performance of a PVPS can be calculated for several manometric heights and
 nominal PV power values. A nomogram can display the set of combinations. 
 This graphical tool can help to choose the best combination of pump and PV generator 
-for certain conditions of irradiation and height {Abella.Lorenzo.ea2003}. 
+for certain conditions of irradiation and height \cite{Abella.Lorenzo.ea2003}. 
 
-This kind of graphics are provided by the function \texttt{NmgPVPS}. For example, the \ref{fig:Nomograma}) is a nomogram for the SP8A44 pump working in a range of heights from 50 to 80 meters, 
-with a different PV generators. The peculiar shape of the curve of 50 meters shows that
-this pump does not work correctly with this height.
+This kind of graphics is provided by the function
+\texttt{NmgPVPS}. For example, the figure \ref{fig:Nomograma} is a nomogram
+for the SP8A44 pump working in a range of heights from 50 to 80
+meters, with different PV generators. The peculiar shape of the
+curve of 50 meters shows that this pump does not work correctly with
+this height.
 
 \texttt{}%
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, width=6>>=
+<<echo=TRUE, fig=TRUE>>=
 Pg=seq(3000,5500,by=500);
 H=seq(50,80,by=5);
 NmgSP8A44<-NmgPVPS(pump=CoefSP8A44, Pg=Pg, H=H, Gd=6000,
@@ -886,7 +1010,7 @@ print(NmgSP8A44$plot)
 \par\end{centering}
 
 \caption{Nomogram for the SP8A44 pump working in a range of heights from 50 to 80 meters, 
-with a different PV generators.\label{fig:Nomograma} }
+with different PV generators.\label{fig:Nomograma} }
 
 \end{figure}
 
@@ -895,12 +1019,12 @@ with a different PV generators.\label{fig:Nomograma} }
 
 A different approach is to simulate the performance of the PVPS
 following the same procedure as the one described for the GCPV systems.
-The function \texttt{prodPVPS} is the equivalent to the function \texttt{prodSFCR}.
+The function \texttt{prodPVPS} is the equivalent to the function \texttt{prodGCPV}.
 The inputs are very similar between them, although there are some changes 
-due to the different composition of the system. This function does not allow 
-the calculation of shadows.
+due to the different composition of the system. This function does not
+allow for the calculation of shadows.
 
-Once again with the SP8A44 pump, we compute the flow to be provided by this pump
+Once again with the SP8A44 pump, we compute the flow to be produced by this pump
 with a PV generator of $\SI{5500}{\wattpeak}$ and a manometric height of 50 meters. 
 The relation between flow and effective irradiance is displayed in the figure \ref{fig:CaudalIrradiancia}. 
 
@@ -910,14 +1034,14 @@ prodSP8A44<-prodPVPS(lat=41,
              mapa=list(prov=28,est=3,
                start='01/01/2009', end='31/12/2009'),
              pump=CoefSP8A44, Pg=5500, H=50)
-print(prodSP8A44)
+as.zooY(prodSP8A44)
 @
 
 
 
 \begin{figure}
 \begin{centering}
-<<echo=TRUE, fig=TRUE, width=6>>=
+<<echo=TRUE, fig=TRUE>>=
 p=xyplot(Q~Gef|month, data=prodSP8A44, 
   cex=0.5, type=c('p', 'smooth'), 
   col.symbol='gray', col.line='black')
@@ -929,18 +1053,25 @@ print(p)
 
 \end{figure}
 
-Let's try to obtain more water with this pump using a larger PV generator of $\SI{7000}{\wattpeak}$.
-However, we can check that this is not a correct decision. Both the productivity and the water flow have decreased. The figure  \ref{fig:CaudalIrradianciaLimite} shows that during the central months of the year, during the maximum irradiance periods, the pump reaches its limits of flow and frequency,
-and so the frequency converter stops the system.
+Let's try to obtain more water with this pump using a larger PV
+generator of $\SI{7000}{\wattpeak}$.  However, we can check that this
+is not a correct decision since the productivity has decreased.  The
+figure \ref{fig:CaudalIrradianciaLimite} shows that during the central
+months of the year, during the maximum irradiance periods, the pump
+reaches its limits of flow and frequency, and so the frequency
+converter stops the system. Finally, the figure
+\ref{fig:ComparisonPVPS} shows the evolution of the daily productivity
+of these two configurations.
 
 <<echo=TRUE>>=
 prodSP8A44Lim<-prodPVPS(lat, modeRad='prev', prev=prodSP8A44,
                         pump=CoefSP8A44, H=50, Pg=7000)  
+as.zooY(prodSP8A44Lim)
 @
 %
 \begin{figure}
 \begin{centering}
-<<echo=FALSE, fig=TRUE, width=6>>=
+<<echo=FALSE, fig=TRUE>>=
 p=xyplot(Q~Gef|month, data=prodSP8A44Lim, 
   cex=0.5, type=c('p', 'smooth'), 
   col.symbol='gray', col.line='black')
@@ -953,6 +1084,15 @@ print(p)
 
 \end{figure}
 
+\begin{figure}
+  \centering
+<<echo=TRUE, fig=TRUE>>=
+compPVPS <- mergesolaR(prodSP8A44, prodSP8A44Lim)
+print(xyplot(compPVPS, superpose=TRUE, ylab='Yf'))
+@ 
+  \caption{Comparison of the daily productivity of two pumping PV systems.\label{fig:ComparisonPVPS}}
+\end{figure}
+
 \section{Statistical analysis of PV plants}
 \label{sec:AnalisisEstadistico}
 In a PV plant, the individual systems are theoretically
@@ -960,7 +1100,7 @@ identical and their performance along the time should be the same. Due to their
 practical differences --power tolerance, dispersion losses, dust--,
 the individual performance of each system will deviate from the average
 behaviour. However, when a system is performing correctly, these deviations
-are constrained inside a range and should not be regarded as sign
+are constrained inside a range and should not be regarded as a sign
 of malfunctioning. 
 
 If these common deviations are assumed as a random process, a statistical
@@ -968,17 +1108,23 @@ analysis of the performance of the whole set of systems can identify
 a faulty system as the one that departs significantly from the mean
 behaviour.
 
-The functions \texttt{analyzeData} and \texttt{TargetDiagram} compare the daily performance of each system with a reference (for example, the median of the whole set) during  a time period of N days
-preceding the current day. They calculate a set of statistics of the performance of the
-PV plant as a whole, and another set of the comparison with the
-reference. This statistical analysis can be summarised with a graphical tool
-named "Target Diagram", which plots together the root mean square
-difference, the average difference and the standard deviation of the
-difference. Besides, this diagram includes the sign of the difference of
-the standard deviations of the system and the reference \cite{Perpinan2009}.
+The functions \texttt{analyzeData} and \texttt{Target Diagram} compare
+the daily performance of each system with a reference (for example,
+the median of the whole set) during a time period of N days preceding
+the current day. They calculate a set of statistics of the performance
+of the PV plant as a whole, and another set of the comparison with the
+reference. This statistical analysis can be summarised with a
+graphical tool named "Target Diagram", which plots together the root
+mean square difference, the average difference and the standard
+deviation of the difference. Besides, this diagram includes the sign
+of the difference of the standard deviations of the system and the
+reference \cite{Perpinan2009}.
 
-The next example uses a dataset of productivity from a PV plant composed of 22 systems (\texttt{data(prodEx)}). 
-It is clear that the system no.22 is not working correctly during these periods (figure \ref{fig:TargetDiagram}).
+The next example uses a dataset of productivity from a PV plant
+composed of 22 systems (\texttt{data(prodEx)}).  It is clear that the
+system no.20 is not working correctly during these periods
+(horizonplot of figure \ref{fig:StatisticalAnalysis} and target
+diagram of figure \ref{fig:TargetDiagram}).
 
 <<echo=TRUE>>=
 data(prodEx)
@@ -988,12 +1134,19 @@ prodStat<-analyzeData(prodEx)
 %
 \begin{figure}
   \centering
-<<echo=TRUE, fig=TRUE, width=6>>=
-p=xyplot(prodStat$stat)
+<<echo=TRUE, fig=TRUE>>=
+dif<-prodEx-prodStat$stat$Median;
+
+day=as.Date('2008-8-29')
+p <- horizonplot(window(dif, start=day-60, end=day),
+                 origin=0, layout=c(1, 22), 
+                 colorkey=TRUE, colorkey.digits=1,
+                 scales=list(y=list(relation="same")))
+
 print(p)
 @ 
 
-\caption{Statistical analysis of a set of 22 PV systems.}
+\caption{Horizonplot of the differences of productivity of a set of 22 PV systems.}
 \label{fig:StatisticalAnalysis}
 \end{figure}
 
@@ -1001,12 +1154,9 @@ print(p)
 \begin{figure}
   \centering
  
-<<echo=TRUE, fig=TRUE, width=6>>=
-day=as.Date('2008-8-29')
+<<echo=TRUE, fig=TRUE>>=
 ndays=c(5, 10, 15, 20)
-
 palette=brewer.pal(n=length(ndays), name='Set1')
-
 TDColor<-TargetDiagram(prodEx, end=day, ndays=ndays,
 color=palette)
 print(TDColor$plot)
@@ -1015,7 +1165,41 @@ print(TDColor$plot)
   \label{fig:TargetDiagram}
 \end{figure}
 
+Let's remember the example devoted to \texttt{mergesolaR}, with the
+result displayed in the figure \ref{fig:horizonMerge}. The function
+\texttt{TargetDiagram} is an alternative tool to show the behaviour of
+the set of meteorological stations (figure \ref{fig:TargetMerge}).
+
+\begin{figure}
+  \centering
+<<echo=TRUE, fig=TRUE, width=8>>=
+TDMadrid <- TargetDiagram(YfMadrid, 
+                    end=as.POSIXct('2010-12-31'), 
+                    ndays=c(10, 20, 30, 40, 50, 60), cex=0.5)
+print(TDMadrid$plot)
+@ 
+  \caption{Target Diagram of the result of the mergesolaR example}
+  \label{fig:TargetMerge}
+\end{figure}
+
 \section{Changes}
+
+\subsection*{solaR 0.22}
+
+\begin{itemize}
+\item A new \texttt{mergesolaR} method has been defined for merging
+  \texttt{solaR} objects.
+\item The calculation of the sunset time has been improved.
+\item The voltage dependency of the efficiency curve of the inverter
+  is now included in \texttt{fProd} and \texttt{calcGCPV}.
+\item The default values of the \texttt{module}, \texttt{generator}
+  and \texttt{inverter} of both \texttt{fProd}, \texttt{calcGCPV} and
+  \texttt{optimShd} is now documented.
+\item The help page of optimShd now explains correctly the concept of GRR.
+\item The plot method for Shade has been renamed to shadeplot.
+\item The \texttt{as.data.frame} method of the \texttt{Shade} class is
+  now exported.
+\end{itemize}
 
 \subsection*{solaR 0.21}
 

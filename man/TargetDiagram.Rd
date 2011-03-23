@@ -31,7 +31,7 @@
 }
 \usage{
 analyzeData(x, ref=NULL)
-TargetDiagram(x, end, ndays, ref=NULL, color=NULL, ...)
+TargetDiagram(x, end, ndays, ref=NULL, color=NULL, cex=0.8,...)
 }
 \arguments{
 
@@ -42,14 +42,17 @@ TargetDiagram(x, end, ndays, ref=NULL, color=NULL, ...)
   \item{ref}{A \code{zoo} object to be used as the reference unit. If
     \code{ref=NULL} (default), the reference is the median of the set.}
 
-  \item{end}{A \code{Date} or \code{POSIXct} object. It defines the last
+  \item{end}{A \code{Date} or \code{POSIXct} object (same class as the
+    index of \code{x}). It defines the last
     day of the window to be included in the analysis.}
 
-  \item{ndays}{A numeric vector, number of days to be included in each
+  \item{ndays}{A numeric vector, where each element is the number of days to be included in each
     analysis.}
 
   \item{color}{If \code{color=NULL} (default) the \code{plot} is black
     and white and each analysis is contained in different areas.}
+
+  \item{cex}{Size of the labels.}
 
   \item{...}{Arguments to be read by \code{xyplot}.}
 }
@@ -87,7 +90,7 @@ TargetDiagram(x, end, ndays, ref=NULL, color=NULL, ...)
       2009.\url{http://oa.upm.es/1843/1/PERPINAN_ART2009_01.pdf}
 
     \item Taylor, K. E. Summarizing multiple aspects of model performance
-      in a single diagram Program for Climate Model Diagnosis and
+      in a single diagram, Program for Climate Model Diagnosis and
       Intercomparison, 2000, \url{http://www-pcmdi.llnl.gov/publications/pdf/55.pdf}
 
   }
@@ -105,7 +108,11 @@ data(prodEx)
 prodStat<-analyzeData(prodEx)
 xyplot(prodStat$stat)
 dif<-prodEx-prodStat$stat$Median;
-xyplot(dif[,1:18], superpose=TRUE, auto.key=FALSE)
+##xyplot(dif[,1:18], superpose=TRUE, auto.key=FALSE)
+day=as.Date('2008-8-29')
+horizonplot(window(dif, start=day-90, end=day),
+origin=0, layout=c(1, 22), colorkey=TRUE, colorkey.digits=1,
+scales=list(y=list(relation="same")))
 
 ###With a external reference
 ref1=apply(prodEx, 1, median, na.rm=1)
@@ -113,7 +120,7 @@ prodStat1=analyzeData(prodEx, ref=ref1)
 identical(prodStat, prodStat1)
 
 ###Target Diagram
-day=as.Date('2008-8-29')
+
 ndays=c(5, 10, 15, 20)
 
 #Color

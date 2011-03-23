@@ -28,7 +28,7 @@ analyzeData<-function(x, ref=NULL){
 ###Referencia con sus estadísticos
   if (is.null(ref)) {ref<-Median}
   MediaRef<-mean(ref,na.rm=1)
-  SDRef<-sd(ref,na.rm=1);
+  SDRef<-sd(ref,na.rm=1)
 
 ###Diferencia de cada variable (columna) respecto a la referencia
   Dif<-x-ref
@@ -37,13 +37,13 @@ analyzeData<-function(x, ref=NULL){
   SDUnit<-sd(x, na.rm=1) ##SD de CADA variable
   ME<-apply(Dif,2,mean,na.rm=1)
   RMSDc<-apply(Dif,2,sd,na.rm=1)
-  DifSD<-SDUnit-SDRef;
+  DifSD<-SDUnit-SDRef
 
   ##Valores relativos (respecto a la desv estandar de la referencia)
-  rRMSDc<-RMSDc/SDRef;
-  rME<-ME/SDRef;
-  RMSD<-sqrt(RMSDc^2+ME^2);
-  rRMSD<-RMSD/SDRef;
+  rRMSDc<-RMSDc/SDRef
+  rME<-ME/SDRef
+  RMSD<-sqrt(RMSDc^2+ME^2)
+  rRMSD<-RMSD/SDRef
 
   result<-list(stat=zoo(x.stat, index(x)),
                err=data.frame(Unit=names(x),

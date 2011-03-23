@@ -18,7 +18,9 @@
     \item{\code{GefI}:}{Object of class \code{"zoo"} created by
       \code{\link{fInclin}}. It contains these components:
       \describe{
-        \item{Bo: }{Extra-atmospheric irradiance on the inclined surface (W/m²)}
+        \item{Bo: }{Extra-atmospheric irradiance on the inclined surface
+	  (W/m²)}
+	\item{Bn: }{Direct normal irradiance (W/m²)}
         \item{G, B, D, Di, Dc, R: }{Global, direct, diffuse (total, isotropic
           and anisotropic) and albedo irradiance incident on an inclined
           surface (W/m²)}
@@ -70,10 +72,18 @@
       \code{zoo} object with daily values.}
     \item{as.zooI}{\code{signature(object = "Gef")}: conversion to a
       \code{zoo} object with intradaily values.}
+    \item{as.zooM}{\code{signature(object = "Gef")}: conversion to a
+      \code{zoo} object with monthly values.}
+    \item{as.zooY}{\code{signature(object = "Gef")}: conversion to a
+      \code{zoo} object with yearly values.}
     \item{as.data.frameD}{\code{signature(object = "Gef")}: conversion
       to a data.frame with daily values.}
     \item{as.data.frameI}{\code{signature(object = "Gef")}: conversion
       to a data.frame with intradaily values.}
+    \item{as.data.frameM}{\code{signature(object = "Gef")}: conversion
+      to a data.frame with monthly values.}
+    \item{as.data.frameY}{\code{signature(object = "Gef")}: conversion
+      to a data.frame with yearly values.}
     \item{indexD}{\code{signature(object = "Gef")}: index of the
       \code{solD} slot. }
     \item{indexI}{\code{signature(object = "Gef")}: index of the
@@ -91,7 +101,7 @@
 }
 
 \references{
-  Perpiñán, O, Energía Solar Fotovoltaica, 2010.
+  Perpiñán, O, Energía Solar Fotovoltaica, 2011.
   (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }
 \author{

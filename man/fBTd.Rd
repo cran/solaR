@@ -30,7 +30,7 @@ fBTd(mode = "prom",
 \author{Oscar Perpiñán Lamigueiro}
 
 
-\references{Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
+\references{Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
 
 \seealso{
   \code{\link{fSolD}},

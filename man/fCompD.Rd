@@ -48,7 +48,7 @@ fCompD(sol, G0d, corr = "CPR",f)
   \item{B0d}{numeric, the direct irradiation on a horizontal surface (Wh/m²)}
 }
 
-\references{ Perpiñán, O, Energía Solar Fotovoltaica, 2010.
+\references{ Perpiñán, O, Energía Solar Fotovoltaica, 2011.
   (\url{http://procomun.wordpress.com/documentos/libroesf/})}
 
 \author{

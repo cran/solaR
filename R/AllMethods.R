@@ -1,4 +1,4 @@
- # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -465,6 +465,17 @@ header <-function(object){
       paste(round(getLat(object, 'deg'),1), 'degrees\n\n'))
 }
 
+setMethod('show', 'Sol',
+          function(object){
+            cat('Object of class ', class(object),'\n\n')
+            cat('Latitude:',
+                paste(round(getLat(object, 'deg'),1), 'degrees\n\n'))
+            cat('Daily values:\n')
+            print(summary(object@solD))
+            cat('\nIntradaily values:\n')
+            print(summary(object@solI))
+          }
+          )
 
 setMethod('show', 'G0',
           function(object){
@@ -542,9 +553,14 @@ setMethod('show', 'ProdPVPS',
 ## myTheme$strip.background$col='transparent'
 ## lattice.options(default.theme=myTheme)
 
+solaR.theme=custom.theme.2(pch=19, cex=0.7)
+solaR.theme$strip.background$col='lightgray'
+solaR.theme$strip.shingle$col='transparent'
+
+
 setMethod('xyplot',
           signature=c(x='formula', data='zoo'),
-          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
+          definition=function(x, data, par.settings=solaR.theme,...){            
             data0=as.data.frame(data)
             ind=index(data)
             data0$day=doy(ind) ##Incorporo dia, mes y año para facilitar la formula.
@@ -553,7 +569,8 @@ setMethod('xyplot',
             if (!('w' %in% names(data0))){
               data0$w=h2r(hms(ind)-12) ##hora solar en radianes
             }
-            xyplot(x, data0, par.settings=par.settings, ...)
+            xyplot(x, data0, par.settings=par.settings,
+                   strip=strip.custom(strip.levels=c(TRUE, TRUE)),...)
           }
           )
 
@@ -561,7 +578,7 @@ setMethod('xyplot',
           signature=c(x='formula', data='Meteo'),
           definition=function(x, data, ...){
             data0=getData(data)
-            xyplot(x, data0, ...)##data0 es un zoo, luego ahora aplica el método data='zoo'
+            xyplot(x, data0, ...) ##es un zoo, luego ahora aplica el método data='zoo'
           }
           )
 
@@ -584,15 +601,22 @@ setMethod('xyplot',
 
 setMethod('xyplot',
           signature=c(x='Meteo', data='missing'),
-          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
+          definition=function(x, data, par.settings=solaR.theme,
+            strip=FALSE, strip.left=TRUE,...){
             x0=getData(x)
-            xyplot(x0, par.settings=par.settings, ...)
+            N=ncol(x0)
+            xyplot(x0, par.settings=par.settings,
+                   layout=c(1, N),
+                   scales=list(cex=0.6, rot= 0),
+                   strip=strip, strip.left=TRUE,
+                   par.strip.text=list(cex=0.6),
+                   ...)
           }
           )
 
 setMethod('xyplot',
           signature=c(x='G0', data='missing'),
-          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
+          definition=function(x, data, par.settings=solaR.theme, ...){
             x0=as.zooD(x, complete=FALSE)
             xyplot(x0, par.settings=par.settings,
                    ...,
@@ -604,17 +628,23 @@ setMethod('xyplot',
 
 setMethod('xyplot',
           signature=c(x='ProdGCPV', data='missing'),
-          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
+          definition=function(x, data, par.settings=solaR.theme, ...){
             x0=as.zooD(x, complete=FALSE)
-            xyplot(x0, par.settings=par.settings, ...)
+            xyplot(x0, layout=c(1, 3),
+                   strip=FALSE,
+                   strip.left=TRUE,
+                   par.settings=par.settings, ...)
           }
           )
 
 setMethod('xyplot',
           signature=c(x='ProdPVPS', data='missing'),
-          definition=function(x, data, par.settings=custom.theme.2(pch=19, cex=0.8), ...){
+          definition=function(x, data, par.settings=solaR.theme, ...){
             x0=as.zooD(x, complete=FALSE)
-            xyplot(x0, par.settings=par.settings, ...)
+            xyplot(x0, layout=c(1, 3),
+                   strip=FALSE,
+                   strip.left=TRUE,
+                   par.settings=par.settings, ...)
           }
           )
 
@@ -668,7 +698,7 @@ setMethod('levelplot',
 setMethod('as.data.frame', 'Shade',
           function(x, ...){
             res <- cbind(x@distances,
-                         data.frame(FS=x@FS, GCR=x@GCR, Yf=x@Yf)
+                         data.frame(FS=x@FS, GRR=x@GRR, Yf=x@Yf)
                          )
             return(res)
           }
@@ -695,8 +725,14 @@ setMethod('xyplot',
           }
           )
 
-setMethod('plot', 'Shade',
-          function(x,..., main='', n=9){
+setGeneric('shadeplot', function(x, ...)standardGeneric('shadeplot'))
+
+setMethod('shadeplot', signature(x='Shade'),
+          function(x, y, ...,
+                   main='',
+                   xlab=expression(L[ew]),
+                   ylab=expression(L[ns]),
+                   n=9){
             red=x@distances
             FS.loess=x@FS.loess
             Yf.loess=x@Yf.loess
@@ -708,21 +744,16 @@ setMethod('plot', 'Shade',
               Red=expand.grid(Lew=Lew,Lns=Lns)
               FS=predict(FS.loess,Red)
               AreaG=with(struct,L*W)
-              GCR=Red$Lew*Red$Lns/AreaG;
+              GRR=Red$Lew*Red$Lns/AreaG
               FS.m<-matrix(1-FS,
                            nrow=length(Lew),
                            ncol=length(Lns))
-              GCR.m<-matrix(GCR,
+              GRR.m<-matrix(GRR,
                             nrow=length(Lew),
                             ncol=length(Lns))
               niveles=signif(seq(min(FS.m),max(FS.m),l=n+1),3)
-              pruebaCB<-("RColorBrewer" %in% .packages());
+              pruebaCB<-("RColorBrewer" %in% .packages())
               if (pruebaCB) {
-                ## paleta=heat_hcl(n,
-                ##   h = c(10, 100),
-                ##   c. = c(100, 20),
-                ##   l = c(40, 100),
-                ##   power = c(1/5, 1.5))
                 paleta=rev(brewer.pal(n, 'YlOrRd'))
               } else {
                 paleta=rev(heat.colors(n))}
@@ -730,14 +761,14 @@ setMethod('plot', 'Shade',
               filled.contour(x=Lew,y=Lns,z=FS.m,...,
                              col=paleta, #levels=niveles,
                              nlevels=n,
-                             plot.title=title(xlab=expression(L[ew]),
-                               ylab=expression(L[ns]), main=main),
+                             plot.title=title(xlab=xlab,
+                               ylab=ylab, main=main),
                              plot.axes={
                                axis(1);axis(2);
                                contour(Lew, Lns, FS.m,
                                        nlevels=n, #levels=niveles,
                                        col="black", labcex=.8,  add=TRUE)
-                               contour(Lew, Lns, GCR.m,
+                               contour(Lew, Lns, GRR.m,
                                        col="black", lty=3, labcex=.8, add=TRUE)
                                grid(col="white",lty=3)},
                              key.title=title("1-FS",cex.main=.8))
@@ -745,16 +776,15 @@ setMethod('plot', 'Shade',
             if (mode=='horiz') {
               Lew=seq(min(red$Lew),max(red$Lew),length=100)
               FS=predict(FS.loess,Lew)
-              GCR=Lew/struct$L;
-              plot(GCR,1-FS,main=main,type='l',...)
+              GRR=Lew/struct$L
+              plot(GRR,1-FS,main=main,type='l',...)
               grid()    }
             if (mode=='fixed'){
               D=seq(min(red$D),max(red$D),length=100)
               FS=predict(FS.loess,D)
-              GCR=D/struct$L;
-              plot(GCR,1-FS,main=main,type='l',...)
+              GRR=D/struct$L
+              plot(GRR,1-FS,main=main,type='l',...)
               grid()    }
-
           }
           )
 
@@ -781,7 +811,7 @@ setMethod('losses',
 setMethod('losses',
           signature=(object='ProdGCPV'),
           definition=function(object){
-            DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31); ###OJO
+            DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31) ###OJO
             dat <- as.data.frameY(object, complete=TRUE)
             module0=object@module
             module0$CoefVT=0 ##No losses with temperature
@@ -820,7 +850,12 @@ setGeneric('compareLosses', signature='...', function(...){standardGeneric('comp
 setMethod('compareLosses', 'ProdGCPV',
           definition=function(...){
             dots <- list(...)
-            nms <- as.character(substitute(list(...)))[-1]
+            nms0 <- substitute(list(...))
+            if (!is.null(names(nms0))){ ##estamos dentro de do.call
+              nms <- names(nms0[-1])
+            } else {
+              nms <- as.character(nms0[-1])
+            }
             foo <- function(object, label){
               yY <- losses(object)
               yY <- cbind(yY, name=label)
@@ -834,7 +869,7 @@ setMethod('compareLosses', 'ProdGCPV',
                          auto.key=list(corner=c(0.95,0.2), cex=0.7), xlab='Losses (%)')
             print(p)
             return(z)
-            }
+          }
           )
 
 
@@ -843,7 +878,12 @@ setGeneric('compare', signature='...', function(...){standardGeneric('compare')}
 
 compareFunction <- function(..., vars){
   dots <- list(...)
-  nms <- as.character(substitute(list(...)))[-1]
+  nms0 <- substitute(list(...))
+  if (!is.null(names(nms0))){ ##estamos dentro de do.call
+    nms <- names(nms0[-1])
+  } else {
+    nms <- as.character(nms0[-1])
+  }
   foo <- function(object, label){
     yY <- colMeans(as.data.frameY(object, complete=TRUE)[vars])
     yY <- cbind(stack(yY), name=label)
@@ -886,3 +926,168 @@ setMethod('compare',
             return(res)
           }
           )
+
+###merge y horizon
+setGeneric('mergesolaR', signature='...', function(...){standardGeneric('mergesolaR')})
+
+fooMeteo <- function(object, var){yY <- getData(object)[,var]}
+
+fooG0 <- function(object, var){yY <- as.zooD(object)[,var]}
+
+mergeFunction <- function(..., foo, var){
+  dots <- list(...)
+  dots <- lapply(dots, as, class(dots[[1]])) ##el primer elemento es el que dicta la clase a todos
+  nms0 <- substitute(list(...))
+  if (!is.null(names(nms0))){ ##estamos dentro de do.call
+    nms <- names(nms0[-1])
+  } else { ##llamada convencional
+    nms <- as.character(nms0[-1])
+  }
+  cdata <- sapply(dots, FUN=foo, var, simplify=FALSE)
+  names(cdata) <- nms
+  z <- do.call(merge, cdata)
+  z
+}
+
+setMethod('mergesolaR', 
+          signature='Meteo',
+          definition=function(...){
+            res <- mergeFunction(..., foo=fooMeteo, var='G0')
+            res
+          }
+          )
+
+setMethod('mergesolaR', 
+          signature='G0',
+          definition=function(...){
+            res <- mergeFunction(..., foo=fooG0, var='G0d')
+            res
+          }
+          )
+
+setMethod('mergesolaR', 
+          signature='Gef',
+          definition=function(...){
+            res <- mergeFunction(..., foo=fooG0, var='Gefd')
+            res
+          }
+          )
+
+setMethod('mergesolaR', 
+          signature='ProdGCPV',
+          definition=function(...){
+            res <- mergeFunction(..., foo=fooG0, var='Yf')
+            res
+          }
+          )
+
+setMethod('mergesolaR', 
+          signature='ProdPVPS',
+          definition=function(...){
+            res <- mergeFunction(..., foo=fooG0, var='Yf')
+            res
+          }
+          )
+
+## setGeneric('horizonsolaR', signature='...', function(...){standardGeneric('horizonsolaR')})
+
+## setMethod('horizonsolaR',
+##           signature='Meteo',
+##           definition=function(...){
+##             z <- mergesolaR(..., var='G0')
+##             z <- z-rowMeans(z, na.rm=1)
+##             horizonplot(z, colorkey=TRUE)
+##           }
+##           )
+
+## setMethod('horizonsolaR',
+##           signature='G0',
+##           definition=function(...){
+##             z <- mergesolaR(..., var='G0d')
+##             z <- z-rowMeans(z, na.rm=1)
+##             horizonplot(z, colorkey=TRUE)
+##           })
+
+
+## setMethod('horizonsolaR',
+##           signature='Gef',
+##           definition=function(...){
+##             z <- mergesolaR(..., var='Gefd')
+##             z <- z-rowMeans(z, na.rm=1)
+##             horizonplot(z, colorkey=TRUE)
+##           })
+
+## setMethod('horizonsolaR',
+##           signature='ProdGCPV',
+##           definition=function(...){
+##             z <- mergesolaR(..., var='Yf')
+##             z <- z-rowMeans(z, na.rm=1)
+##             horizonplot(z, colorkey=TRUE)
+##           })
+
+###splom
+## splomsolaR <- function(x, ...){
+##   splom(x,
+##         panel=panel.hexbinplot,
+##         diag.panel = function(x, ...){
+##           yrng <- current.panel.limits()$ylim
+##           d <- density(x, na.rm=TRUE)
+##           d$y <- with(d, yrng[1] + 0.95 * diff(yrng) * y / max(y) )
+##           panel.lines(d)
+##           diag.panel.splom(x,...)
+##         },
+##         lower.panel = function(x, y, ...){
+##           panel.hexbinplot(x, y, ...)
+##           panel.loess(x, y, ..., col = 'red')
+##         },
+##         pscale=0, varname.cex=0.7
+##         )
+##   }
+
+## setMethod('splom',
+##           signature='Meteo',
+##           definition=function(x, ...){
+##             df <- as.data.frame(getData(x))
+##             splomsolaR(df)
+##           }
+##           )
+
+
+
+## setGeneric('compareSplom', signature='...', function(...){standardGeneric('compareSplom')})
+
+## setMethod('compareSplom',
+##           signature='Meteo',
+##           definition=function(...){
+##             z <- mergesolaR(..., var='G0')
+##             df <- as.data.frame(z)
+##             splomsolaR(df)
+##           }
+##           )
+
+## setMethod('compareSplom',
+##           signature='G0',
+##           definition=function(...){
+##             z <- mergesolaR(..., var='G0d')
+##             df <- as.data.frame(z)
+##             splomsolaR(df)
+##           }
+##           )
+
+## setMethod('compareSplom',
+##           signature='Gef',
+##           definition=function(...){
+##             z <- mergesolaR(..., var='Gefd')
+##             df <- as.data.frame(z)
+##             splomsolaR(df)
+##           }
+##           )
+
+## setMethod('compareSplom',
+##           signature='ProdGCPV',
+##           definition=function(...){
+##             z <- mergesolaR(..., var='Yf')
+##             df <- as.data.frame(z)
+##             splomsolaR(df)
+##           }
+##           )

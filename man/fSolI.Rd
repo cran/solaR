@@ -49,7 +49,7 @@ fSolI(solD, sample='hour', BTi, EoT=FALSE, keep.night=TRUE)
 \references{ \itemize{
     \item Collares-Pereira, M. y Rabl, A.,  The average distribution of solar radiation: correlations between
       diffuse and hemispherical and between daily and hourly insolation values. Solar Energy, 22:155–164, 1979.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }}
 \author{
   Oscar Perpiñán Lamigueiro.
@@ -84,7 +84,7 @@ library(latticeExtra)
 ###Solar elevation angle vs. azimuth.
 #This kind of graphics is useful for shadows calculations
 mon=month.abb
-p<-xyplot(AlS*180/pi~AzS*180/pi,
+p<-xyplot(r2d(AlS)~r2d(AzS),
     groups=month,
     data=solI, type='l', col='black',
     xlab=expression(psi[s]),ylab=expression(gamma[s]))

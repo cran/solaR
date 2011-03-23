@@ -9,15 +9,15 @@
   A class for meteorological data.
 }
 \section{Objects from the Class}{
-  Objects can be created by \code{\link{readBD}}, \code{\link{readG0dm}}
-  and \code{\link{readMAPA}}.
+  Objects can be created by the family of \code{\link{readBD}} functions.
 }
 \section{Slots}{
   \describe{
     \item{\code{latData}:}{Latitude (degrees) of the meteorological station or
       source of the data.}
     \item{\code{data}:}{A \code{zoo} object with the time series of
-      daily irradiation (\code{G}), and maximum and minimum ambient
+      daily irradiation (\code{G0}), the ambient temperature (\code{Ta})
+      or the maximum and minimum ambient
       temperature (\code{TempMax} and \code{TempMin}).}
     \item{\code{source}:}{A character with a short description of the
       source of the data.}
@@ -49,6 +49,10 @@
 
 \seealso{
   \code{\link{readBD}},
+  \code{\link{readBDi}},
+  \code{\link{zoo2Meteo}},
+  \code{\link{df2Meteo}},
+    \code{\link{dfI2Meteo}},
   \code{\link{readG0dm}},
   \code{\link{readMAPA}}.
 }

@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 \docType{class}
 \alias{Sol-class}
-
+\alias{show,Sol-method}
 
 \title{Class "Sol": Apparent movement of the Sun from the Earth}
 \description{A class which describe the apparent movement of the Sun from the Earth.
@@ -16,9 +16,9 @@
     \item{\code{lat}:}{numeric, latitude (degrees) as defined in the
       call to \code{\link{calcSol}}.}
     \item{\code{solD}:}{Object of class \code{"zoo"} created by
-      \code{\link{fSolD}}. It contains these components:}
+      \code{\link{fSolD}}.}
     \item{\code{solI}:}{Object of class \code{"zoo"} created by
-      \code{\link{fSolI}}. It contains these components:}
+      \code{\link{fSolI}}.}
     \item{\code{match}:}{numeric, index of \code{solD} related
       with the index of \code{solI}.}
     \item{\code{sample}:}{\code{difftime}, increment of the intradaily sequence.}
@@ -48,7 +48,7 @@
   }
 }
 \references{
-  Perpiñán, O, Energía Solar Fotovoltaica, 2010.
+  Perpiñán, O, Energía Solar Fotovoltaica, 2011.
   (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }
 

@@ -1,4 +1,4 @@
- # Copyright (C) 2009, 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010, 2009 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -61,35 +61,36 @@ fSolI<-function(solD, sample='hour', BTi, EoT=FALSE, keep.night=TRUE){
   eo<-sol.rep$eo
   if (EoT) {EoT=sol.rep$EoT} else {EoT=0}
     
-  Bo=1367; ##Constante Solar
+  Bo=1367 ##Constante Solar
      
   TO=hms(seqby.match)
   w<-h2r(TO-12)+EoT
   	
-  aman<-abs(w)<=abs(ws);
+  aman<-abs(w)<=abs(ws)
 
   ##Angulos solares
-  cosThzS<-sin(decl)*sin(lat)+cos(decl)*cos(w)*cos(lat);
-  is.na(cosThzS) <- (!aman);
+  cosThzS<-sin(decl)*sin(lat)+cos(decl)*cos(w)*cos(lat)
+  is.na(cosThzS) <- (!aman)
   cosThzS[cosThzS>1]<-1
 
-  AlS=asin(cosThzS); ##Altura del sol
+  AlS=asin(cosThzS) ##Altura del sol
 
   cosAzS=sign(lat)*(cos(decl)*cos(w)*sin(lat)-cos(lat)*sin(decl))/cos(AlS)
   is.na(cosAzS) <- (!aman)
-  cosAzS[cosAzS>1]<-1;
+  cosAzS[cosAzS > 1] <- 1
+  cosAzS[cosAzS < -1] <- -1
 
-  AzS=sign(w)*acos(cosAzS); ##Angulo azimutal del sol. Positivo hacia el oeste.
+  AzS=sign(w)*acos(cosAzS) ##Angulo azimutal del sol. Positivo hacia el oeste.
 
   ##Irradiancia extra-atmosférica
-  Bo0<-Bo*eo*cosThzS;
+  Bo0<-Bo*eo*cosThzS
     
   ##Generador empirico de Collares-Pereira y Rabl 
-  a=0.409-0.5016*sin(ws+pi/3);
-  b=0.6609+0.4767*sin(ws+pi/3);
+  a=0.409-0.5016*sin(ws+pi/3)
+  b=0.6609+0.4767*sin(ws+pi/3)
 
-  rd<-Bo0/Bo0d;
-  rg<-rd*(a+b*cos(w));
+  rd<-Bo0/Bo0d
+  rg<-rd*(a+b*cos(w))
     
 ###Resultados
   resultDF<-data.frame(w, aman, cosThzS, AlS, AzS, Bo0, rd, rg)

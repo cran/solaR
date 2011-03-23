@@ -58,7 +58,7 @@ calcGef(lat,
 
   %    \item{bd}{\code{list} as defined by \code{\link{readBD}}. This list
   %    is only required when \code{modoRad='bd'}.}
-  \item{sample, keep.night, corr, f}{See \code{\link{calcSol}} for details.}
+  \item{sample, keep.night}{See \code{\link{calcSol}} for details.}
   % \item{sample}{\code{character}, containing one of ‘"sec"’, ‘"min"’,
   %       ‘"hour"’.  This can optionally be preceded by a (positive or
   %       negative) integer and a space, or followed by ‘"s"’ (used by
@@ -67,12 +67,14 @@ calcGef(lat,
   %     \item{keep.night}{\code{logical} When it is TRUE (default) the
   %       time series includes the night.}
 
+  \item{corr, f}{See \code{\link{calcG0}} for details.}
+  
+  \item{beta}{numeric, inclination angle of the surface
+    (degrees). It is only needed when \code{modeTrk='fixed'}.}
+
   \item{betaLim}{numeric, maximum value of the inclination angle
     for a tracking surface. Its default value is 90 (no
     limitation))}
-
-  \item{beta}{numeric, inclination angle of the surface
-    (degrees). It is only needed when \code{modeTrk='fixed'}.}
 
   \item{alfa}{numeric, azimuth angle of the surface (degrees). It is
     positive to the West. It is only needed when
@@ -81,9 +83,10 @@ calcGef(lat,
   \item{iS}{integer, degree of dirtiness. Its value must be included in
     the set (1,2,3,4). \code{iS=1} corresponds to a clean surface while
     \code{iS=4} is the selection for a dirty surface. Its default value is
-    2}
+    2.}
 
   \item{alb}{numeric, albedo reflection coefficient. Its default value is 0.2}
+
   \item{modeShd, struct, distances}{See \code{\link{calcShd}} for
     details.}
 
@@ -120,7 +123,7 @@ calcGef(lat,
 
 \value{A \code{Gef} object.}
 
-\references{Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
+\references{Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
 
 \author{Oscar Perpiñán Lamigueiro.}
 
@@ -148,6 +151,7 @@ gef2<-calcGef(lat=37.2, modeRad='prom', prom=list(G0dm=G0dm, Ta=Ta), modeTrk='tw
 print(gef2)
 xyplot(gef2)
 
+\dontrun{
 ###Irradiation data from mapa.es/siar
 
 ##Fixed surface
@@ -178,7 +182,7 @@ gefShd<-calcGef(lat=41, modeRad='prev',
 print(gefShd)
 ##The Gef0, Bef0 and Def0 values are the same as those contained in the
 ##                gefMapa2 object
-
+}
 }
 
 \keyword{utilities}

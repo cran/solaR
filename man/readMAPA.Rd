@@ -36,10 +36,12 @@ readMAPA(prov, est, start, end, lat=0, format='\%d/\%m/\%Y')
   \code{\link{RedEstaciones}}.
 }
 \examples{
+\dontrun{
 #Aranjuez, Madrid
 BD<-readMAPA(28,3,'01/01/2008','31/12/2008')
 
 xyplot(TempMedia~G0|equal.count(VelViento),data=BD)
+}
 }
 
 \keyword{utilities}

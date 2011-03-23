@@ -17,8 +17,8 @@
 calcSol <- function(lat, BTd, sample='hour', BTi, EoT=FALSE, keep.night=TRUE){
 
   if (missing(BTi)){
-    solD<-fSolD(lat,BTd=BTd);
-    solI<-fSolI(solD, sample=sample, EoT=EoT, keep.night=keep.night);
+    solD<-fSolD(lat,BTd=BTd)
+    solI<-fSolI(solD, sample=sample, EoT=EoT, keep.night=keep.night)
     match <- attr(solI, 'match')
     sample <- attr(solI, 'sample')
   } else { ##utilizo BTi

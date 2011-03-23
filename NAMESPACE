@@ -92,13 +92,15 @@ exportMethods(
               as.data.frameI,
               as.data.frameM,
               as.data.frameY,
+              as.data.frame,#Shade
               show,
               xyplot,
               levelplot,
-              plot,
+              shadeplot,
               losses,
               compare,
-              compareLosses)
+              compareLosses,
+              mergesolaR)
 
 exportClasses(
               Meteo,

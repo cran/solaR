@@ -1,10 +1,11 @@
-\name{D_plot-methods}
+\name{D_shadeplot-methods}
 \docType{methods}
-\alias{plot-methods}
-\alias{plot,Shade-method}
-\title{Methods for Function plot in Package `solaR'}
+\alias{shadeplot}
+\alias{shadeplot-methods}
+\alias{shadeplot,Shade-method}
+\title{Methods for Function shadeplot}
 \description{
-  Methods for function \code{plot} in Package `solaR'
+  Visualization of the content of a \code{\linkS4class{Shade}} object.
 }
 
 \section{Methods}{

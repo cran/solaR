@@ -48,14 +48,22 @@
 }
 \section{Methods}{
   \describe{
-    \item{as.zooD}{\code{signature(object = "ProdPVPS")}: conversion to a
+\item{as.zooD}{\code{signature(object = "ProdPVPS")}: conversion to a
       \code{zoo} object with daily values.}
     \item{as.zooI}{\code{signature(object = "ProdPVPS")}: conversion to a
       \code{zoo} object with intradaily values.}
+    \item{as.zooM}{\code{signature(object = "ProdPVPS")}: conversion to a
+      \code{zoo} object with monthly values.}
+    \item{as.zooY}{\code{signature(object = "ProdPVPS")}: conversion to a
+      \code{zoo} object with yearly values.}
     \item{as.data.frameD}{\code{signature(object = "ProdPVPS")}: conversion
       to a data.frame with daily values.}
     \item{as.data.frameI}{\code{signature(object = "ProdPVPS")}: conversion
       to a data.frame with intradaily values.}
+    \item{as.data.frameM}{\code{signature(object = "ProdPVPS")}: conversion
+      to a data.frame with monthly values.}
+    \item{as.data.frameY}{\code{signature(object = "ProdPVPS")}: conversion
+      to a data.frame with yearly values.}
     \item{indexD}{\code{signature(object = "ProdPVPS")}: index of the
       \code{solD} slot. }
     \item{indexI}{\code{signature(object = "ProdPVPS")}: index of the
@@ -73,7 +81,7 @@
 }
 \references{\itemize{
     \item Abella, M. A., Lorenzo, E. y Chenlo, F.: PV water pumping systems based on standard frequency converters. Progress in Photovoltaics: Research and Applications, 11(3):179–191, 2003, ISSN 1099-159X.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }}
 
 \author{Oscar Perpiñán Lamigueiro.}

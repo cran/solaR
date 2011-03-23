@@ -34,7 +34,7 @@ fSombraEst(angGen, distances,struct)
 
   \item{modeTrk}{character, to be chosen from \code{'fixed'}, \code{'two'} or \code{'horiz'}. When \code{modeTrk='fixed'} the surface is fixed (inclination and azimuth angles are constant). The performance of a two-axis tracker is calculated with \code{modeTrk='two'}, and \code{modeTrk='horiz'} is the option for an horizontal N-S tracker. Its default value is \code{modeTrk='fixed'}}
 
-  \item{prom}{logical, only needed for two-axis tracker mode. If TRUE the shadows are averaged between the set of trackers defined by \code{struct$Nrow} and \code{struct$Ncol}}
+  \item{prom}{logical, only needed for two-axis tracker mode. If \code{TRUE} the shadows are averaged between the set of trackers defined by \code{struct$Nrow} and \code{struct$Ncol}}
 
 }
 \details{
@@ -46,7 +46,7 @@ fSombraEst(angGen, distances,struct)
 
 \references{\itemize{
     \item Perpiñán, O.: Grandes Centrales Fotovoltaicas: producción, seguimiento y ciclo de vida. PhD Thesis, UNED, 2008. \url{http://e-spacio.uned.es/fez/view.php?pid=bibliuned:20080}.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
   }
 }
 \author{

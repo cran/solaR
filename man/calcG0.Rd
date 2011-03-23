@@ -58,14 +58,14 @@ calcG0(lat, modeRad='prom',
     \code{Meteo} object. It is only required when
     \code{modeRad='bd'}.
     
-    The resulting object \emph{must} include a column named \code{Ta},
+    The resulting object will include a column named \code{Ta},
     with information about ambient temperature.}
 
   \item{bdI}{A \code{list} as defined by \code{\link{readBDi}},
     \code{\link{dfI2Meteo}} or \code{\link{zoo2Meteo}}, or a
     \code{Meteo} object. It is only required when \code{modeRad='bdI'}.
 
-    The resulting object \emph{must} include a column named \code{Ta},
+    The resulting object will include a column named \code{Ta},
     with information about ambient temperature.}
 
   \item{sample}{\code{character}, containing one of ‘"sec"’, ‘"min"’,
@@ -99,7 +99,7 @@ calcG0(lat, modeRad='prom',
 
 \value{A \code{G0} object.}
 
-\references{Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
+\references{Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})}
 
 \author{Oscar Perpiñán Lamigueiro.}
 
@@ -122,6 +122,7 @@ g0<-calcG0(lat=37.2, modeRad='prom', prom=list(G0dm=G0dm, Ta=Ta))
 print(g0)
 xyplot(g0)
 
+\dontrun{
 g0<-calcG0(lat=37.2,
         modeRad='mapa',
         mapa=list(prov=28,est=3,
@@ -150,7 +151,9 @@ g03<-calcG0(lat=37.2,
 print(g03)
 
 xyplot(fd~kt, data=g03, pch=19, alpha=0.3)
+}
 
+\dontrun{
 ##NREL-MIDC
 ##La Ola, Lanai
 ##Latitude: 20.76685o North
@@ -180,15 +183,19 @@ NRELMeteo <- zoo2Meteo(z, lat=lat)
 xyplot(NRELMeteo)
 
 g0 <- calcG0(lat=lat, modeRad='bdI', bdI=NRELMeteo, corr='none')
+xyplot(g0)
 xyplot(as.zooI(g0), superpose=TRUE)
 
 g02 <- calcG0(lat=lat, modeRad='bdI', bdI=NRELMeteo, corr='BRL')
+xyplot(g02)
 xyplot(as.zooI(g02), superpose=TRUE)
 xyplot(fd~kt, data=g02, pch=19, cex=0.5, alpha=0.5)
 
 g03 <- calcG0(lat=lat, modeRad='bdI', bdI=NRELMeteo, corr='CLIMEDh')
+xyplot(g03)
 xyplot(as.zooI(g03), superpose=TRUE)
 xyplot(fd~kt, data=g03, pch=19, cex=0.5, alpha=0.5)
+}
 }
 
 \keyword{utilities}

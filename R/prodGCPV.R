@@ -1,4 +1,4 @@
- # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -75,7 +75,7 @@ prodGCPV<-function(lat,
   ##Producción 
   ##=======================================
 	
-  prodI<-fProd(radEf,module,generator,inverter,effSys);
+  prodI<-fProd(radEf,module,generator,inverter,effSys)
   module=attr(prodI, 'module')
   generator=attr(prodI, 'generator')
   inverter=attr(prodI, 'inverter')
@@ -83,7 +83,7 @@ prodGCPV<-function(lat,
   
   ##Cálculo de valores diarios, mensuales y anuales
   ##=======================================
-  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31); ###OJO
+  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31) ###OJO
     Pg=generator$Pg                       #Wp
   
   if (radEf@type=='prom') {

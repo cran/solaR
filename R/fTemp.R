@@ -32,8 +32,8 @@ fTemp<-function(sol, BD){
 
 ###Genera secuencia de temperatura a partir de Maxima y Minima de base de datos
 
-  Tm=(TempMin+TempMax)/2;
-  Tr=(TempMax-TempMin)/2;
+  Tm=(TempMin+TempMax)/2
+  Tr=(TempMax-TempMin)/2
 
   wp=pi/4
 

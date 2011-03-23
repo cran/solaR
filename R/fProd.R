@@ -1,4 +1,4 @@
- # Copyright (C) 2009, 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010, 2009 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -39,7 +39,7 @@ fProd<-function(inclin,
     } else {
       Gef=inclin$Gef
       Ta=inclin$Ta
-      }
+    }
   }
   
 ###Listas de parámetros
@@ -57,40 +57,40 @@ fProd<-function(inclin,
   
 ###Constantes
   Gstc=1000
-  Ct=(module$TONC-20)/800;
-  Vtn=0.025*(273+25)/300;
+  Ct=(module$TONC-20)/800
+  Vtn=0.025*(273+25)/300
   m=1.3
 	
 ###Cálculo de Tc
-  Tc=Ta+Ct*Gef;
+  Tc=Ta+Ct*Gef
 
 ###Método de Ruiz para el cálculo de la tensión y corriente MPP de una célula en condiciones no estándar
 ###Calculos para UNA CÉLULA
-  Rs=with(module,(Vocn/Ncs-Vmn/Ncs+m*Vtn*log(1-Imn/Iscn))/(Imn/Ncp));
-  rs=with(module,Rs/((Vocn/Ncs)/(Iscn/Ncp)));
+  Rs=with(module,(Vocn/Ncs-Vmn/Ncs+m*Vtn*log(1-Imn/Iscn))/(Imn/Ncp))
+  rs=with(module,Rs/((Vocn/Ncs)/(Iscn/Ncp)))
 	
-  Vt=0.025*(Tc+273)/300;
-  Voc_c=with(module,Vocn/Ncs-CoefVT*(Tc-25));
-  Isc_c=with(module,Iscn/Ncp*Gef/Gstc);
+  Vt=0.025*(Tc+273)/300
+  Voc_c=with(module,Vocn/Ncs-CoefVT*(Tc-25))
+  Isc_c=with(module,Iscn/Ncp*Gef/Gstc)
 
-  koc=Voc_c/(m*Vt);
-  Dm0=(koc-1)/(koc-log(koc));
-  Dm=Dm0+2*rs*Dm0^2;
+  koc=Voc_c/(m*Vt)
+  Dm0=(koc-1)/(koc-log(koc))
+  Dm=Dm0+2*rs*Dm0^2
 	
-  Impp_c=Isc_c*(1-Dm/koc);
-  Vmpp_c=Voc_c*(1-log(koc/Dm)/koc-rs*(1-Dm/koc));
+  Impp_c=Isc_c*(1-Dm/koc)
+  Vmpp_c=Voc_c*(1-log(koc/Dm)/koc-rs*(1-Dm/koc))
 	
 ###Corriente, Tensión y Potencia del generator
-  Voc=with(module,Voc_c*Ncs*generator$Nms);
-  Isc=with(module,Isc_c*Ncp*generator$Nmp);
-  Impp=with(module,Impp_c*Ncp*generator$Nmp);
-  Vmpp=with(module,Vmpp_c*Ncs*generator$Nms);
+  Voc=with(module,Voc_c*Ncs*generator$Nms)
+  Isc=with(module,Isc_c*Ncp*generator$Nmp)
+  Impp=with(module,Impp_c*Ncp*generator$Nmp)
+  Vmpp=with(module,Vmpp_c*Ncs*generator$Nms)
   Pmpp=Impp*Vmpp
 	
   ##Cálculo de corriente para tensión diferente al MPP
   ##cuando el inverter limita por tensión fuera de rango
   f<-function(i,v,koc){
-    vp=v+i*rs;
+    vp=v+i*rs
     Is=1/(1-exp(-koc*(1-rs)))
     result=i-(1-Is*(exp(-koc*(1-vp))-exp(-koc*(1-rs))))}
   raiz<-function(M){
@@ -107,7 +107,7 @@ fProd<-function(inclin,
 
   ##¿Está por debajo de la mínima tensión del inverter?
   if (any(Vmpp<inverter$Vmin,na.rm=1)){
-    indMIN=which(Vmpp<inverter$Vmin);
+    indMIN=which(Vmpp<inverter$Vmin)
     VocMIN=Voc[indMIN]
     kocMIN=koc[indMIN]
     vmin=inverter$Vmin/VocMIN
@@ -122,7 +122,7 @@ fProd<-function(inclin,
 
   ##¿Está por encima de la máxima tensión del inverter?
   if (any(Vmpp>inverter$Vmax,na.rm=1)){
-    indMAX=which(Vmpp>inverter$Vmax);
+    indMAX=which(Vmpp>inverter$Vmax)
     VocMAX=Voc[indMAX]
     kocMAX=koc[indMAX]
     vmax=inverter$Vmax/VocMAX
@@ -136,26 +136,31 @@ fProd<-function(inclin,
     warning('Maximum MPP voltage of the inverter has been reached')}
 	
 ###Potencia DC normalizada al inverter
-  PdcN=with(inverter,(Idc*Vdc)/Pinv*(1-effSys$ModQual/100)*(1-effSys$ModDisp/100)*(1-effSys$MPP/100)*(1-effSys$OhmDC/100)); 
+  PdcN=with(inverter,(Idc*Vdc)/Pinv*(1-effSys$ModQual/100)*(1-effSys$ModDisp/100)*(1-effSys$MPP/100)*(1-effSys$OhmDC/100)) 
 
-  PacN=with(inverter,{
-    A=Ki[3];
-    B=Ki[2]+1
-    C=Ki[1]-(PdcN);
-                                        #Potencia AC normalizada al inverter
-    result=(-B+sqrt(B^2-4*A*C))/(2*A);
-  })
+###Potencia AC normalizada al inverter
+  if (is.matrix(inverter$Ki)){ #Ki es una matriz de nueve coeficientes-->dependencia con tensión
+    VP <- cbind(Vdc, PdcN)
+    PacN <- apply(VP, 1, solvePac, inverter$Ki)
+  } else { #Ki es un vector de tres coeficientes-->sin dependencia con la tensión
+    PacN=with(inverter,{
+      A=Ki[3]
+      B=Ki[2]+1
+      C=Ki[1]-(PdcN)
+      result=(-B+sqrt(B^2-4*A*C))/(2*A)
+    })
+  }
+  
   is.na(PacN) <- (PacN<0)
-                                        #PacN[PacN>1]<-1;
-  EffI=PacN/PdcN;
+  EffI=PacN/PdcN
 	
 ###Potencia AC y DC sin la normalización
-  Pac=with(inverter,PacN*Pinv*(Gef>Gumb)*(1-effSys$OhmAC/100)*(1-effSys$TrafoMT/100)*(1-effSys$Disp/100));
-  Pdc=PdcN*inverter$Pinv*(Pac>0);
+  Pac=with(inverter,PacN*Pinv*(Gef>Gumb)*(1-effSys$OhmAC/100)*(1-effSys$TrafoMT/100)*(1-effSys$Disp/100))
+  Pdc=PdcN*inverter$Pinv*(Pac>0)
 	
                                         
 ###Resultado
-  Pg=generator$Nms*module$Vmn*generator$Nmp*module$Imn;
+  Pg=generator$Nms*module$Vmn*generator$Nmp*module$Imn
   generator$Pg=Pg
   
   resProd <-data.frame(Tc,Voc,Isc,Vmpp,Impp,Vdc,Idc,Pac,Pdc,EffI)

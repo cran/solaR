@@ -59,7 +59,7 @@
 \references{ \itemize{
     \item Collares-Pereira, M. y Rabl, A.,  The average distribution of solar radiation: correlations between
       diffuse and hemispherical and between daily and hourly insolation values. Solar Energy, 22:155–164, 1979.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
   }
 }
 \author{

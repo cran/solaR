@@ -67,44 +67,44 @@ prodPVPS<-function(lat,
   effSys=modifyList(effSys.default, effSys)
 
   TONC=47
-  Ct=(TONC-20)/800;
+  Ct=(TONC-20)/800
   lambda=0.0045
   Gef=coredata(radEf@GefI$Gef)
   aman=coredata(radEf@solI$aman)
   Ta=coredata(radEf@Ta)
   
-  Tc=Ta+Ct*Gef;
+  Tc=Ta+Ct*Gef
   Pdc=Pg*Gef/1000*(1-lambda*(Tc-25))
   Pdc[is.na(Pdc)]=0    #Necesario para las funciones que entrega fPump
   PdcN=with(effSys,
     Pdc/converter$Pnom*(1-ModQual/100)*(1-ModDisp/100)*(1-OhmDC/100)
     )
   PacN=with(converter,{
-    A=Ki[3];
+    A=Ki[3]
     B=Ki[2]+1
-    C=Ki[1]-(PdcN);
+    C=Ki[1]-(PdcN)
     ##Potencia AC normalizada al inversor
-    result=(-B+sqrt(B^2-4*A*C))/(2*A);
+    result=(-B+sqrt(B^2-4*A*C))/(2*A)
   })
-  PacN[PacN<0]<-0;
+  PacN[PacN<0]<-0
 	
   Pac=with(converter,
-    PacN*Pnom*(1-effSys$OhmAC/100));
-  Pdc=PdcN*converter$Pnom*(Pac>0);
+    PacN*Pnom*(1-effSys$OhmAC/100))
+  Pdc=PdcN*converter$Pnom*(Pac>0)
 	
 		
 ###Bomba
   fun<-fPump(pump=pump, H=H)
   ##Limito la potencia al rango de funcionamiento de la bomba
-  rango=with(fun,Pac>=lim[1] & Pac<=lim[2]); 
+  rango=with(fun,Pac>=lim[1] & Pac<=lim[2]) 
   Pac[!rango]<-0
   Pdc[!rango]<-0
   prodI=data.frame(Pac=Pac,Pdc=Pdc,Q=0,Pb=0,Ph=0,f=0)	
   prodI=within(prodI,{
-    Q[rango]<-fun$fQ(Pac[rango]);
-    Pb[rango]<-fun$fPb(Pac[rango]);
-    Ph[rango]<-fun$fPh(Pac[rango]);
-    f[rango]<-fun$fFreq(Pac[rango]);
+    Q[rango]<-fun$fQ(Pac[rango])
+    Pb[rango]<-fun$fPb(Pac[rango])
+    Ph[rango]<-fun$fPh(Pac[rango])
+    f[rango]<-fun$fFreq(Pac[rango])
     etam=Pb/Pac
     etab=Ph/Pb
   })
@@ -116,7 +116,7 @@ prodPVPS<-function(lat,
 ###Cálculo de valores diarios, mensuales y anuales
   ##Cálculo de valores diarios, mensuales y anuales
   ##=======================================
-  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31); ###OJO
+  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31) ###OJO
     
   if (radEf@type=='prom') {
     prodDm=aggregate(prodI[,c('Pac', 'Q')],

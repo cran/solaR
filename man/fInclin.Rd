@@ -21,7 +21,8 @@ fInclin(compI, angGen, iS = 2, alb = 0.2, horizBright=FALSE)
 
 \arguments{
   \item{compI}{A \code{G0} object. It may be the result of \code{\link{calcG0}}.}
-  \item{angGen}{A \code{zoo} object, including at least three variables named \code{Beta},\code{Alfa} and \code{cosTheta}. It may be the result of \code{\link{fTheta}}.}
+  \item{angGen}{A \code{zoo} object, including at least three variables
+  named \code{Beta}, \code{Alfa} and \code{cosTheta}. It may be the result of \code{\link{fTheta}}.}
   \item{iS}{integer, degree of dirtiness. Its value must be included in the set (1,2,3,4). \code{iS=1} corresponds to a clean surface while \code{iS=4} is the choice for a dirty surface. Its default value is 2}
   \item{alb}{numeric, albedo reflection coefficient. Its default value
     is 0.2}
@@ -36,6 +37,7 @@ fInclin(compI, angGen, iS = 2, alb = 0.2, horizBright=FALSE)
 }
 \value{A \code{zoo} object with these components:
   \item{Bo}{Extra-atmospheric irradiance on the inclined surface (W/m²)}
+  \item{Bn}{Direct normal irradiance (W/m²)}
   \item{G, B, D, Di, Dc, R}{Global, direct, diffuse (total, isotropic and anisotropic) and albedo irradiance incident on an inclined surface (W/m²)}
   \item{Gef, Bef, Def, Dief, Dcef, Ref}{Effective global, direct, diffuse (total, isotropic and anisotropic) and albedo irradiance incident on an inclined surface (W/m²)}
   \item{FTb, FTd, FTr}{Factor of angular losses for the direct, diffuse and albedo components}
@@ -45,7 +47,7 @@ fInclin(compI, angGen, iS = 2, alb = 0.2, horizBright=FALSE)
     \item Martin, N. and Ruiz, J.M.: Calculation of the PV modules angular losses under field conditions by means of an analytical model. Solar Energy Materials & Solar Cells, 70:25–38, 2001.
     \item D. T. Reindl and W. A. Beckman and J. A. Duffie: Evaluation of
       hourly tilted surface radiation models, Solar Energy, 45:9-17, 1990.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }}
 \author{
   Oscar Perpiñán Lamigueiro.

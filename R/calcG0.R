@@ -1,6 +1,6 @@
  # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
  #
- # This program is free software; you can redistribute it and/or
+ # This program is free software you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
  # as published by the Free Software Foundation; either version 2
  # of the License, or (at your option) any later version.
@@ -41,7 +41,7 @@ calcG0<-function(lat,
       bd='CPR',    #Correlacion entre Fd y Kt para valores diarios
       prom='Page', #Correlacion entre Fd y Kt para promedios mensuales
       bdI='BRL'   #Correlación entre fd y kt para valores intradiarios
-      );
+      )
   }
  
   BD=switch(modeRad,
@@ -117,7 +117,7 @@ calcG0<-function(lat,
                stop('bdI$file should be a character, a data.frame or a zoo.')
                )}
     }                                   #Fin de bdI
-    );                                  #Fin del switch general
+    )                                  #Fin del switch general
 
 ### Angulos solares y componentes de irradiancia
   if (modeRad=='bdI') {
@@ -130,8 +130,8 @@ calcG0<-function(lat,
     compD$Ktd=compD$G0d/as.zooD(sol)$Bo0d
   } else { ##modeRad!='bdI'
     sol <- calcSol(lat=lat, BTd=indexD(BD), sample=sample, keep.night=keep.night)
-    compD<-fCompD(sol=sol, G0d=BD, corr=corr, f);
-    compI<-fCompI(sol=sol, compD=compD);
+    compD<-fCompD(sol=sol, G0d=BD, corr=corr, f)
+    compI<-fCompI(sol=sol, compD=compD)
   }
 
 ###Temperatura
@@ -170,7 +170,7 @@ calcG0<-function(lat,
     )
 
 ###Medias mensuales y anuales
-  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31); ###OJO
+  DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31) ###OJO
 
   G0dm=aggregate(compD[,c('G0d', 'D0d', 'B0d')], by=as.yearmon,
     FUN=function(x, ...)mean(x, na.rm=1)/1000) ##kWh

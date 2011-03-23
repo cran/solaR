@@ -41,7 +41,7 @@ calcSol(lat, BTd, sample='hour', BTi, EoT=FALSE, keep.night=TRUE)
 \value{A \code{\link{Sol-class}} object.}
 
 \references{
-  Perpiñán, O, Energía Solar Fotovoltaica, 2010.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+  Perpiñán, O, Energía Solar Fotovoltaica, 2011.  (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }
 \author{Oscar Perpiñán Lamigueiro.}
 

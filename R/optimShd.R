@@ -1,4 +1,4 @@
- # Copyright (C) 2009, 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010, 2009 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -65,7 +65,7 @@ optimShd<-function(lat,
                  H=0))
     )
   
-  casos<-dim(Red)[1];              #Número de posibilidades a estudiar
+  casos<-dim(Red)[1]              #Número de posibilidades a estudiar
 
   ##Preparo la barra de progreso
   if (prog) {pb <- txtProgressBar(min = 0, max = casos+1, style = 3)
@@ -82,7 +82,7 @@ optimShd<-function(lat,
   ##Empieza el bucle
   
   ##Creo un vector vacío de la misma longitud que los casos a estudiar
-  YfAnual<-numeric(casos); 
+  YfAnual<-numeric(casos) 
 
   BT=('bt' %in% modeShd)
   if (BT) { ##Hay backtracking, luego debo partir de radiación horizontal
@@ -113,24 +113,24 @@ optimShd<-function(lat,
 
 
 ###Entrego resultados
-  FS=1-YfAnual/YfAnual0;
-  GCR=switch(modeTrk,
+  FS=1-YfAnual/YfAnual0
+  GRR=switch(modeTrk,
     two=with(Red,Lew*Lns)/with(struct,L*W),
     fixed=Red$D/struct$L,
     horiz=Red$Lew/struct$L)
-  SombraDF=cbind(Red,GCR=GCR,FS=FS,Yf=YfAnual)
+  SombraDF=cbind(Red,GRR=GRR,FS=FS,Yf=YfAnual)
   FS.loess=switch(modeTrk,
     two=loess(FS~Lew*Lns,data=SombraDF),
     horiz=loess(FS~Lew,data=SombraDF),
-    fixed=loess(FS~D,data=SombraDF));
+    fixed=loess(FS~D,data=SombraDF))
   Yf.loess=switch(modeTrk,
     two=loess(Yf~Lew*Lns,data=SombraDF),
     horiz=loess(Yf~Lew,data=SombraDF),
-    fixed=loess(Yf~D,data=SombraDF));
+    fixed=loess(Yf~D,data=SombraDF))
   result <- new('Shade',
                 Prod0, ##contains ProdGCPV
                 FS=FS,
-                GCR=GCR,
+                GRR=GRR,
                 Yf=YfAnual,
                 FS.loess=FS.loess,
                 Yf.loess=Yf.loess,

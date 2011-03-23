@@ -13,15 +13,13 @@ readG0dm(G0dm, Ta=25, lat=0,
     source='')
 }
 \arguments{
-
   \item{G0dm}{numeric, 12 values of monthly means of daily global horizontal
     irradiation (Wh/m²).}
   \item{Ta}{numeric, 12 values of monthly means of ambient temperature
     (degrees Celsius).}
   \item{lat}{numeric, latitude (degrees) of the location.}
   \item{year}{numeric (Default: current year).}
-  \item{promDays}{numeric, set of the average days for each month
-    (Default: c(17,14,15,15,15,10,18,18,18,19,18,13))}
+  \item{promDays}{numeric, set of the average days for each month.}
   \item{source}{character string with information about the source of
     the values.}
 }

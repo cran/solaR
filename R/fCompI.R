@@ -1,4 +1,4 @@
- # Copyright (C) 2009, 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010, 2009 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@ fCompI<-function(sol, compD, G0I, corr='none', f){
   rg=coredata(solI$rg)
   aman=coredata(solI$aman)
   Bo0=coredata(solI$Bo0)
+  cosThzS=coredata(solI$cosThzS)
 
   if (missing(G0I)) { ##Utilizo compD
 
@@ -44,9 +45,9 @@ fCompI<-function(sol, compD, G0I, corr='none', f){
     B0d=comp.rep$B0d
 
     ##Calculos
-    D0<-D0d*rd*aman;
-    G0<-G0d*rg*aman;
-    B0<-G0-D0;
+    D0<-D0d*rd*aman
+    G0<-G0d*rg*aman
+    B0<-G0-D0
 
     ##Pongo a NA todos los valores nulos o negativos.
     neg=(B0<=0)|(D0<=0)|(G0<=0)
@@ -61,9 +62,10 @@ fCompI<-function(sol, compD, G0I, corr='none', f){
     ##OJO cambiar función sum por trapz o simpson
     ##foo=function(x)sum(x,na.rm=1)/Nm
     ##normalizo para mantener el valor de radiacion diaria
-    D0<-D0*D0d/ave(D0,list(day), FUN=function(x) P2E(x, sample)); 
-    G0<-G0*G0d/ave(G0,list(day), FUN=function(x) P2E(x, sample)); 
-    B0<-B0*B0d/ave(B0,list(day), FUN=function(x) P2E(x, sample)); 
+    D0<-D0*D0d/ave(D0,list(day), FUN=function(x) P2E(x, sample)) 
+    G0<-G0*G0d/ave(G0,list(day), FUN=function(x) P2E(x, sample)) 
+    B0<-B0*B0d/ave(B0,list(day), FUN=function(x) P2E(x, sample))
+
 	
     kt=G0/Bo0
     fd=D0/G0
@@ -80,8 +82,8 @@ fCompI<-function(sol, compD, G0I, corr='none', f){
       
       if (class(G0I)=='Meteo') {
         G0=coredata(getG0(G0I))
-      } else {#G0I es un zoo
-        if (NCOL(G0I)>1) { ##¿Es multivariante
+      } else {                          #G0I es un zoo
+        if (NCOL(G0I)>1) {              ##¿Es multivariante
           G0=coredata(G0I$G0) # Si es así, trabajo sólo con la variable G0
         } else {
           G0=coredata(G0I)
@@ -90,7 +92,7 @@ fCompI<-function(sol, compD, G0I, corr='none', f){
 
       is.na(G0) <- (G0>Bo0 | !aman)
 
-      kt=G0/Bo0;
+      kt=G0/Bo0
 	
       fd=switch(corr,
         EKDh=FdKtEKDh(kt),
@@ -100,25 +102,28 @@ fCompI<-function(sol, compD, G0I, corr='none', f){
         stop('Wrong descriptor of the correlation fd-kt.')
         )
 
-      D0=fd*G0;
-      B0=G0-D0;
+      D0=fd*G0
+      B0=G0-D0
+
 
     } else { ##corr=='none', y por tanto G0 es multivariante con G0, D0 y B0
 
       if (class(G0I)=='Meteo') {
         IrrData=getData(G0I)
-      } else {#G0I es un zoo
-          IrrData=G0I
-        }
+      } else {                          #G0I es un zoo
+        IrrData=G0I
+      }
       
       is.na(IrrData) <- (IrrData$G0>Bo0 | !aman)
 
       D0=coredata(IrrData$D0)
       B0=coredata(IrrData$B0)
       G0=coredata(IrrData$G0)
-  
-      kt=G0/Bo0;
-      fd=D0/G0;
+
+
+      
+      kt=G0/Bo0
+      fd=D0/G0
 
     }
   }

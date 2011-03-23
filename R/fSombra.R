@@ -1,4 +1,4 @@
- # Copyright (C) 2009, 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010, 2009 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -17,10 +17,10 @@
 fSombra<-function(angGen, distances, struct, modeTrk='fixed',prom=TRUE){
 
   stopifnot(modeTrk %in% c('two','horiz','fixed'))
-  result=switch(modeTrk, #Para evitar errores si sólo entrego la primera fila a fSombraHoriz y fSombraEst
-    two={fSombra6(angGen,distances,struct,prom)},
-    horiz={fSombraHoriz(angGen,distances[1,],struct)},
-    fixed= {fSombraEst(angGen,distances[1,],struct)}
-    );
+  result=switch(modeTrk, 
+    two={fSombra6(angGen, distances, struct, prom)},
+    horiz={fSombraHoriz(angGen, distances, struct)},
+    fixed= {fSombraEst(angGen, distances, struct)}
+    )
 }
 

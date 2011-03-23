@@ -57,10 +57,18 @@
       \code{zoo} object with daily values.}
     \item{as.zooI}{\code{signature(object = "G0")}: conversion to a
       \code{zoo} object with intradaily values.}
+    \item{as.zooM}{\code{signature(object = "G0")}: conversion to a
+      \code{zoo} object with monthly values.}
+    \item{as.zooY}{\code{signature(object = "G0")}: conversion to a
+      \code{zoo} object with yearly values.}
     \item{as.data.frameD}{\code{signature(object = "G0")}: conversion
       to a data.frame with daily values.}
     \item{as.data.frameI}{\code{signature(object = "G0")}: conversion
       to a data.frame with intradaily values.}
+    \item{as.data.frameM}{\code{signature(object = "G0")}: conversion
+      to a data.frame with monthly values.}
+    \item{as.data.frameY}{\code{signature(object = "G0")}: conversion
+      to a data.frame with yearly values.}
     \item{indexD}{\code{signature(object = "G0")}: index of the
       \code{solD} slot. }
     \item{indexI}{\code{signature(object = "G0")}: index of the
@@ -78,7 +86,7 @@
   }
 }
 \references{
-  Perpiñán, O, Energía Solar Fotovoltaica, 2010.
+  Perpiñán, O, Energía Solar Fotovoltaica, 2011.
   (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }
 

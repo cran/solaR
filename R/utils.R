@@ -1,4 +1,4 @@
- # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2011, 2010 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -93,7 +93,7 @@ local2Solar<-function(x, lon=NULL){
   tz=attr(x, 'tzone')
   if (tz=='' || is.null(tz)) {tz='UTC'}
   ##Adelanto oficial por verano
-  AO=3600*dst(x);
+  AO=3600*dst(x)
   AOneg=(AO<0)
   if (any(AOneg)) {
     AO[AOneg]=0
@@ -174,7 +174,19 @@ P2E <- function(x, by){
   Nm=1/sample2Hours(by)
   sum(x, na.rm=1)/Nm                    #Potencia a Energía
 } 
-###OJO
+###OJO: no exportadas
+solvePac <- function(x, Cinv){
+  Vdc=x[1]
+  PdcN=x[2]
+  V <- c(1, Vdc, Vdc^2)
+  Ki=t(colSums(V*t(Cinv)))
+  A=Ki[3]
+  B=Ki[2]+1
+  C=Ki[1]-(PdcN)
+  result <- (-B+sqrt(B^2-4*A*C))/(2*A)
+  result
+}
+
 dailySum <- function(x, by){##x is a time series
   if (missing(by)) {by=DeltaT(x)}
   res <- aggregate(x, by=truncDay, FUN=P2E, by)

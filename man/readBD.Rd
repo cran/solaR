@@ -43,7 +43,7 @@ zoo2Meteo(file, lat, source='')
     It must contain a column \code{G0} with
     \emph{daily} (\code{readBD} and \code{df2Meteo}) or
     \emph{intradaily} (\code{readBDi} and \code{dfI2Meteo})  values of
-    global horizontal irradiation (Wh/m²), \emph{and} a column
+    global horizontal irradiation (Wh/m²). It should also include a column
     named \code{Ta} with values of ambient temperature.
 
     If the \code{Meteo} object is to be used with \code{\link{calcG0}}

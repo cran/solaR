@@ -1,4 +1,4 @@
- # Copyright (C) 2009, 2010 Oscar Perpiñán Lamigueiro
+ # Copyright (C) 2010, 2009 Oscar Perpiñán Lamigueiro
  #
  # This program is free software; you can redistribute it and/or
  # modify it under the terms of the GNU General Public License
@@ -30,22 +30,22 @@ fSombra6<-function(angGen, distances, struct, prom=TRUE){
   SombraGrupo<-matrix(ncol=5,nrow=dim(angGen)[1])
   for (i in 1:5) {SombraGrupo[,i]<-coredata(fSombra2X(angGen,Red[i,],struct))}
   ##Para calcular la Sombra Promedio, necesito el número de seguidores en cada posición(distrib)
-  distrib=with(struct,c(1,Ncol-2,1,Nrow-1,(Ncol-2)*(Nrow-1),Nrow-1)); 
+  distrib=with(struct,c(1,Ncol-2,1,Nrow-1,(Ncol-2)*(Nrow-1),Nrow-1)) 
   vProm=c(sum(distrib[c(5,6)]),
     sum(distrib[c(4,5,6)]),
     sum(distrib[c(4,5)]),
     sum(distrib[c(2,3,5,6)]),
-    sum(distrib[c(1,2,4,5)]));
-  Nseg=sum(distrib); ##Número total de seguidores
+    sum(distrib[c(1,2,4,5)]))
+  Nseg=sum(distrib) ##Número total de seguidores
   ##Con la función SWEEP multiplico el Factor de Sombra de cada tipo (columnas de SombraGrupo) por el resultado de vProm
     
   if (prom==TRUE){
 ###Factor de Sombra Promedio en el grupo de SEIS seguidores teniendo en cuenta distrib
-    FS=rowSums(sweep(SombraGrupo,2,vProm,'*'))/Nseg;
-    FS[FS>1]<-1;
+    FS=rowSums(sweep(SombraGrupo,2,vProm,'*'))/Nseg
+    FS[FS>1]<-1
   } else {		
 ###Factor de sombra en el seguidor #5 debido a los otros 5 seguidores
     FS=rowSums(SombraGrupo)
-    FS[FS>1]<-1;}
+    FS[FS>1]<-1}
   return(zoo(FS, index(angGen)))
 }

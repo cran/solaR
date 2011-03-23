@@ -24,9 +24,9 @@
         \item{Pac: }{power at the output of the inverter, W}
         \item{EffI: }{efficiency of the inverter}
     }}
-    \item{\code{prodD}:}{A \code{zoo} object with daily values of AC and
-      DC energy (Wh), and
-      productivity of the system.}
+    \item{\code{prodD}:}{A \code{zoo} object with daily values of AC (\code{Eac}) and
+      DC (\code{Edc}) energy (Wh), and
+      productivity (\code{Yf}, Wh/Wp) of the system.}
     \item{\code{prodDm}:}{A \code{zoo} object with monthly means of
       daily values of AC and DC energy (kWh), and
       productivity of the system.}
@@ -51,15 +51,22 @@
 }
 \section{Methods}{
   \describe{
-
     \item{as.zooD}{\code{signature(object = "ProdGCPV")}: conversion to a
       \code{zoo} object with daily values.}
     \item{as.zooI}{\code{signature(object = "ProdGCPV")}: conversion to a
       \code{zoo} object with intradaily values.}
+    \item{as.zooM}{\code{signature(object = "ProdGCPV")}: conversion to a
+      \code{zoo} object with monthly values.}
+    \item{as.zooY}{\code{signature(object = "ProdGCPV")}: conversion to a
+      \code{zoo} object with yearly values.}
     \item{as.data.frameD}{\code{signature(object = "ProdGCPV")}: conversion
       to a data.frame with daily values.}
     \item{as.data.frameI}{\code{signature(object = "ProdGCPV")}: conversion
       to a data.frame with intradaily values.}
+    \item{as.data.frameM}{\code{signature(object = "ProdGCPV")}: conversion
+      to a data.frame with monthly values.}
+    \item{as.data.frameY}{\code{signature(object = "ProdGCPV")}: conversion
+      to a data.frame with yearly values.}
     \item{indexD}{\code{signature(object = "ProdGCPV")}: index of the
       \code{solD} slot. }
     \item{indexI}{\code{signature(object = "ProdGCPV")}: index of the
@@ -81,7 +88,7 @@
 }
 
 \references{
-  Perpiñán, O, Energía Solar Fotovoltaica, 2010.
+  Perpiñán, O, Energía Solar Fotovoltaica, 2011.
   (\url{http://procomun.wordpress.com/documentos/libroesf/})
 }
 
