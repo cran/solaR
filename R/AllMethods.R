@@ -14,6 +14,10 @@
  # along with this program; if not, write to the Free Software
  # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  #/
+setGeneric('xyplot')
+setGeneric('levelplot')
+setGeneric('as.data.frame')
+
 setGeneric('getData', function(object){standardGeneric('getData')})
 setMethod('getData',##Solo definido para Meteo, de forma que siempre devuelve valores de partida
           signature=(object='Meteo'),
@@ -553,7 +557,8 @@ setMethod('show', 'ProdPVPS',
 ## myTheme$strip.background$col='transparent'
 ## lattice.options(default.theme=myTheme)
 
-solaR.theme=custom.theme.2(pch=19, cex=0.7)
+solaR.theme=custom.theme.2(pch=19, cex=0.7,
+  region=rev(brewer.pal(9, 'YlOrRd')))
 solaR.theme$strip.background$col='lightgray'
 solaR.theme$strip.shingle$col='transparent'
 
@@ -652,8 +657,9 @@ setMethod('xyplot',
 setMethod('levelplot',
           signature=c(x='formula', data='zoo'),
           definition=function(x, data,
-            par.settings=custom.theme(region=rev(brewer.pal(9, 'YlOrRd'))),
-            panel=panel.levelplot.raster, interpolate=TRUE,...){
+            par.settings=solaR.theme,
+##            panel=panel.levelplot.raster, interpolate=TRUE,...){
+            ...){
             data0=as.data.frame(data)
             ind=index(data)
             data0$day=doy(ind) ##Incorporo dia, mes y año para facilitar la formula.
@@ -663,7 +669,7 @@ setMethod('levelplot',
               data0$w=h2r(hms(ind)-12) ##hora solar en radianes
             }
             levelplot(x, data0, par.settings=par.settings,
-                      panel=panel, interpolate=interpolate,
+ ##                     panel=panel, interpolate=interpolate,
                       ...)
           }
           )
@@ -717,6 +723,8 @@ setMethod('show', 'Shade',
             print(summary(as.data.frame(object)))
           }
           )
+
+
 setMethod('xyplot',
           signature=c(x='formula', data='Shade'),
           definition=function(x, data, ...){
@@ -865,7 +873,7 @@ setMethod('compareLosses', 'ProdGCPV',
             z <- do.call(rbind, cdata)
             z$id <- ordered(z$id, levels=c('Shadows', 'AoI', 'Generator', 'DC', 'Inverter', 'AC'))
             p <- dotplot(id~values*100, groups=name, data=z,
-                         par.settings=custom.theme.2(pch=19), type='b',
+                         par.settings=solaR.theme, type='b',
                          auto.key=list(corner=c(0.95,0.2), cex=0.7), xlab='Losses (%)')
             print(p)
             return(z)
@@ -893,7 +901,7 @@ compareFunction <- function(..., vars){
   z <- do.call(rbind, cdata)
   z$ind <- ordered(z$ind, levels=vars)
   p <- dotplot(ind~values, groups=name, data=z, type='b',
-               par.settings=custom.theme.2(pch=19))
+               par.settings=solaR.theme)
   print(p+glayer(panel.text(x[length(x)], y[length(x)],
                             label=group.value, cex=0.7, pos=3, srt=45)))
   return(z)
@@ -1089,5 +1097,73 @@ setMethod('mergesolaR',
 ##             z <- mergesolaR(..., var='Yf')
 ##             df <- as.data.frame(z)
 ##             splomsolaR(df)
+##           }
+##           )
+
+##WINDOW
+## setGeneric('window')
+
+## ## start <- as.POSIXct('2011-11-01 12:00:00')
+## ## end <- as.POSIXct('2011-12-13 16:00:00')
+
+## setMethod('window',
+##           signature='Meteo',
+##           definition=function(x, start, end,...){
+##             if (!is.null(start)) start <- truncDay(start)
+##             if (!is.null(end)) end <- truncDay(end)+86400-1
+##             x@data <- window(x@data, start=start, end=end, ...)
+##             x
+##           }
+##           )
+
+## setMethod('window',
+##           signature='Sol',
+##           definition=function(x, start, end, ...){
+##             if (!is.null(start)) start <- truncDay(start)
+##             if (!is.null(end)) end <- truncDay(end)+86400-1
+##             solI <- x@solI
+##             idxI <- index(solI)
+##             match <- x@match
+##             if (is.null(start)){
+##               if (is.null(end)){
+##                 wIdx <- seq_along(idxI)
+##               } else {
+##                 wIdx <- which(idxI <= end)
+##               }
+##             } else {
+##               if (is.null(end)){
+##                 wIdx <- which(idxI >= start)
+##               } else {
+##                 wIdx <- which(idxI >= start & idxI <= end)
+##               }}
+##             x@solI <- solI[wIdx,]
+##             x@match <- match[wIdx]
+##             x@solD <- window(x@solD, start=start, end=end)
+##             x
+##             }
+##           )
+
+## setMethod('window',
+##           signature='G0',
+##           definition=function(x, start, end, ...){
+##             if (!is.null(start)) start <- truncDay(start)
+##             if (!is.null(end)) end <- truncDay(end)+86400-1
+##             sol <- window(as(x, 'Sol'), start=start, end=end, ...) ##Sol method
+##             meteo <- window(as(x, 'Meteo'), start=start, end=end, ...) ##Meteo method
+##             g0Iw <- window(x@G0I, start=start, end=end,...) ##zoo method
+##             Taw <- window(x@Ta, start=start, end=end,...) ##zoo method
+##             ##GENERAR G0d, G0dm, G0dy
+##             g0dw <- window(x@G0D, start=start, end=end)
+## ##            g0dmw <- window(x@G0dm, start=as.yearmon(start), end=as.yearmon(end))
+## ##            g0yw <- window(x@G0y, start=year(start), end=year(end))
+##             result <- new('G0',
+##                           meteo,
+##                           sol,
+##                           G0D=g0dw,
+##                           G0dm=g0dmw,
+##                           G0y=g0yw,
+##                           G0I=g0Iw,
+##                           Ta=Taw)
+##             result
 ##           }
 ##           )

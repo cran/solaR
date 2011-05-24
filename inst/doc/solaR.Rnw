@@ -57,7 +57,7 @@
 \author{Oscar Perpiñán Lamigueiro}
 
 
-\date{23 March 2011}
+\date{24 May 2011}
 
 \maketitle
 
@@ -70,7 +70,7 @@ This package performs the whole calculation from both \emph{daily} and
 \emph{intra-daily} global horizontal irradiation to the final productivity of 
 grid connected PV systems and water pumping PV systems. 
 Besides, the package includes several visualization methods based on
-the \texttt{lattice} and \texttt{latticeExtra} packages , and tools for the statistical analysis of
+the \texttt{lattice} and \texttt{latticeExtra} packages, and tools for the statistical analysis of
 the performance of a large PV plant composed of several systems.
 
 The package is constructed with \texttt{S4} classes and methods. 
@@ -129,7 +129,12 @@ p<-xyplot(r2d(AlS)~r2d(AzS),
     groups=month,
     data=SolI, type='l', col='black',
     xlab=expression(psi[s]),ylab=expression(gamma[s]))
-plab=p+glayer(panel.text(0, y[x==0], mon[group.value], pos=4, cex=0.8))
+
+plab <- p + glayer({
+  idx <- round(length(x)/2+1)
+  panel.text(x[idx], y[idx], mon[group.value], pos=3, offset=0.2, cex=0.8)
+})
+
 print(plab)
 
 @
@@ -165,6 +170,28 @@ These two functions are included in a function,  \texttt{calcSol}.
 This function constructs an object of class  \texttt{Sol} containing in its slots 
 the \texttt{zoo} objects created by \texttt{fSolD} and \texttt{fSolI}. 
 This class owns methods for getting and displaying information (for example, \texttt{as.zooD, as.zooI, xyplot}).
+
+There are three methods for the sun geometry calculations. These
+methods are named as 'cooper' (the default in previous versions),
+'spencer', 'michalsky' (the default in this version) and 'strous'. 
+<<echo=TRUE>>=
+lat=37.2
+BTd=fBTd(mode='serie')
+
+sol=calcSol(lat, BTd[100])
+print(as.zooD(sol))
+
+solStrous=calcSol(lat, BTd[100], method='strous')
+print(as.zooD(solStrous))
+
+solSpencer=calcSol(lat, BTd[100], method='spencer')
+print(as.zooD(solSpencer))
+
+solCooper=calcSol(lat, BTd[100], method='cooper')
+print(as.zooD(solCooper))
+
+@ 
+
 
 
 \section{Solar Radiation}
@@ -668,35 +695,33 @@ For example, the shadows factor of a tracker surrounded by five
 trackers is calculated in the next code box. The dimensions of the
 tracker structure and the configuration (rows and columns) of the
 plant are defined by \texttt{struct}, while the distances between the
-trackers are defined by \texttt{distances}. The figure
+trackers are defined by \texttt{distances}.  The figure
 \ref{fig:Sombreado2x} shows the evolution of the shadows factor during
 the day (X axis) and year (Y axis).
 
 
-<<echo=FALSE>>=
-sol<-calcSol(lat=37.2, fBTd(mode='serie'), sample='10 min', keep.night=FALSE)
+<<echo=TRUE>>=
+##I use method='spencer' and EoT='FALSE' in order to get w equispaced
+##so levelplot method produces a suitable plot.
+sol<-calcSol(lat=37.2, fBTd(mode='serie'), sample='10 min', 
+             EoT=FALSE, keep.night=FALSE, method='spencer')
 angGen<-fTheta(sol, beta=35);
 Angles=CBIND(as.zooI(sol), angGen)
 
 distances=data.frame(Lew=40,Lns=30,H=0)
 struct=list(W=23.11, L=9.8, Nrow=2, Ncol=8)
-
 ShdFactor<-fSombra6(Angles, distances, struct, prom=FALSE)
-
 Angles$FS=ShdFactor
-@
+@                               
 
-%
+
 \begin{figure}
-\begin{centering}
+  \centering
 <<echo=TRUE, fig=TRUE>>=
 p <- levelplot(FS~w*day, data=Angles, par.settings=custom.theme(region=brewer.pal('YlOrBr', n=9)))
 print(p)
-@
-\par\end{centering}
-
+@                               
 \caption{Shadows in a PV plant with two-axis trackers.\label{fig:Sombreado2x}}
-
 \end{figure}
 
 
@@ -1184,8 +1209,17 @@ print(TDMadrid$plot)
 
 \section{Changes}
 
-\subsection*{solaR 0.22}
+\subsection*{solaR 0.23}
+\begin{itemize}
+\item A bug in \texttt{fInclin} when \texttt{horizBright=FALSE} has been corrected. See help(calcGef).
+\item Four sun-geometry methods are now available in \texttt{fSolD, fSolI, calcSol}.
+\item \texttt{ThzS, AlS and AzS} are not set to NA outside sunrise-sunset period (suggested by Joerg Trentmann)
+\item \texttt{fInclin} and \texttt{calcGef} gain a new argument, \texttt{HCPV} (suggested by Álvaro Segovia)
+\item A bug in \texttt{fSolI} and \texttt{fTheta} when \texttt{lat=0} has been corrected (suggested by Alberto Soria)
+\item \texttt{h2d} and \texttt{d2h} small functions added.
+\end{itemize}
 
+\subsection*{solaR 0.22}
 \begin{itemize}
 \item A new \texttt{mergesolaR} method has been defined for merging
   \texttt{solaR} objects.

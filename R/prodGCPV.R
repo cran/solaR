@@ -24,9 +24,10 @@ prodGCPV<-function(lat,
                    bdI=list(),
                    sample='hour',
                    keep.night=TRUE,
+                   sunGeometry='michalsky',
                    corr, f,
                    betaLim=90, beta=abs(lat)-10, alfa=0,
-                   iS=2, alb=0.2, horizBright=FALSE,
+                   iS=2, alb=0.2, horizBright=TRUE, HCPV=FALSE,
                    module=list(), 
                    generator=list(),
                    inverter=list(), 
@@ -47,14 +48,15 @@ prodGCPV<-function(lat,
     modeShd[which(modeShd=='bt')]='area'
     warning('backtracking is only implemented for modeTrk=horiz')}
 		
-  if (modeRad!='prev'){                 #No utilizamos un cálculo previo
+  if (modeRad!='prev'){               #No utilizamos un cálculo previo
 
     radEf<-calcGef(lat=lat, modeTrk=modeTrk, modeRad=modeRad,
                    prom=prom, mapa=mapa, bd=bd, bdI=bdI,
                    sample=sample, keep.night=keep.night,
+                   sunGeometry=sunGeometry,
                    corr=corr, f=f,
                    betaLim=betaLim, beta=beta, alfa=alfa,
-                   iS=iS, alb=alb, horizBright=horizBright,
+                   iS=iS, alb=alb, horizBright=horizBright, HCPV=HCPV,
                    modeShd=modeShd, struct=struct, distances=distances)
 		
   } else { #Utilizamos un cálculo previo de calcG0, calcGef o prodSFCR
@@ -64,7 +66,7 @@ prodGCPV<-function(lat,
                       modeTrk=modeTrk, modeRad='prev',
                       prev=prev,
                       betaLim=betaLim, beta=beta, alfa=alfa,
-                      iS=iS, alb=alb, horizBright=horizBright,
+                      iS=iS, alb=alb, horizBright=horizBright, HCPV=HCPV,
                       modeShd=modeShd, struct=struct, distances=distances),
                     Gef=prev,
                     ProdGCPV=as(prev, 'Gef')
@@ -84,23 +86,23 @@ prodGCPV<-function(lat,
   ##Cálculo de valores diarios, mensuales y anuales
   ##=======================================
   DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31) ###OJO
-    Pg=generator$Pg                       #Wp
+  Pg=generator$Pg                                   #Wp
   
   if (radEf@type=='prom') {
     prodDm=aggregate(prodI[,c('Pac', 'Pdc')]/1000,
-      by=as.yearmon, FUN=P2E, radEf@sample)       #kWh
+      by=as.yearmon, FUN=P2E, radEf@sample) #kWh
     names(prodDm)=c('Eac', 'Edc')
     prodDm$Yf=prodDm$Eac/(Pg/1000)
     
-    prodD=prodDm*1000                #Wh
+    prodD=prodDm*1000                   #Wh
     prodD$Yf=prodD$Yf/1000
-    index(prodD) <- indexD(radEf)    ##para que sea compatible con G0D
+    index(prodD) <- indexD(radEf) ##para que sea compatible con G0D
 
     prody=zoo(t(colSums(prodDm*DayOfMonth)),
       unique(year(index(prodDm))))
   } else {
     prodD=aggregate(prodI[,c('Pac', 'Pdc')],
-      by=truncDay, FUN=P2E, radEf@sample)         #Wh
+      by=truncDay, FUN=P2E, radEf@sample) #Wh
     names(prodD)=c('Eac', 'Edc')
     prodD$Yf=prodD$Eac/Pg
     

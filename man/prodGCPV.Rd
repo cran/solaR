@@ -18,9 +18,10 @@ prodGCPV(lat,
          bdI=list(),
          sample='hour',
          keep.night=TRUE,
+         sunGeometry='michalsky',
          corr, f,
          betaLim=90, beta=abs(lat)-10, alfa=0,
-         iS=2, alb=0.2, horizBright=FALSE,
+         iS=2, alb=0.2, horizBright=TRUE, HCPV=FALSE,
          module=list(),
          generator=list(),
          inverter=list(),
@@ -55,6 +56,10 @@ prodGCPV(lat,
   %    is only required when \code{modeRad='bd'}.}
 
   \item{sample, keep.night}{See \code{\link{calcSol}} for details.}
+
+  \item{sunGeometry}{\code{character}, method for the sun geometry
+    calculations. See \code{\link{calcSol}}, \code{\link{fSolD}} and \code{\link{fSolI}}.}
+
   \item{corr, f}{See \code{\link{calcG0}} for details.}
   % \code{character}, containing one of ‘"sec"’, ‘"min"’,
   %        ‘"hour"’.  This can optionally be preceded by a (positive or
@@ -65,7 +70,7 @@ prodGCPV(lat,
   %        time series includes the night.}
 
 
-  \item{betaLim, beta, alfa, iS, alb, horizBright}{See \code{\link{calcGef}} for details.}
+  \item{betaLim, beta, alfa, iS, alb, horizBright, HCPV}{See \code{\link{calcGef}} for details.}
   %     \item{betaLim}{numeric, maximum value of the inclination angle
   %     for a tracking surface. Its default value is 90 (no
   %     limitation))}

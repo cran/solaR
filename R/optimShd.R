@@ -23,8 +23,9 @@ optimShd<-function(lat,
                    bd=list(),
                    sample='hour',
                    keep.night=TRUE,
+                   sunGeometry='michalsky',
                    betaLim=90, beta=abs(lat)-10, alfa=0,
-                   iS=2, alb=0.2,
+                   iS=2, alb=0.2, HCPV=FALSE,
                    module=list(), 
                    generator=list(),
                    inverter=list(), 
@@ -44,8 +45,9 @@ optimShd<-function(lat,
   listArgs<-list(lat=lat, modeTrk=modeTrk, modeRad=modeRad,
                  prev=prev, prom=prom, mapa=mapa, bd=bd,
                  sample=sample, keep.night=keep.night,
+                 sunGeometry=sunGeometry,
                  betaLim=betaLim, beta=beta, alfa=alfa,
-                 iS=iS, alb=alb,
+                 iS=iS, alb=alb, HCPV=HCPV,
                  module=module, generator=generator,
                  inverter=inverter, effSys=effSys,
                  modeShd=modeShd, struct=struct, distances=data.frame(Lew=NA, Lns=NA, D=NA))
@@ -65,7 +67,7 @@ optimShd<-function(lat,
                  H=0))
     )
   
-  casos<-dim(Red)[1]              #Número de posibilidades a estudiar
+  casos<-dim(Red)[1]               #Número de posibilidades a estudiar
 
   ##Preparo la barra de progreso
   if (prog) {pb <- txtProgressBar(min = 0, max = casos+1, style = 3)
