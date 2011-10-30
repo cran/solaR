@@ -553,19 +553,33 @@ setMethod('show', 'ProdPVPS',
 
 ###XYPLOT
 
-## myTheme <- custom.theme.2(pch=19, cex=0.8, alpha=0.6, region=rev(brewer.pal(9, 'YlOrRd')))
-## myTheme$strip.background$col='transparent'
-## lattice.options(default.theme=myTheme)
 
-solaR.theme=custom.theme.2(pch=19, cex=0.7,
-  region=rev(brewer.pal(9, 'YlOrRd')))
-solaR.theme$strip.background$col='lightgray'
-solaR.theme$strip.shingle$col='transparent'
+xscale.solar <- function(...){ans <- xscale.components.default(...); ans$top=FALSE; ans}
+yscale.solar <- function(...){ans <- yscale.components.default(...); ans$right=FALSE; ans}
+
+solaR.theme <- function(pch=19, cex=0.7, region=rev(brewer.pal(9, 'YlOrRd')), ...) {
+  theme <- custom.theme.2(pch=pch, cex=cex, region=region, ...)
+  theme$strip.background$col='transparent'
+  theme$strip.shingle$col='transparent'
+  theme$strip.border$col='transparent'
+  theme
+}
+
+solaR.theme.2 <- function(pch=19, cex=0.7, region=rev(brewer.pal(9, 'YlOrRd')), ...) {
+  theme <- custom.theme.2(pch=pch, cex=cex, region=region, ...)
+  theme$strip.background$col='lightgray'
+  theme$strip.shingle$col='lightgray'
+  theme
+}
 
 
 setMethod('xyplot',
           signature=c(x='formula', data='zoo'),
-          definition=function(x, data, par.settings=solaR.theme,...){            
+          definition=function(x, data,
+            par.settings=solaR.theme,
+            xscale.components=xscale.solar,
+            yscale.components=yscale.solar,
+            ...){            
             data0=as.data.frame(data)
             ind=index(data)
             data0$day=doy(ind) ##Incorporo dia, mes y año para facilitar la formula.
@@ -575,6 +589,8 @@ setMethod('xyplot',
               data0$w=h2r(hms(ind)-12) ##hora solar en radianes
             }
             xyplot(x, data0, par.settings=par.settings,
+                   xscale.components=yscale.components,
+                   yscale.components=yscale.components,
                    strip=strip.custom(strip.levels=c(TRUE, TRUE)),...)
           }
           )
@@ -606,11 +622,16 @@ setMethod('xyplot',
 
 setMethod('xyplot',
           signature=c(x='Meteo', data='missing'),
-          definition=function(x, data, par.settings=solaR.theme,
+          definition=function(x, data,
+            par.settings=solaR.theme.2,
+            ## xscale.components=xscale.solar,
+            ## yscale.components=yscale.solar,
             strip=FALSE, strip.left=TRUE,...){
             x0=getData(x)
             N=ncol(x0)
             xyplot(x0, par.settings=par.settings,
+                   ## xscale.components=xscale.components,
+                   ## yscale.components=yscale.components,
                    layout=c(1, N),
                    scales=list(cex=0.6, rot= 0),
                    strip=strip, strip.left=TRUE,
@@ -621,35 +642,55 @@ setMethod('xyplot',
 
 setMethod('xyplot',
           signature=c(x='G0', data='missing'),
-          definition=function(x, data, par.settings=solaR.theme, ...){
+          definition=function(x, data,
+            par.settings=solaR.theme.2,
+            ## xscale.components=xscale.solar,
+            ## yscale.components=yscale.solar,
+            ...){
             x0=as.zooD(x, complete=FALSE)
             xyplot(x0, par.settings=par.settings,
-                   ...,
+                   ## xscale.components=xscale.components,
+                   ## yscale.components=yscale.components,
                    superpose=TRUE,
                    auto.key=list(space='right'),
-                   ylab='Wh/m²')
+                   ylab='Wh/m²',
+                   ...)
           }
           )
 
 setMethod('xyplot',
           signature=c(x='ProdGCPV', data='missing'),
-          definition=function(x, data, par.settings=solaR.theme, ...){
+          definition=function(x, data,
+            par.settings=solaR.theme.2,
+            ## xscale.components=xscale.solar,
+            ## yscale.components=yscale.solar,
+            ...){
             x0=as.zooD(x, complete=FALSE)
             xyplot(x0, layout=c(1, 3),
+                   par.settings=par.settings,
+                   ## xscale.components=xscale.components,
+                   ## yscale.components=yscale.components,
                    strip=FALSE,
                    strip.left=TRUE,
-                   par.settings=par.settings, ...)
+                   ...)
           }
           )
 
 setMethod('xyplot',
           signature=c(x='ProdPVPS', data='missing'),
-          definition=function(x, data, par.settings=solaR.theme, ...){
+          definition=function(x, data,
+            par.settings=solaR.theme.2,
+            ## xscale.components=xscale.solar,
+            ## yscale.components=yscale.solar,
+            ...){
             x0=as.zooD(x, complete=FALSE)
             xyplot(x0, layout=c(1, 3),
+                   par.settings=par.settings,
+                   ## xscale.components=xscale.components,
+                   ## yscale.components=yscale.components,
                    strip=FALSE,
                    strip.left=TRUE,
-                   par.settings=par.settings, ...)
+                   ...)
           }
           )
 
@@ -658,7 +699,9 @@ setMethod('levelplot',
           signature=c(x='formula', data='zoo'),
           definition=function(x, data,
             par.settings=solaR.theme,
-##            panel=panel.levelplot.raster, interpolate=TRUE,...){
+            ##            panel=panel.levelplot.raster, interpolate=TRUE,...){
+            xscale.components=xscale.solar,
+            yscale.components=yscale.solar,
             ...){
             data0=as.data.frame(data)
             ind=index(data)
@@ -669,7 +712,9 @@ setMethod('levelplot',
               data0$w=h2r(hms(ind)-12) ##hora solar en radianes
             }
             levelplot(x, data0, par.settings=par.settings,
- ##                     panel=panel, interpolate=interpolate,
+                      xscale.components=xscale.components,
+                      yscale.components=yscale.components,
+                      ##                     panel=panel, interpolate=interpolate,
                       ...)
           }
           )
@@ -736,11 +781,11 @@ setMethod('xyplot',
 setGeneric('shadeplot', function(x, ...)standardGeneric('shadeplot'))
 
 setMethod('shadeplot', signature(x='Shade'),
-          function(x, y, ...,
+          function(x, 
                    main='',
                    xlab=expression(L[ew]),
                    ylab=expression(L[ns]),
-                   n=9){
+                   n=9, ...){
             red=x@distances
             FS.loess=x@FS.loess
             Yf.loess=x@Yf.loess
@@ -751,8 +796,10 @@ setMethod('shadeplot', signature(x='Shade'),
               Lns=seq(min(red$Lns),max(red$Lns),length=100)
               Red=expand.grid(Lew=Lew,Lns=Lns)
               FS=predict(FS.loess,Red)
+              Red$FS=as.numeric(FS)
               AreaG=with(struct,L*W)
               GRR=Red$Lew*Red$Lns/AreaG
+              Red$GRR=GRR
               FS.m<-matrix(1-FS,
                            nrow=length(Lew),
                            ncol=length(Lns))
@@ -766,7 +813,15 @@ setMethod('shadeplot', signature(x='Shade'),
               } else {
                 paleta=rev(heat.colors(n))}
               par(mar=c(4.1,4.1,2.1,2.1))
-              filled.contour(x=Lew,y=Lns,z=FS.m,...,
+              ##alternativa con levelplot y layer
+              ## levelplot((1-FS)~Lew*Lns,  data=Red, aspect='iso',
+              ##           xlab=xlab, ylab=ylab, main=main,
+              ##           subscripts=TRUE, contour=TRUE, lwd=0.6) + 
+              ##     layer(panel.contourplot(Lew, Lns, GRR,
+              ##                             lty=3, labels=TRUE,
+              ##                             region=FALSE, contour=TRUE,
+              ##                             subscripts=TRUE), data=Red)
+              filled.contour(x=Lew,y=Lns,z=FS.m,#...,
                              col=paleta, #levels=niveles,
                              nlevels=n,
                              plot.title=title(xlab=xlab,
@@ -1033,7 +1088,7 @@ setMethod('mergesolaR',
 ##             horizonplot(z, colorkey=TRUE)
 ##           })
 
-###splom
+## splom
 ## splomsolaR <- function(x, ...){
 ##   splom(x,
 ##         panel=panel.hexbinplot,
@@ -1101,69 +1156,245 @@ setMethod('mergesolaR',
 ##           )
 
 ##WINDOW
-## setGeneric('window')
 
-## ## start <- as.POSIXct('2011-11-01 12:00:00')
-## ## end <- as.POSIXct('2011-12-13 16:00:00')
+DayOfMonth=c(31,28,31,30,31,30,31,31,30,31,30,31) ###OJO
 
-## setMethod('window',
-##           signature='Meteo',
-##           definition=function(x, start, end,...){
-##             if (!is.null(start)) start <- truncDay(start)
-##             if (!is.null(end)) end <- truncDay(end)+86400-1
-##             x@data <- window(x@data, start=start, end=end, ...)
-##             x
-##           }
-##           )
+## start <- as.POSIXct('2009-01-01')
+## end <- as.POSIXct('2009-01-31')
 
-## setMethod('window',
-##           signature='Sol',
-##           definition=function(x, start, end, ...){
-##             if (!is.null(start)) start <- truncDay(start)
-##             if (!is.null(end)) end <- truncDay(end)+86400-1
-##             solI <- x@solI
-##             idxI <- index(solI)
-##             match <- x@match
-##             if (is.null(start)){
-##               if (is.null(end)){
-##                 wIdx <- seq_along(idxI)
-##               } else {
-##                 wIdx <- which(idxI <= end)
-##               }
-##             } else {
-##               if (is.null(end)){
-##                 wIdx <- which(idxI >= start)
-##               } else {
-##                 wIdx <- which(idxI >= start & idxI <= end)
-##               }}
-##             x@solI <- solI[wIdx,]
-##             x@match <- match[wIdx]
-##             x@solD <- window(x@solD, start=start, end=end)
-##             x
-##             }
-##           )
+setMethod('[',
+          signature='Meteo',
+          definition=function(x, i, j,...){
+            if (!missing(i)) {
+              i <- truncDay(i)
+            } else {
+              i <- indexD(x)[1]
+            }
+            if (!missing(j)) {
+              j <- truncDay(j)+86400-1 ##The end is the last second of the day
+            } else {
+              nDays <- length(indexD(x))
+              j <- indexD(x)[nDays]+86400-1
+            }
+            stopifnot(j>i)
 
-## setMethod('window',
-##           signature='G0',
-##           definition=function(x, start, end, ...){
-##             if (!is.null(start)) start <- truncDay(start)
-##             if (!is.null(end)) end <- truncDay(end)+86400-1
-##             sol <- window(as(x, 'Sol'), start=start, end=end, ...) ##Sol method
-##             meteo <- window(as(x, 'Meteo'), start=start, end=end, ...) ##Meteo method
-##             g0Iw <- window(x@G0I, start=start, end=end,...) ##zoo method
-##             Taw <- window(x@Ta, start=start, end=end,...) ##zoo method
-##             ##GENERAR G0d, G0dm, G0dy
-##             g0dw <- window(x@G0D, start=start, end=end)
-## ##            g0dmw <- window(x@G0dm, start=as.yearmon(start), end=as.yearmon(end))
-## ##            g0yw <- window(x@G0y, start=year(start), end=year(end))
-##             result <- new('G0',
-##                           meteo,
-##                           sol,
-##                           G0D=g0dw,
-##                           G0dm=g0dmw,
-##                           G0y=g0yw,
-##                           G0I=g0Iw,
-##                           Ta=Taw)
-##             result
-##           }
-##           )
+            if (!is.null(i)) i <- truncDay(i)
+            if (!is.null(j)) j <- truncDay(j)+86400-1
+            x@data <- window(x@data, start=i, end=j, ...) ##zoo method
+            x
+          }
+          )
+
+
+setMethod('[',
+          signature='Sol',
+          definition=function(x, i, j, ...){
+            if (!missing(i)) {
+              i <- truncDay(i)
+              } else {
+                i <- indexD(x)[1]
+                }
+            if (!missing(j)) {
+              j <- truncDay(j)+86400-1##The end is the last second of the day
+              } else {
+                nDays <- length(indexD(x))
+                j <- indexD(x)[nDays]+86400-1
+                }
+            stopifnot(j>i)
+            solI <- x@solI
+            idxI <- index(solI)
+            match <- x@match
+            if (missing(i)){
+              if (missing(j)){
+                wIdx <- seq_along(idxI)
+              } else {
+                wIdx <- which(idxI <= j)
+              }
+            } else {
+              if (missing(j)){
+                wIdx <- which(idxI >= i)
+              } else {
+                wIdx <- which(idxI >= i & idxI <= j)
+              }}
+            x@solI <- solI[wIdx,]
+            x@match <- match[wIdx]
+            x@solD <- window(x@solD, start=i, end=j, ...)
+            x
+            }
+          )
+
+setMethod('[',
+          signature='G0',
+          definition=function(x, i, j, ...){
+            sol <- as(x, 'Sol')[i=i, j=j, ...] ##Sol method
+            meteo <- as(x, 'Meteo')[i=i, j=j, ...] ##Meteo method
+
+            ## The sol methods already includes a procedure to correct the start and end values
+            idx <- indexI(sol)
+            start <- idx[1]
+            end <- idx[length(idx)]
+            
+            G0Iw <- window(x@G0I, start=start, end=end)##,...) ##zoo method
+            Taw <- window(x@Ta, start=start, end=end)##,...) ##zoo method
+            G0dw <- window(x@G0D, start=truncDay(start), end=truncDay(end))##, ...) ##zoo method
+
+            G0dmw <- aggregate(G0dw[,c('G0d', 'D0d', 'B0d')], by=as.yearmon,
+                               FUN=function(x, ...)mean(x, na.rm=1)/1000) ##kWh
+            if (x@type=='prom'){
+              G0yw=zoo(t(colSums(G0dmw*DayOfMonth)),
+                unique(year(index(G0dmw))))
+            } else {
+              G0yw=aggregate(G0dw[,c('G0d', 'D0d', 'B0d')], by=year,
+                FUN=function(x, ...)sum(x, na.rm=1)/1000) ##kWh
+            }
+
+            result <- new('G0',
+                          meteo,
+                          sol,
+                          G0D=G0dw,
+                          G0dm=G0dmw,
+                          G0y=G0yw,
+                          G0I=G0Iw,
+                          Ta=Taw)
+            result
+          }
+          )
+
+
+setMethod('[',
+          signature='Gef',
+          definition=function(x, i, j, ...){
+            g0 <- as(x, 'G0')[i=i, j=j, ...] ##G0 method
+
+            ## The sol methods already includes a procedure to correct the start and end values
+            idx <- indexI(g0)
+            start <- idx[1]
+            end <- idx[length(idx)]
+
+
+            GefIw <- window(x@GefI, start=start, end=end,...) ##zoo method
+            Thetaw <- window(x@Theta, start=start, end=end,...) ##zoo method
+            Gefdw <- window(x@GefD, start=truncDay(start), end=truncDay(end), ...) ##zoo method
+
+            Gefdmw <- aggregate(Gefdw[,c('Bod', 'Bnd', 'Gd', 'Dd', 'Bd', 'Gefd', 'Defd', 'Befd')],
+                                by=as.yearmon,
+                                FUN=function(x, ...)mean(x, na.rm=1)/1000) ##kWh
+            if (x@type=='prom'){
+              Gefyw=zoo(t(colSums(Gefdmw*DayOfMonth)),
+                unique(year(index(Gefdmw))))
+            } else {
+              Gefyw=aggregate(Gefdw[,c('Bod', 'Bnd', 'Gd', 'Dd', 'Bd', 'Gefd', 'Defd', 'Befd')],
+                by=year,
+                FUN=function(x, ...)sum(x, na.rm=1)/1000) ##kWh
+            }
+
+            result <- new('Gef',
+                          g0,
+                          GefD=Gefdw,
+                          Gefdm=Gefdmw,
+                          Gefy=Gefyw,
+                          GefI=GefIw,
+                          Theta=Thetaw,
+                          iS=x@iS,
+                          alb=x@alb,
+                          modeTrk=x@modeTrk,
+                          modeShd=x@modeShd,
+                          angGen=x@angGen,
+                          struct=x@struct,
+                          distances=x@distances
+                          )
+            result
+          }
+          )
+
+
+setMethod('[',
+          signature='ProdGCPV',
+          definition=function(x, i, j, ...){
+            gef <- as(x, 'Gef')[i=i, j=j, ...] ##Gef method
+
+            ## The sol methods already includes a procedure to correct the start and end values
+            idx <- indexI(gef)
+            start <- idx[1]
+            end <- idx[length(idx)]
+
+
+            prodIw <- window(x@prodI, start=start, end=end,...) ##zoo method
+            prodDw <- window(x@prodD, start=truncDay(start), end=truncDay(end),...) ##zoo method
+
+            if (x@type=='prom'){
+              prodDmw <- prodDw/1000
+              prodDmw$Yf <- prodDw$Yf
+              prodyw=zoo(t(colSums(prodDmw*DayOfMonth)),
+                unique(year(index(prodDmw))))
+            } else {
+              prodDmw <- aggregate(prodDw/1000,
+                                   by=as.yearmon,
+                                   mean, na.rm=1)
+              prodyw=aggregate(prodDw/1000,
+                by=year,
+                sum, na.rm=1) ##kWh
+              prodDmw$Yf=prodDmw$Yf*1000
+              prodyw$Yf=prodyw$Yf*1000
+            }
+
+            result <- new('ProdGCPV',
+                          gef,
+                          prodD=prodDw,
+                          prodDm=prodDmw,
+                          prody=prodyw,
+                          prodI=prodIw,
+                          module=x@module,
+                          generator=x@generator,
+                          inverter=x@inverter,
+                          effSys=x@effSys
+                          )
+            result
+          }
+          )
+
+setMethod('[',
+          signature='ProdPVPS',
+          definition=function(x, i, j, ...){
+            gef <- as(x, 'Gef')[i=i, j=j, ...] ##Gef method
+
+            ## The sol methods already includes a procedure to correct the start and end values
+            idx <- indexI(gef)
+            start <- idx[1]
+            end <- idx[length(idx)]
+
+
+            prodIw <- window(x@prodI, start=start, end=end,...) ##zoo method
+            prodDw <- window(x@prodD, start=truncDay(start), end=truncDay(end),...) ##zoo method
+
+            if (x@type=='prom'){
+              prodDmw <- prodDw
+              prodDmw$Eac <- prodDw$Eac/1000
+              prodyw=zoo(t(colSums(prodDmw*DayOfMonth)),
+                unique(year(index(prodDmw))))
+            } else {
+              prodDmw <- aggregate(prodDw,
+                                   by=as.yearmon,
+                                   mean, na.rm=1)
+              prodyw=aggregate(prodDw,
+                by=year,
+                sum, na.rm=1) ##kWh
+              prodDmw$Eac=prodDmw$Eac/1000
+              prodyw$Eac=prodyw$Eac/1000
+            }
+
+            result <- new('ProdPVPS',
+                          gef,
+                          prodD=prodDw,
+                          prodDm=prodDmw,
+                          prody=prodyw,
+                          prodI=prodIw,
+                          pump=x@pump,
+                          H=x@H,
+                          Pg=x@Pg,
+                          converter=x@converter,
+                          effSys=x@effSys
+                          )
+            result
+          }
+          )
