@@ -1,10 +1,10 @@
-b61dca7a306ad6feb6e64140a88495f6 *DESCRIPTION
+7811f2f7eb389e528d1fe70d069c057e *DESCRIPTION
 beed527a8e8beb1f2ad8edf4fa1be14e *NAMESPACE
 d64dfdbf3283b8b11975ce662e0b121d *NEWS
 885b63c878a0428d111bed32d0e216cc *R/AllClasses.R
-bd653b38bc89b195814a25b8ee775398 *R/AllMethods.R
+8feac1145f456f41e013ad8969e80888 *R/AllMethods.R
 af1e2ca99318f8a768cda9a41bb7376e *R/HQCurve.R
-bacebf6b8b6edc75360ff9d7aa42e0d8 *R/NmgSFB.R
+87af9df1ef81fbce873b7af3f249b7a7 *R/NmgSFB.R
 17ad7f44489700fe24971e0a4f8c33de *R/TargetDiagram.R
 d4d7aa8889ba32cb134c1f675cb36f85 *R/analyzeData.R
 ad7d9635d4c8db8d4ecb9c1ec7d04ed4 *R/calcG0.R
@@ -57,7 +57,7 @@ c933797cc4fa8f63124ae2d749e1a69e *man/as.zooD-methods.Rd
 e218f528fc4155c32cb7900078851ea4 *man/as.zooM-methods.Rd
 72bf426490c52c6ecf986e737c9f30a7 *man/as.zooY-methods.Rd
 fb6ac4cef657c3a43fd834b7d1feb8a9 *man/calcG0.Rd
-6f12d24c6efbcabd961271f9b2122a53 *man/calcGef.Rd
+df65194ac436362efb55070a42f5e625 *man/calcGef.Rd
 4c0fc8e33a5e3e3134a8490cf3653c19 *man/calcShd.Rd
 db26514ca9d84988fb0249b5cb50cdef *man/calcSol.Rd
 dc64a0a53ecc0af2ba1e4e80cf62db8f *man/compare-methods.Rd
@@ -66,7 +66,7 @@ dc64a0a53ecc0af2ba1e4e80cf62db8f *man/compare-methods.Rd
 a13dbf95a21ac0609ce95c904135a9b9 *man/fBTd.Rd
 5ea4dc3c8b730877f8c2f6caf292e124 *man/fCompD.Rd
 c3be11cde599d7a8fe0aee35640eb903 *man/fCompI.Rd
-1c0828fbe9bd73b8ce68202d8d080a55 *man/fInclin.Rd
+84984bae6827e9a4b9304d3f861e8df1 *man/fInclin.Rd
 921ac3b95c1ea3e04496029f51939171 *man/fProd.Rd
 4f47f770481cfdcaf7f606da62f0b6f6 *man/fPump.Rd
 9a01fb297a72dcb92d11aef4a8318d79 *man/fSolD.Rd
