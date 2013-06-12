@@ -3,7 +3,7 @@ source(file.path(R.home("share"), "R", "examples-header.R"))
 options(warn = 1)
 library('solaR')
 
-assign(".oldSearch", search(), pos = 'CheckExEnv')
+base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
 cleanEx()
 nameEx("HQCurve")
 ### * HQCurve
@@ -119,40 +119,37 @@ G0dm=c(2.766,3.491,4.494,5.912,6.989,7.742,7.919,7.027,5.369,3.562,2.814,2.179)*
 Ta=c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2,
   15.2)
 
-g0<-calcG0(lat=37.2, modeRad='prom', dataRad=list(G0dm=G0dm, Ta=Ta))
+g0 <- calcG0(lat=37.2, modeRad='prom', dataRad=list(G0dm=G0dm, Ta=Ta))
 print(g0)
 xyplot(g0)
 
-## Not run: 
-##D g0<-calcG0(lat=37.2,
-##D         modeRad='siar',
-##D         dataRad=list(prov=28,est=3,
-##D         start='01/01/2009', end='31/12/2009'))
-##D print(g0)
-##D xyplot(g0)
-##D 
-##D ##Now the G0I component of g0 is used as
-##D ##the bdI argument to calcG0 in order to
-##D ##test the intradaily correlations of fd-kt
-##D 
-##D BDi=as.zooI(g0)
-##D BDi$Ta=25 ##Information about temperature must be contained in BDi
-##D 
-##D g02<-calcG0(lat=37.2,
-##D             modeRad='bdI',
-##D             dataRad=list(lat=37.2, file=BDi),
-##D             corr='none')
-##D 
-##D print(g02)
-##D 
-##D g03<-calcG0(lat=37.2,
-##D             modeRad='bdI',
-##D             dataRad=list(lat=37.2, file=BDi),
-##D             corr='BRL')
-##D print(g03)
-##D 
-##D xyplot(fd~kt, data=g03, pch=19, alpha=0.3)
-## End(Not run)
+## Aguiar et al.
+
+g0 <- calcG0(lat=37.2, modeRad='aguiar', dataRad=G0dm)
+print(g0)
+xyplot(g0)
+
+##Now the G0I component of g0 is used as
+##the bdI argument to calcG0 in order to
+##test the intradaily correlations of fd-kt
+
+BDi=as.zooI(g0)
+BDi$Ta=25 ##Information about temperature must be contained in BDi
+
+g02 <- calcG0(lat=37.2,
+            modeRad='bdI',
+            dataRad=list(lat=37.2, file=BDi),
+            corr='none')
+
+print(g02)
+
+g03 <- calcG0(lat=37.2,
+            modeRad='bdI',
+            dataRad=list(lat=37.2, file=BDi),
+            corr='BRL')
+print(g03)
+
+xyplot(fd~kt, data=g03, pch=19, alpha=0.3)
 
 ## Not run: 
 ##D ##NREL-MIDC
@@ -230,38 +227,28 @@ gef2<-calcGef(lat=37.2, modeRad='prom', dataRad=list(G0dm=G0dm, Ta=Ta), modeTrk=
 print(gef2)
 xyplot(gef2)
 
-## Not run: 
-##D ###Irradiation data from mapa.es/siar
-##D 
-##D ##Fixed surface
-##D 
-##D gefSIAR<-calcGef(lat=41,
-##D              modeRad='siar',
-##D              dataRad=list(prov=28,est=3,
-##D                start='01/01/2009', end='31/12/2009'),
-##D              keep.night=FALSE)
-##D print(gefSIAR)
-##D xyplot(gefSIAR)
-##D ##Two-axis tracker, using the previous result.
-##D ##'gefSIAR' is internally coerced to a 'G0' object.
-##D 
-##D gefSIAR2<-calcGef(lat=41, modeRad='prev', dataRad=gefSIAR, modeTrk='two')
-##D print(gefSIAR2)
-##D xyplot(gefSIAR2)
-##D 
-##D ###Shadows between two-axis trackers, again using the gefSIAR result.
-##D 
-##D struct=list(W=23.11, L=9.8, Nrow=2, Ncol=8)
-##D distances=data.frame(Lew=40, Lns=30, H=0)
-##D 
-##D gefShd<-calcGef(lat=41, modeRad='prev',
-##D                 dataRad=gefSIAR, modeTrk='two',
-##D                 modeShd=c('area', 'prom'),
-##D                 struct=struct, distances=distances)
-##D print(gefShd)
-##D ##The Gef0, Bef0 and Def0 values are the same as those contained in the
-##D ##                gefSIAR2 object
-## End(Not run)
+##Fixed surface
+gefAguiar <- calcGef(lat=41, modeRad='aguiar', dataRad=G0dm)
+
+##Two-axis tracker, using the previous result.
+##'gefAguiar' is internally coerced to a 'G0' object.
+
+gefAguiar2 <- calcGef(lat=41, modeRad='prev', dataRad=gefAguiar, modeTrk='two')
+print(gefAguiar2)
+xyplot(gefAguiar2)
+
+###Shadows between two-axis trackers, again using the gefAguiar result.
+
+struct=list(W=23.11, L=9.8, Nrow=2, Ncol=8)
+distances=data.frame(Lew=40, Lns=30, H=0)
+
+gefShd<-calcGef(lat=41, modeRad='prev',
+                dataRad=gefAguiar, modeTrk='two',
+                modeShd=c('area', 'prom'),
+                struct=struct, distances=distances)
+print(gefShd)
+##The Gef0, Bef0 and Def0 values are the same as those contained in the
+##                gefAguiar2 object
 
 
 
@@ -330,6 +317,7 @@ GefFixed=as(ProdFixed, 'Gef')
 compare(GefFixed, Prod2x, ProdHoriz)
 
 ## Not run: 
+##D ## Due to changes in SIAR webpage this code no longer works
 ##D ###compare and do.call
 ##D EstMadrid <- subset(RedEstaciones, NomProv=='Madrid')
 ##D nEstMadrid <- nrow(EstMadrid)
@@ -851,6 +839,7 @@ prod <- mergesolaR(ProdFixed, Prod2x, ProdHoriz)
 head(prod)
 
 ## Not run: 
+##D ## Due to changes in SIAR webpage this code no longer works
 ##D EstMadrid <- subset(RedEstaciones, NomProv=='Madrid')
 ##D nEstMadrid <- nrow(EstMadrid)
 ##D namesMadrid <- EstMadrid$NomEst
@@ -1000,31 +989,29 @@ mon=month(index(ComparePac))
 xyplot(two+horiz+fixed~AzS|mon, data=ComparePac,
      type='l', auto.key=list(space='right', lines=TRUE, points=FALSE),ylab='Pac')
 
-## Not run: 
-##D ###Use of modeRad='siar' and modeRad='prev'
-##D prodSIARFixed<-prodGCPV(lat=41,
-##D              modeRad='siar',
-##D              dataRad=list(prov=28,est=3,
-##D                start='01/01/2009', end='31/12/2009'),
-##D              keep.night=FALSE)
-##D 
-##D ##We want to compare systems with different effective irradiance
-##D ##so we have to convert prodSIARFixed to a 'G0' object.
-##D G0SIAR=as(prodSIARFixed, 'G0')
-##D 
-##D prodSIAR2x<-prodGCPV(lat=41,modeTrk='two',modeRad='prev', dataRad=G0SIAR)
-##D prodSIARHoriz<-prodGCPV(lat=41, modeTrk='horiz',modeRad='prev',
-##D dataRad=G0SIAR)
-##D 
-##D ##Comparison of yearly values
-##D compare(prodSIARFixed, prodSIAR2x, prodSIARHoriz)
-##D compareLosses(prodSIARFixed, prodSIAR2x, prodSIARHoriz)
-##D 
-##D ##Compare of daily productivities of each tracking system
-##D compareYf <- mergesolaR(prodSIARFixed, prodSIAR2x, prodSIARHoriz)
-##D xyplot(compareYf, superpose=TRUE,
-##D ylab='kWh/kWp', main='Daily productivity', auto.key=list(space='right'))
-## End(Not run)
+###Use of modeRad='aguiar' and modeRad='prev'
+prodAguiarFixed <- prodGCPV(lat=41,
+                            modeRad='aguiar',
+                            dataRad=G0dm,
+                            keep.night=FALSE)
+
+##We want to compare systems with different effective irradiance
+##so we have to convert prodAguiarFixed to a 'G0' object.
+G0Aguiar=as(prodAguiarFixed, 'G0')
+
+prodAguiar2x<-prodGCPV(lat=41,modeTrk='two',modeRad='prev', dataRad=G0Aguiar)
+prodAguiarHoriz<-prodGCPV(lat=41, modeTrk='horiz',modeRad='prev',
+dataRad=G0Aguiar)
+
+##Comparison of yearly values
+compare(prodAguiarFixed, prodAguiar2x, prodAguiarHoriz)
+compareLosses(prodAguiarFixed, prodAguiar2x, prodAguiarHoriz)
+
+##Compare of daily productivities of each tracking system
+compareYf <- mergesolaR(prodAguiarFixed, prodAguiar2x, prodAguiarHoriz)
+xyplot(compareYf, superpose=TRUE,
+ylab='kWh/kWp', main='Daily productivity', auto.key=list(space='right'))
+
 
 ###Shadows
 #Two-axis trackers
@@ -1069,18 +1056,16 @@ xyplot(r2d(Beta)~r2d(w),
      xlab=expression(omega (degrees)),
      ylab=expression(beta (degrees)))
 
-## Not run: 
-##D compare(prodFixed, prod2x, prodHoriz, prod2xShd,
-##D        prodHorizShd, prodHorizBT)
-##D 
-##D compareLosses(prodFixed, prod2x, prodHoriz, prod2xShd,
-##D        prodHorizShd, prodHorizBT)
-##D 
-##D compareYf2 <- mergesolaR(prodFixed, prod2x, prodHoriz, prod2xShd,
-##D        prodHorizShd, prodHorizBT)
-##D xyplot(compareYf2, superpose=TRUE,
-##D ylab='kWh/kWp', main='Daily productivity', auto.key=list(space='right'))
-## End(Not run)
+compare(prodFixed, prod2x, prodHoriz, prod2xShd,
+       prodHorizShd, prodHorizBT)
+
+compareLosses(prodFixed, prod2x, prodHoriz, prod2xShd,
+       prodHorizShd, prodHorizBT)
+
+compareYf2 <- mergesolaR(prodFixed, prod2x, prodHoriz, prod2xShd,
+       prodHorizShd, prodHorizBT)
+xyplot(compareYf2, superpose=TRUE,
+ylab='kWh/kWp', main='Daily productivity', auto.key=list(space='right'))
 
 
 
@@ -1172,8 +1157,8 @@ nameEx("readSIAR")
 flush(stderr()); flush(stdout())
 
 ### Name: A8_readSIAR
-### Title: Meteorological data from www.marm.es/siar
-### Aliases: readSIAR readMAPA
+### Title: Meteorological data from the SIAR network.
+### Aliases: readSIAR
 ### Keywords: utilities constructors
 
 ### ** Examples
@@ -1261,17 +1246,59 @@ lat=37.2
 sol=calcSol(lat, BTd=fBTd(mode='serie'))
 range(indexD(sol))
 
-start <- as.POSIXct('2011-01-01')
-end <- as.POSIXct('2011-01-31')
+start <- as.Date(indexD(sol)[1])
+end <- start + 30
 
 solWindow <- sol[start, end]
 range(indexD(solWindow))
 
 
 
+cleanEx()
+nameEx("writeSolar")
+### * writeSolar
+
+flush(stderr()); flush(stdout())
+
+### Name: D_writeSolar-methods
+### Title: Exporter of solaR results
+### Aliases: writeSolar writeSolar-methods writeSolar,Sol-method
+### Keywords: methods
+
+### ** Examples
+
+
+lat <- 37.2;
+G0dm <- c(2766, 3491, 4494, 5912, 6989, 7742, 7919, 7027, 5369, 3562, 2814, 2179)
+Ta <- c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2, 15.2)
+prom <- list(G0dm=G0dm, Ta=Ta)
+
+prodFixed <- prodGCPV(lat=lat, dataRad=prom, modeRad='aguiar', keep.night=FALSE)
+
+old <- setwd(tempdir())
+
+writeSolar(prodFixed, 'prodFixed.csv')
+
+dir()
+
+zI <- read.zoo("prodFixed.csv",
+               header = TRUE, sep = ",",
+               FUN = as.POSIXct)
+
+zD<- read.zoo("prodFixed.D.csv",
+               header = TRUE, sep = ",")
+
+zD<- read.zoo("prodFixed.D.csv",
+               header = TRUE, sep = ",",
+               FUN = as.yearmon)
+
+setwd(old)
+
+
+
 ### * <FOOTER>
 ###
-cat("Time elapsed: ", proc.time() - get("ptime", pos = 'CheckExEnv'),"\n")
+base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
 grDevices::dev.off()
 ###
 ### Local variables: ***
