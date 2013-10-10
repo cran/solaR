@@ -1,5 +1,6 @@
-24a98a29e96aecc17b05322bd9fa7bda *ChangeLog
-7104b11f2132cb6e97491aefc31b9d80 *DESCRIPTION
+77de697e413fa5730a1a8c56c5af81e5 *ChangeLog
+a3bb326d15b56e6e02e15b5d5dea6416 *DESCRIPTION
+c9f41b4584cbf38107f041f9afffc1d2 *LICENSE
 a853a02d3e9fc1eade8cfc4674f6e44d *NAMESPACE
 885b63c878a0428d111bed32d0e216cc *R/AllClasses.R
 501ffe2241df7d3c3a816d7344b10bf3 *R/AllMethods.R
@@ -48,6 +49,7 @@ aea18584534169fc4cdce740ac7e6063 *R/window.R
 ef37a4428591e1bb28d2d62d8fe12298 *R/writeSolar.R
 10b27c6dfd89dd5a741e50e911951cad *R/xyplot.R
 4da09e22cc8ee149242adfdc9e22329b *R/zzz.R
+84f042b9757df6c526ea70689a207fb6 *README.md
 597fcbc02d0b85171139e65412cf8855 *data/MTM.RData
 b99b13e132bacadb99db6120d03422a8 *data/helios.RData
 8557ce80871f8f697b56efd7afd5d21e *data/prodEx.RData
@@ -72,7 +74,7 @@ c933797cc4fa8f63124ae2d749e1a69e *man/as.zooD-methods.Rd
 0ad0537468f769851ddb5246cfa2a19b *man/as.zooI-methods.Rd
 e218f528fc4155c32cb7900078851ea4 *man/as.zooM-methods.Rd
 72bf426490c52c6ecf986e737c9f30a7 *man/as.zooY-methods.Rd
-170c0341f51c6a32f95ec6ebd6cc8a05 *man/calcG0.Rd
+907629776b72c8feced6208eeebde889 *man/calcG0.Rd
 06f8696571183deb2166c4b18822793a *man/calcGef.Rd
 8a0a43faeff90cbe813c8193504e022e *man/calcShd.Rd
 fabf8c7fea14493c37a4785ead61d62a *man/calcSol.Rd
@@ -116,4 +118,3 @@ f6e3d2f6ac89b261cd1c741023637932 *man/sample2Diff.Rd
 8528021804474e84c77a7885c5beac69 *man/window-methods.Rd
 ba4a73e114b1b9259fa53ab837923078 *man/writeSolar.Rd
 541c8b9fac4646cc94ac2b03d7997118 *man/xyplot-methods.Rd
-3e4ecc7001c549ce1f63b84eb89195cf *solaR-Ex.R
