@@ -27,20 +27,20 @@
     See below for \code{corr='none'}.}
 
   \item{corr}{A character, the correlation between the the fraction of
-    intradaily diffuse irradiation and the
-    clearness index to be used.
+    intradaily diffuse irradiation and the clearness index to be
+    used. It is ignored if \code{G0I} is not provided.
 
-    With this version several options are available, as described in
+    With this version several correlations are available, as described in
     \code{\link{corrFdKt}}. You should choose one of \emph{intradaily}
     proposals. For example, the \code{\link{FdKtCLIMEDh}} is
     selected with \code{corr='CLIMEDh'}.
 
-    If \code{corr='user'} the use of a correlation
-    defined by a function \code{f} is possible.
+    If \code{corr='user'} the use of a correlation defined by a function
+    \code{f} is possible.
 
-    If \code{corr='none'} the \code{G0I} object should include information
-    about global, diffuse and direct intradaily irradiation with columns named
-    \code{G0}, \code{D0} and \code{B0}, respectively. }
+    If \code{corr='none'} the \code{G0I} object must include information
+    about global, diffuse and direct intradaily irradiation with columns
+    named \code{G0}, \code{D0} and \code{B0}, respectively. }
 
 
   \item{f}{A function defininig a correlation between the fraction of
@@ -59,7 +59,7 @@
 \references{ \itemize{
     \item Collares-Pereira, M. y Rabl, A.,  The average distribution of solar radiation: correlations between
       diffuse and hemispherical and between daily and hourly insolation values. Solar Energy, 22:155–164, 1979.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2012.
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2013.
     (\url{http://procomun.wordpress.com/documentos/libroesf/})
     \item Perpiñán, O. (2012), "solaR: Solar Radiation and Photovoltaic
   Systems with R", Journal of Statistical Software, 50(9), 1-32,
@@ -77,24 +77,39 @@
 }
 \examples{
 
-lat=37.2;
-BTd=fBTd(mode='serie')
+lat <- 37.2
 
-solD<-fSolD(lat, BTd[100])
-solI<-fSolI(solD, sample='hour')
-G0d=zoo(5000, index(solD))
-compD<-fCompD(solD, G0d, corr = "Page")
+BTd <- fBTd(mode='serie')
+solD <- fSolD(lat, BTd[100])
+solI <- fSolI(solD, sample='hour')
+G0d <- zoo(5000, index(solD))
+compD <- fCompD(solD, G0d, corr = "Page")
 fCompI(solI, compD)
 
-lat=37.2;
-sol<-calcSol(lat, fBTd(mode='prom'), sample='hour', keep.night=FALSE)
+sol <- calcSol(lat, fBTd(mode='prom'), sample='hour', keep.night=FALSE)
 
-G0dm=c(2.766,3.491,4.494,5.912,6.989,7.742,7.919,7.027,5.369,3.562,2.814,2.179)*1000;
-Ta=c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9, 24.3, 18.2, 17.2, 15.2)
-BD<-readG0dm(G0dm=G0dm, Ta=Ta, lat=37.2)
-compD<-fCompD(sol, BD, corr = 'Page')
-compI<-fCompI(sol, compD)
+G0dm <- c(2.766, 3.491, 4.494, 5.912, 6.989, 7.742,
+          7.919, 7.027, 5.369, 3.562, 2.814, 2.179)*1000
+
+Ta <- c(10, 14.1, 15.6, 17.2, 19.3, 21.2, 28.4, 29.9,
+        24.3, 18.2, 17.2, 15.2)
+
+BD <- readG0dm(G0dm = G0dm, Ta = Ta, lat = lat)
+compD <- fCompD(sol, BD, corr = 'Page')
+compI <- fCompI(sol, compD)
 head(compI)
+
+## Use of 'corr'.  The help page of calcG0 includes additional examples
+## with intradaily data xyplot(fd ~ kt, data=compI)
+
+climed <- fCompI(sol, G0I=compI, corr = 'CLIMEDh')
+xyplot(fd ~ kt, data=climed)
+
+ekdh <- fCompI(sol, G0I=compI, corr = 'EKDh')
+xyplot(fd ~ kt, data=ekdh)
+
+brl <- fCompI(sol, G0I=compI, corr = 'BRL')
+xyplot(fd ~ kt, data=brl)
 }
 
 \keyword{utilities}

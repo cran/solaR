@@ -1,5 +1,5 @@
-77de697e413fa5730a1a8c56c5af81e5 *ChangeLog
-a3bb326d15b56e6e02e15b5d5dea6416 *DESCRIPTION
+fe50aac02562dad073dfb1f50c8451bc *ChangeLog
+3c4b9acb4cc81c8d4660a30dd5a310b0 *DESCRIPTION
 c9f41b4584cbf38107f041f9afffc1d2 *LICENSE
 a853a02d3e9fc1eade8cfc4674f6e44d *NAMESPACE
 885b63c878a0428d111bed32d0e216cc *R/AllClasses.R
@@ -15,15 +15,15 @@ d4d7aa8889ba32cb134c1f675cb36f85 *R/analyzeData.R
 ed22f35000a5c8d94c000ee0831e9a98 *R/calcShd.R
 86a5ee3c41d4d9c64b8c4867c74a01e9 *R/calcSol.R
 7b460b2c90979025063143ff18b6afe4 *R/compare.R
-a3eb51e8f025106623a4d3c4b2c4a160 *R/corrFdKt.R
+8c0106edc07631d9696e16caf1ac7b85 *R/corrFdKt.R
 eb9cb6809dc63de9447f1280d985da0f *R/fBTd.R
 c20b2bcab340c77936f643179f9c484b *R/fCompD.R
-3ebf0dc05cb6982f1ba4ca84c587a4cf *R/fCompI.R
+4cdf1daf395c3cce58ca88b3f945d579 *R/fCompI.R
 ac1d97df62060af7a7c2575fcad7872e *R/fInclin.R
 9b51c44f1d099bb588cc7760111a051a *R/fProd.R
 471da18efdfa43af098390e347db997a *R/fPump.R
 254e38770fae12bb63d3af8bc3ffbdab *R/fSolD.R
-1720f5d5f7d18d45503be2949b03149b *R/fSolI.R
+ebf172842de999fe8eaeed983edc404e *R/fSolI.R
 773c1bd4dc55b16905fc84505dd66ec9 *R/fSombra.R
 9c83162c6d40d32d3a6773463533a9c2 *R/fSombra2X.R
 38f5f9b6bfd61f3006ebb484b911c087 *R/fSombra6.R
@@ -49,7 +49,7 @@ aea18584534169fc4cdce740ac7e6063 *R/window.R
 ef37a4428591e1bb28d2d62d8fe12298 *R/writeSolar.R
 10b27c6dfd89dd5a741e50e911951cad *R/xyplot.R
 4da09e22cc8ee149242adfdc9e22329b *R/zzz.R
-84f042b9757df6c526ea70689a207fb6 *README.md
+96d74e533ab0a12f65203a581cfed4fb *README.md
 597fcbc02d0b85171139e65412cf8855 *data/MTM.RData
 b99b13e132bacadb99db6120d03422a8 *data/helios.RData
 8557ce80871f8f697b56efd7afd5d21e *data/prodEx.RData
@@ -83,7 +83,7 @@ f8a20ee25eba196267322542e8f54e2d *man/compareLosses-methods.Rd
 0d7bfc82caa20d413e018c1c10eacae6 *man/corrFdKt.Rd
 1d0df18beea8eb57b9d65f8ff7d458d9 *man/fBTd.Rd
 06ef3101fbd8fbd474916ad1655a5ce3 *man/fCompD.Rd
-bff4edc7349febeb1d12835dd76a03d3 *man/fCompI.Rd
+70954d6e4a405526211b071c5e5c32fc *man/fCompI.Rd
 b8d161f3b03b1b0be79e2778434ab6a5 *man/fInclin.Rd
 c680a1e620999d5fbffbe6783f05930c *man/fProd.Rd
 c66568ba86839d5bcd1da51b55e652cc *man/fPump.Rd
