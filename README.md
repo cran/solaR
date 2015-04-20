@@ -1,5 +1,8 @@
 solaR
 =====
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.8709.png)](http://dx.doi.org/10.5281/zenodo.8709)
+
+[![Build Status](https://travis-ci.org/oscarperpinan/solar.svg?branch=master)](https://travis-ci.org/oscarperpinan/solar)
 
 The `solaR` package allows for reproducible research both for
 photovoltaics (PV) systems performance and solar radiation. It

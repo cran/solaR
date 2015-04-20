@@ -18,9 +18,11 @@
 
 \usage{
 
-calcG0(lat, modeRad='prom', dataRad, prom, mapa, bd,
-bdI, sample='hour', keep.night=TRUE, sunGeometry='michalsky',
-corr, f) }
+calcG0(lat, modeRad='prom', dataRad,
+       sample='hour', keep.night=TRUE,
+       sunGeometry='michalsky',
+       corr, f)
+}
 
 \arguments{
   \item{lat}{numeric, latitude (degrees) of the point of the Earth where calculations are needed. It is positive for locations above the Equator.}
@@ -37,11 +39,6 @@ corr, f) }
     irradiation time series following the procedure by Aguiar etal. (see
     reference below).
 
-    \code{modeRad='siar'} is currently disabled. In previous versions,
-    with \code{modeRad='siar'} the source data was downloaded from
-    \url{www.marm.es/siar} with the information provided in
-    \code{dataRad}.
-    
     If \code{modeRad='bd'} the information of \emph{daily} irradiation is read from a
     file, a \code{data.frame} defined by \code{dataRad}, a \code{zoo} or a
     \code{Meteo} object. (See \code{\link{readBD}}, \code{\link{df2Meteo}}
@@ -59,9 +56,6 @@ corr, f) }
 	numeric with 12 values or a named list whose components will be
 	processed with \code{\link{readG0dm}}.}
       
-      %% \item{If \code{modeRad='siar'}, a list as defined by
-      %% 	\code{\link{readSIAR}}.}
-
       \item{If \code{modeRad='bd'} a character (name of the file to be
     read with \code{readBD}), a \code{data.frame} (to be processed with
     \code{df2Meteo}), a \code{zoo} (to be processed with
@@ -78,30 +72,6 @@ corr, f) }
     \code{\link{zoo2Meteo}}. The resulting object will include a column
     named \code{Ta}, with information about ambient temperature.}
   }}
-
-  \item{prom, mapa, bd, bdI}{Deprecated. \code{dataRad} should be used
-    instead.}
-
-  % \item{prom}{A list as defined by \code{\link{readG0dm}}. This list
-  %   is only required when \code{modeRad='prom'}.}
-
-  % \item{mapa}{A list as defined by \code{\link{readMAPA}}. This
-  %   list is only required  when \code{modeRad='mapa'}.}
-
-  % \item{bd}{A \code{list} as defined by \code{\link{readBD}},
-  %   \code{\link{df2Meteo}} or \code{\link{zoo2Meteo}}, or a
-  %   \code{Meteo} object. It is only required when
-  %   \code{modeRad='bd'}.
-    
-  %   The resulting object will include a column named \code{Ta},
-  %   with information about ambient temperature.}
-
-  % \item{bdI}{A \code{list} as defined by \code{\link{readBDi}},
-  %   \code{\link{dfI2Meteo}} or \code{\link{zoo2Meteo}}, or a
-  %   \code{Meteo} object. It is only required when \code{modeRad='bdI'}.
-
-  %   The resulting object will include a column named \code{Ta},
-  %   with information about ambient temperature.}
 
   \item{sample}{\code{character}, containing one of ‘"sec"’, ‘"min"’,
     ‘"hour"’.  This can optionally be preceded by a (positive or
@@ -130,7 +100,7 @@ corr, f) }
     \code{G0d}, \code{D0d} and \code{B0d}, respectively
     (or \code{G0}, \code{D0} and \code{B0} if \code{modeRad='bdI'}).
     If \code{corr} is missing, then it is internally set to \code{CPR}
-    when \code{modeRad='siar'} or \code{modeRad='bd'}, to \code{Page}
+    when \code{modeRad='bd'}, to \code{Page}
     when \code{modeRad='prom'} and to \code{BRL} when \code{modeRad='bdI'}.}
 
   \item{f}{A function defininig a correlation between the fraction of
@@ -162,7 +132,6 @@ corr, f) }
   \code{\link{readG0dm}},
   \code{\link{readBD}},
   \code{\link{readBDi}},
-  \code{\link{readSIAR}},
   \code{\link{corrFdKt}}.
 }
 \examples{

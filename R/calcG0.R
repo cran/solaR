@@ -1,23 +1,6 @@
- # Copyright (C) 2010 Oscar Perpiñán Lamigueiro
- #
- # This program is free software you can redistribute it and/or
- # modify it under the terms of the GNU General Public License
- # as published by the Free Software Foundation; either version 2
- # of the License, or (at your option) any later version.
- #
- # This program is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with this program; if not, write to the Free Software
- # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- #/
 calcG0 <- function(lat,
                    modeRad='prom',
                    dataRad,
-                   prom, mapa, bd, bdI,
                    sample='hour',
                    keep.night=TRUE,
                    sunGeometry='michalsky',
@@ -25,38 +8,12 @@ calcG0 <- function(lat,
 
     if (missing(lat)) stop('lat missing. You must provide a latitude value.')
 
-    stopifnot(modeRad %in% c('prom', 'aguiar','siar','mapa','bd', 'bdI'))
+    stopifnot(modeRad %in% c('prom', 'aguiar','bd', 'bdI'))
 
-    if (!missing(mapa)){
-        dataRad=mapa
-        warning('Use of "mapa" argument is deprecated. You should use dataRad instead.')
-    }
-    if (!missing(prom)) {
-        dataRad=prom
-        warning('Use of "prom" argument is deprecated. You should use dataRad instead.')
-    }
-    if (!missing(bd)) {
-        dataRad=bd
-        warning('Use of "bd" argument is deprecated. You should use dataRad instead.')
-    }
-    if (!missing(bdI)) {
-        dataRad=bdI
-        warning('Use of "bdI" argument is deprecated. You should use dataRad instead.')
-    }
-
-    if (modeRad=='mapa') {
-        modeRad='siar'
-        warning('Use of "modeRad=mapa" is deprecated. You should use "modeRad=siar" instead.')
-    }
-
-    ## if (modeRad=='aguiar')	{
-    ##     warning('aguiar mode is temporarily disabled. Switching to prom mode.')
-    ##     modeRad='prom'} #Deshabilito por ahora el procedimiento de Aguiar
 
 ###Datos de Radiacion
     if (missing(corr)){
         corr = switch(modeRad,
-        siar ='CPR', #Correlacion entre Fd y Kt para valores diarios
         bd = 'CPR', #Correlacion entre Fd y Kt para valores diarios
         aguiar = 'CPR', #Correlacion entre Fd y Kt para valores diarios
         prom = 'Page', #Correlacion entre Fd y Kt para promedios mensuales
@@ -65,16 +22,6 @@ calcG0 <- function(lat,
     }
 
     BD <- switch(modeRad,
-                 siar={
-                     stopifnot(is.list(dataRad))
-
-                     siar.default=list(prov='', est='', lat=lat,
-                     start='01/01/2009', end='31/12/2010',
-                     format='%d/%m/%Y')
-                     siar=modifyList(siar.default, dataRad)
-                     res <- do.call('readSIAR', siar)
-                     res
-                 },                     #Fin de siar
                  bd = {
                      if (is(dataRad, 'Meteo')) {
                          dataRad
@@ -182,9 +129,6 @@ calcG0 <- function(lat,
     indSol <- indexI(sol)
 
     Ta=switch(modeRad,
-    siar={
-        fTemp(sol, BD)
-    },
     bd={
         if (all(c("TempMax","TempMin") %in% names(BD@data))) {
             fTemp(sol, BD)
