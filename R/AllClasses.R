@@ -1,26 +1,10 @@
- # Copyright (C) 2011, 2010 Oscar Perpiñán Lamigueiro
- #
- # This program is free software; you can redistribute it and/or
- # modify it under the terms of the GNU General Public License
- # as published by the Free Software Foundation; either version 2
- # of the License, or (at your option) any later version.
- #
- # This program is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with this program; if not, write to the Free Software
- # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- #/
 setOldClass('zoo')
 setOldClass('loess')
 setOldClass('difftime')
 
 setClass(
          Class='Meteo', ##datos de radiación y temperatura
-         representation=representation(
+         slots=c(
            latData='numeric',       #latitud, en grados, >0 si Norte
            data='zoo',          #datos, incluyendo G (Wh/m2) y Ta (ºC)
            type='character',    #a elegir entre 'prom', 'bd', 'bdI'
@@ -31,7 +15,7 @@ setClass(
 
 setClass(
          Class='Sol', ##Angulos del sol
-         representation=representation(
+         slots=c(
            lat='numeric',             #latitud, en grados, >0 si Norte
            solD='zoo',                #angulos diarios
            solI='zoo',                #angulos intradiarios
@@ -44,7 +28,7 @@ setClass(
 
 setClass(
          Class='G0',
-         representation=representation(
+         slots = c(
            G0D='zoo',                #resultado de fCompD
            G0dm='zoo',               #aggregate, medias mensuales
            G0y='zoo',                #aggregate, valores anuales
@@ -58,7 +42,7 @@ setClass(
 
 setClass(
          Class='Gef',
-         representation=representation(
+         slots = c(
            GefD='zoo',       #aggregate, valores diarios
            Gefdm='zoo',      #aggregate, medias mensuales
            Gefy='zoo',       #aggregate, valores anuales
@@ -78,7 +62,7 @@ setClass(
 
 setClass(
          Class='ProdGCPV',
-         representation=representation(
+         slots = c(
            prodD='zoo',                 #aggregate, valores diarios
            prodDm='zoo',                #aggregate, medias mensuales
            prody='zoo',                 #aggregate, valores anuales
@@ -94,7 +78,7 @@ setClass(
 
 setClass(
          Class='ProdPVPS',
-         representation=representation(
+         slots = c(
            prodD='zoo',                 #aggregate, valores diarios
            prodDm='zoo',                #aggregate, medias mensuales
            prody='zoo',                 #aggregate, valores anuales
@@ -111,7 +95,7 @@ setClass(
 
 setClass(
          Class='Shade',
-         representation=representation(
+         slots = c(
            FS='numeric',
            GRR='numeric',
            Yf='numeric',

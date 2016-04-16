@@ -47,7 +47,7 @@
           argument \code{beta} converted from degreesto radians.}
         \item{\code{Alfa}: }{numeric, azimuth angle of the surface
           (radians). When \code{modeTrk='fixed'} it is the value of the
-          argument \code{alfa} converted from degreesto radians.}
+          argument \code{alfa} converted from degrees to radians.}
         \item{\code{cosTheta}: }{numeric, cosine of the incidence angle of the solar
           irradiance on the surface}
     }}
@@ -101,8 +101,8 @@
 }
 
 \references{\itemize{
-  \item Perpiñán, O, Energía Solar Fotovoltaica, 2012.
-  (\url{http://procomun.wordpress.com/documentos/libroesf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2015.
+    (\url{http://oscarperpinan.github.io/esf/})
   \item Perpiñán, O. (2012), "solaR: Solar Radiation and Photovoltaic
   Systems with R", Journal of Statistical Software, 50(9), 1-32,
   \url{http://www.jstatsoft.org/v50/i09/}

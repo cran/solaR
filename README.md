@@ -1,8 +1,11 @@
 solaR
 =====
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.8709.png)](http://dx.doi.org/10.5281/zenodo.8709)
-
+[DOI](http://dx.doi.org/10.18637/jss.v050.i09)
 [![Build Status](https://travis-ci.org/oscarperpinan/solar.svg?branch=master)](https://travis-ci.org/oscarperpinan/solar)
+[![CRAN](http://www.r-pkg.org/badges/version/solaR)](http://www.r-pkg.org/pkg/solaR)
+[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/solaR)](http://www.r-pkg.org/pkg/solaR)
+[![Research software impact](http://depsy.org/api/package/cran/solaR/badge.svg)](http://depsy.org/package/r/solaR)
+
 
 The `solaR` package allows for reproducible research both for
 photovoltaics (PV) systems performance and solar radiation. It
@@ -37,12 +40,13 @@ Install the stable version with:
 
     install.packages('solaR')
 
-To install the development version you need the `devtools` package:
+You can install the development version with the [`remotes`](https://github.com/MangoTheCat/remotes#installation) package:
 
-    install.packages('devtools')
-	devtools::install_github('solar', 'oscarperpinan')
+	remotes::install_github('oscarperpinan/solar')
 
+or with [`devtools`](https://github.com/hadley/devtools):
 
+    devtools::install_github('oscarperpinan/solar')
 
 # Documentation #
 
