@@ -84,10 +84,10 @@ calcGef(lat,
       hourly tilted surface radiation models, Solar Energy, 45:9-17,
       1990.
     \item Perpiñán, O, Energía Solar Fotovoltaica, 2015.
-    (\url{http://oscarperpinan.github.io/esf/})
+    (\url{https://oscarperpinan.github.io/esf/})
     \item Perpiñán, O. (2012), "solaR: Solar Radiation and Photovoltaic
   Systems with R", Journal of Statistical Software, 50(9), 1-32,
-  \url{http://www.jstatsoft.org/v50/i09/}
+  \doi{10.18637/jss.v050.i09}
 }}
 
 % \note{The version 0.22 included a bug such that when horizBright = FALSE (default)

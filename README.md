@@ -1,10 +1,10 @@
 solaR
 =====
-[DOI](http://dx.doi.org/10.18637/jss.v050.i09)
-[![Build Status](https://travis-ci.org/oscarperpinan/solar.svg?branch=master)](https://travis-ci.org/oscarperpinan/solar)
-[![CRAN](http://www.r-pkg.org/badges/version/solaR)](http://www.r-pkg.org/pkg/solaR)
-[![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/solaR)](http://www.r-pkg.org/pkg/solaR)
-[![Research software impact](http://depsy.org/api/package/cran/solaR/badge.svg)](http://depsy.org/package/r/solaR)
+[![CRAN](https://www.r-pkg.org/badges/version/solaR)](https://www.r-pkg.org/pkg/solaR)
+[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/solaR)](https://www.r-pkg.org/pkg/solaR)
+[![Build Status](https://github.com/oscarperpinan/solar/workflows/R-CMD-check/badge.svg)](https://github.com/oscarperpinan/solar/actions)
+
+[![DOI](https://upload.wikimedia.org/wikipedia/commons/1/11/DOI_logo.svg)](https://doi.org/10.18637/jss.v050.i09)
 
 
 The `solaR` package allows for reproducible research both for
@@ -34,17 +34,17 @@ packages for space-time analysis.
 The stable version of solaR is hosted at
 [CRAN](https://cran.r-project.org/package=solaR). The development
 version is available at
-[GitHub](http://github.com/oscarperpinan/solar/).
+[GitHub](https://github.com/oscarperpinan/solar/).
 
 Install the stable version with:
 
     install.packages('solaR')
 
-You can install the development version with the [`remotes`](https://github.com/MangoTheCat/remotes#installation) package:
+You can install the development version with the [`remotes`](https://github.com/r-lib/remotes) package:
 
 	remotes::install_github('oscarperpinan/solar')
 
-or with [`devtools`](https://github.com/hadley/devtools):
+or with [`devtools`](https://github.com/r-lib/devtools):
 
     devtools::install_github('oscarperpinan/solar')
 
@@ -52,23 +52,25 @@ or with [`devtools`](https://github.com/hadley/devtools):
 
 The best place to learn how to use the package is the companion paper
 published by the Journal of Statistical Software:
-http://www.jstatsoft.org/v50/i09/
 
-[This book](http://procomun.wordpress.com/documentos/libroesf/) (in
+Perpiñán Lamigueiro, O. (2012). solaR: Solar Radiation and
+Photovoltaic Systems with R. Journal of Statistical Software, 50(9),
+1–32. https://doi.org/10.18637/jss.v050.i09
+
+[This book](https://oscarperpinan.github.io/esf/) (in
 Spanish) contains detailed information about solar radiation and
 photovoltaic systems. In
-[my articles](http://oscarperpinan.github.io/) I frequently use
-`solaR`. Besides, I publish news and examples about `solaR` at
-[my blog](http://procomun.wordpress.com/).
+[my articles](https://oscarperpinan.github.io/) I frequently use
+`solaR`. 
 
 # Citation #
 
 If you use `solaR`, please cite it in any publication reporting
 results obtained with this software:
 
-    Oscar Perpiñán (2012). solaR: Solar Radiation and Photovoltaic
-    Systems with R, Journal of Statistical Software, 50(9), 1-32. URL
-		http://www.jstatsoft.org/v50/i09/.
+Perpiñán Lamigueiro, O. (2012). solaR: Solar Radiation and
+Photovoltaic Systems with R. Journal of Statistical Software, 50(9),
+1–32. https://doi.org/10.18637/jss.v050.i09
 
 A BibTeX entry for LaTeX users is:
 
@@ -80,6 +82,6 @@ A BibTeX entry for LaTeX users is:
         volume = {50},
         number = {9},
         pages = {1--32},
-        url = {http://www.jstatsoft.org/v50/i09/},
+		doi = {10.18637/jss.v050.i09}
       }
 
