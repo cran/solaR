@@ -83,8 +83,8 @@ calcGef(lat,
     \item D. T. Reindl and W. A. Beckman and J. A. Duffie: Evaluation of
       hourly tilted surface radiation models, Solar Energy, 45:9-17,
       1990.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2015.
-    (\url{https://oscarperpinan.github.io/esf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2025.
+    (\url{https://blogs.upm.es/oscarperpinan/libros/esf/})
     \item Perpiñán, O. (2012), "solaR: Solar Radiation and Photovoltaic
   Systems with R", Journal of Statistical Software, 50(9), 1-32,
   \doi{10.18637/jss.v050.i09}

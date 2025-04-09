@@ -159,9 +159,9 @@ surfaces.  }
 \value{A \code{\linkS4class{Shade}} object.}
 
 \references{\itemize{
-    \item Perpiñán, O.: Grandes Centrales Fotovoltaicas: producción, seguimiento y ciclo de vida. PhD Thesis, UNED, 2008. \url{http://e-spacio.uned.es/fez/eserv/tesisuned:IngInd-Operpinan/GrandesCentrales.pdf}.
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2015.
-    (\url{https://oscarperpinan.github.io/esf/})
+    \item Perpiñan Lamigueiro, Oscar (2012). Cost of energy and mutual shadows in a two-axis tracking PV system. "Renewable Energy", v. 43 ; pp. 331-342. ISSN 0960-1481. \url{https://oa.upm.es/10219/}.
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2025.
+    (\url{https://blogs.upm.es/oscarperpinan/libros/esf/})
     \item Perpiñán, O. (2012), "solaR: Solar Radiation and Photovoltaic
   Systems with R", Journal of Statistical Software, 50(9), 1-32,
   \doi{10.18637/jss.v050.i09}

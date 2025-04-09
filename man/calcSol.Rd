@@ -57,8 +57,8 @@ calcSol(lat, BTd, sample = 'hour', BTi,
     \url{https://www.aa.quae.nl/en/reken/zonpositie.html}}
     \item{Michalsky, J., 1988: The Astronomical Almanac's algorithm for
     approximate solar position (1950-2050), Solar Energy 40, 227-235}
-  \item Perpiñán, O, Energía Solar Fotovoltaica, 2015.
-    (\url{https://oscarperpinan.github.io/esf/})
+  \item Perpiñán, O, Energía Solar Fotovoltaica, 2025.
+    (\url{https://blogs.upm.es/oscarperpinan/libros/esf/})
     \item Perpiñán, O. (2012), "solaR: Solar Radiation and Photovoltaic
     Systems with R", Journal of Statistical Software, 50(9), 1-32,
     \doi{10.18637/jss.v050.i09} } }

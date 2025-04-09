@@ -8,6 +8,15 @@
 \title{Methods for Function indexD}
 \description{Daily time index of \code{solaR} objects.
 }
+\usage{
+\S4method{indexD}{Meteo}(object)
+\S4method{indexD}{Sol}(object)
+\S4method{indexD}{G0}(object)
+}
+
+\arguments{
+  \item{object}{A \code{Meteo}, \code{Sol} or \code{G0} object (or extended).}
+}
 \section{Methods}{
   \describe{
 

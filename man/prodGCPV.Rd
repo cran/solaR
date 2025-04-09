@@ -100,8 +100,8 @@ prodGCPV(lat,
   \code{\link{fInclin}} functions inside the \code{\link{calcGef}} function. The shadows are computed with  \code{\link{calcShd}} while the performance of the PV system is simulated with \code{\link{fProd}}.}
 
 \references{\itemize{
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2015.
-    (\url{https://oscarperpinan.github.io/esf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2025.
+    (\url{https://blogs.upm.es/oscarperpinan/libros/esf/})
 
     \item Perpiñán, O. (2012), "solaR: Solar Radiation and Photovoltaic
     Systems with R", Journal of Statistical Software, 50(9), 1-32,

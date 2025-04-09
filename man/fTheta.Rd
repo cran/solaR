@@ -46,8 +46,8 @@ fTheta(sol, beta, alfa = 0, modeTrk = "fixed", betaLim = 90,
 }
 \references{
   \itemize{
-    \item Perpiñán, O, Energía Solar Fotovoltaica, 2015.
-    (\url{https://oscarperpinan.github.io/esf/})
+    \item Perpiñán, O, Energía Solar Fotovoltaica, 2025.
+    (\url{https://blogs.upm.es/oscarperpinan/libros/esf/})
     \item Panico, D., Garvison, P., Wenger, H. J., Shugar, D.,
     Backtracking: a novel strategy for tracking PV systems, Photovoltaic
     Specialists Conference, 668-673, 1991

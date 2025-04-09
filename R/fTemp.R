@@ -3,8 +3,8 @@ fTemp<-function(sol, BD)
     ##sol es un objeto con class='Sol'
     ##BD es un objecto con class='Meteo', cuyo slot 'data' contiene dos columnas llamadas "TempMax" y "TempMin"
 
-    stopifnot(class(sol)=='Sol')
-    stopifnot(class(BD)=='Meteo')
+    stopifnot(is(sol, "Sol"))
+    stopifnot(is(BD, "Meteo"))
 
     checkIndexD(indexD(sol), indexD(BD))
 

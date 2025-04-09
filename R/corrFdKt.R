@@ -20,7 +20,7 @@ FdKtCPR <- function(Ktd){##Collares-Pereira y Rabl para diarios
 }
 
 FdKtEKDd <- function(Ktd, sol){##Erbs, Klein y Duffie para diarios
-  if (class(sol)=='Sol') {
+  if (is(sol, "Sol")) {
     ws <- as.data.frameD(sol)$ws
     } else {ws <- coredata(sol$ws)}
   
@@ -57,7 +57,7 @@ FdKtCLIMEDh <- function(kt){##CLIMED2 para horarios
   
 FdKtBRL <- function(kt, sol){##Boland et al.
 
-  if (class(sol)=='Sol') {
+  if (is(sol, "Sol")) {
     sample=sol@sample
     sol <- as.zooI(sol, day=TRUE)
   } else {

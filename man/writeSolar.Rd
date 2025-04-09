@@ -5,7 +5,7 @@
 \alias{writeSolar,Sol-method}
 \title{Exporter of solaR results}
 \description{Exports the results of the \code{solaR} functions as text
-  files using \code{\link{read.zoo}}}
+  files using \code{\link[zoo]{read.zoo}}}
 
 \usage{\S4method{writeSolar}{Sol}(object, file, complete = FALSE,
     day = FALSE, timeScales = c('i', 'd', 'm', 'y'), sep = ',', ...)}
@@ -27,7 +27,7 @@
   \describe{
 
   \item{\code{signature(object = "Sol")}}{This function exports the
-  slots with results using \code{\link{write.zoo}}. If
+  slots with results using \code{\link[zoo]{write.zoo}}. If
   \code{complete = FALSE} and \code{day = FALSE} (default) the result
   includes only the content of the \code{solI} slot. It \code{day = TRUE}
   the contents of the \code{solD} slot are included.}
@@ -65,8 +65,8 @@
 }}
 
 \seealso{
-  \code{\link{write.zoo}},
-  \code{\link{read.zoo}},
+  \code{\link[zoo]{write.zoo}},
+  \code{\link[zoo]{read.zoo}},
   \code{\link{as.zooI}},
   \code{\link{as.zooD}},
   \code{\link{as.zooM}},

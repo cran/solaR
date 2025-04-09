@@ -3,7 +3,7 @@ fCompI <- function(sol, compD, G0I,
                    filterG0 = TRUE){
   
     ##Time indexes
-    if (class(sol)=='Sol') {
+    if (is(sol, "Sol")) {
         solI <- sol@solI
         mtch <- sol@match
         sample <- sol@sample
@@ -61,7 +61,7 @@ fCompI <- function(sol, compD, G0I,
     } else { ## Use instantaneous values if provided through G0I
     
         if (corr!='none'){ 
-            if (class(G0I) == 'Meteo') {
+            if (is(G0I, "Meteo")) {
                 G0 <- coredata(getG0(G0I))
             } else {                       ## G0I is a zoo
                 if (NCOL(G0I)>1) {         ## multivariable
@@ -88,7 +88,7 @@ fCompI <- function(sol, compD, G0I,
 
         } else { ##corr=='none': G0 is a zoo with G0, D0 and B0
 
-            if (class(G0I) == 'Meteo') {
+            if (is(G0I, "Meteo")) {
                 IrrData <- getData(G0I)
             } else {                    #G0I is a zoo
                 IrrData <- G0I

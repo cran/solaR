@@ -40,7 +40,7 @@
   \item{..., drop}{Additional arguments for \code{window.zoo}}
 }
 \seealso{
-  \code{\link{window.zoo}}
+  \code{\link[zoo]{window.zoo}}
 \code{\link{indexD}}
 }
 \examples{

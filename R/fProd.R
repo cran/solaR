@@ -132,12 +132,12 @@ fProd <- function(inclin,
               is.list(effSys)
               )
     ## Extract data from objects
-    if (class(inclin)=='Gef') {
+    if (is(inclin, "Gef")) {
         indInclin <- indexI(inclin)
         Gef <- coredata(inclin@GefI$Gef)
         Ta <- coredata(inclin@Ta)
     } else {
-        if (class(inclin)=='zoo') {
+        if (is(inclin, "zoo")) {
             indInclin <- index(inclin)
             Gef <- coredata(inclin$Gef)
             Ta <- coredata(inclin$Ta)
@@ -252,7 +252,7 @@ fProd <- function(inclin,
                          Vdc, Idc,
                          Pac, Pdc,
                          EffI)
-    if (class(inclin) %in% c('Gef', 'zoo')) {
+    if (is(inclin, "Gef") || is(inclin, "zoo")) {
         result<-zoo(resProd, order.by <- indInclin)
         attr(result, 'generator') <- generator
         attr(result, 'module') <- module

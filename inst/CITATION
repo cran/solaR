@@ -1,8 +1,8 @@
 citHeader("To cite package 'solaR' in publications use:")
      
-citEntry(entry="Article",
+bibentry(bibtype ="Article",
          title ="{solaR}: Solar Radiation and Photovoltaic Systems with {R}",
-         author =personList(as.person("Oscar Perpi{\\~n}{\\'a}n")),
+         author =person("Oscar Perpi{\\~n}{\\'a}n"),
          journal ="Journal of Statistical Software",
          year ="2012",
          volume ="50",

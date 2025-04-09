@@ -7,6 +7,12 @@
 \description{
   Intra-daily time index of \code{solaR} objects.
 }
+\usage{
+\S4method{indexI}{Sol}(object)
+}
+\arguments{
+  \item{object}{A \code{Sol} object (or extended).}
+}
 \section{Methods}{
   \describe{
 

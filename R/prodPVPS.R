@@ -28,7 +28,7 @@ prodPVPS<-function(lat,
                    modeShd='', ...)
 		
   } else { #Utilizamos un cálculo previo de calcG0, calcGef o prodSFCR
-    stopifnot(class(dataRad) %in% c('G0', 'Gef', 'ProdPVPS'))
+    stopifnot(is(dataRad, "G0") || is(dataRad, "Gef") || is(dataRad, "ProdPVPS"))
     radEf <- switch(class(dataRad),
                     G0=calcGef(lat=lat, 
                       modeTrk=modeTrk, modeRad='prev',

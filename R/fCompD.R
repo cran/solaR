@@ -1,7 +1,7 @@
 fCompD<-function(sol, G0d, corr='CPR',f)
 {
 
-    if (class(sol)=='Sol') {
+    if (is(sol, "Sol")) {
         Bo0d<-coredata(sol@solD$Bo0d)
         indexSol <- indexD(sol)
     } else {# sol es un zoo
@@ -9,7 +9,7 @@ fCompD<-function(sol, G0d, corr='CPR',f)
         indexSol <- index(sol)
     }
     ##index de G0d
-    if (class(G0d)=='Meteo') {
+    if (is(G0d, "Meteo")) {
         indexG0d=indexD(G0d)
     } else {# G0d es un zoo
         indexG0d=index(G0d)
@@ -20,7 +20,7 @@ fCompD<-function(sol, G0d, corr='CPR',f)
     if (corr!='none'){
 
         ##Extraigo datos
-        if (class(G0d)=='Meteo') {
+        if (is(G0d, "Meteo")) {
             G0d=coredata(getG0(G0d))
         } else {
             G0d <-coredata(G0d)
@@ -45,7 +45,7 @@ fCompD<-function(sol, G0d, corr='CPR',f)
 
     } else {##corr=='none', y por tanto G0d es multivariante con G0d, D0d y B0d
 
-        if (class(G0d)=='Meteo') {
+        if (is(G0d, "Meteo")) {
             IrrData=getData(G0d)##Ahora G0d es multivariante
         } else {
             IrrData <-G0d
